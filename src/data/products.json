@@ -1,0 +1,512 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Handwoven Banarasi Silk Saree",
+      "price": 15000,
+      "originalPrice": 18000,
+      "category": "Textiles",
+      "region": "Varanasi",
+      "artisan": "Masterweaver Ramesh Kumar",
+      "rating": 4.8,
+      "reviews": 124,
+      "images": [
+        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1583391733956-6c78276477e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Exquisite handwoven Banarasi silk saree featuring intricate gold zari work and traditional motifs. This masterpiece represents centuries of weaving heritage from Varanasi.",
+      "features": [
+        "Pure silk fabric with gold zari work",
+        "Traditional Banarasi weaving technique",
+        "Intricate floral and paisley motifs",
+        "Handcrafted by master weavers",
+        "Perfect for weddings and special occasions"
+      ],
+      "specifications": {
+        "Material": "Pure Silk",
+        "Length": "6.5 meters",
+        "Width": "1.2 meters",
+        "Weight": "800 grams",
+        "Care": "Dry clean only"
+      },
+      "inStock": true,
+      "featured": true,
+      "tags": ["traditional", "wedding", "silk", "zari", "handwoven"]
+    },
+    {
+      "id": 2,
+      "name": "Madhubani Painting on Canvas",
+      "price": 5500,
+      "originalPrice": 6500,
+      "category": "Art",
+      "region": "Bihar",
+      "artisan": "Artist Sunita Devi",
+      "rating": 4.9,
+      "reviews": 89,
+      "images": [
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1549417229-aa67ac26346d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Traditional Madhubani painting depicting the tree of life, created using natural pigments and traditional techniques passed down through generations.",
+      "features": [
+        "Natural pigments and dyes",
+        "Traditional Madhubani style",
+        "Hand-painted on canvas",
+        "Depicts mythological themes",
+        "Ready to frame and display"
+      ],
+      "specifications": {
+        "Medium": "Natural pigments on canvas",
+        "Size": "24 x 18 inches",
+        "Frame": "Not included",
+        "Style": "Traditional Madhubani",
+        "Care": "Keep away from direct sunlight"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["art", "painting", "traditional", "madhubani", "canvas"]
+    },
+    {
+      "id": 3,
+      "name": "Blue Pottery Vase Set",
+      "price": 3200,
+      "originalPrice": 4000,
+      "category": "Pottery",
+      "region": "Jaipur",
+      "artisan": "Potter Vinod Sharma",
+      "rating": 4.6,
+      "reviews": 56,
+      "images": [
+        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Beautiful set of three blue pottery vases showcasing the distinctive azure glaze and intricate patterns characteristic of Jaipur's blue pottery tradition.",
+      "features": [
+        "Traditional blue pottery technique",
+        "Set of 3 different sizes",
+        "Hand-painted floral motifs",
+        "Glazed ceramic finish",
+        "Perfect for home decoration"
+      ],
+      "specifications": {
+        "Material": "Ceramic with blue glaze",
+        "Sizes": "Large: 12\", Medium: 9\", Small: 6\"",
+        "Set": "3 pieces",
+        "Weight": "2.5 kg total",
+        "Care": "Hand wash with mild soap"
+      },
+      "inStock": true,
+      "featured": true,
+      "tags": ["pottery", "ceramic", "blue", "vase", "home-decor"]
+    },
+    {
+      "id": 4,
+      "name": "Pashmina Shawl",
+      "price": 8500,
+      "originalPrice": 10000,
+      "category": "Textiles",
+      "region": "Kashmir",
+      "artisan": "Weaver Abdul Rahman",
+      "rating": 4.9,
+      "reviews": 203,
+      "images": [
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Luxurious Pashmina shawl hand-woven from the finest cashmere wool, featuring delicate embroidery and the warmth of Kashmiri craftsmanship.",
+      "features": [
+        "100% pure Pashmina wool",
+        "Hand-embroidered borders",
+        "Incredibly soft and warm",
+        "Traditional Kashmiri patterns",
+        "Lightweight yet insulating"
+      ],
+      "specifications": {
+        "Material": "Pure Pashmina (Cashmere)",
+        "Size": "80 x 28 inches",
+        "Weight": "200 grams",
+        "Pattern": "Traditional Kashmiri",
+        "Care": "Dry clean recommended"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["pashmina", "shawl", "cashmere", "kashmir", "luxury"]
+    },
+    {
+      "id": 5,
+      "name": "Tanjore Painting - Lord Ganesha",
+      "price": 12000,
+      "originalPrice": 15000,
+      "category": "Art",
+      "region": "Tamil Nadu",
+      "artisan": "Artist Lakshmi Narayanan",
+      "rating": 4.8,
+      "reviews": 76,
+      "images": [
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1549417229-aa67ac26346d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Traditional Tanjore painting of Lord Ganesha with gold foil work, semi-precious stones, and vibrant colors on wooden board with classic composition.",
+      "features": [
+        "22k gold foil detailing",
+        "Semi-precious stone inlay",
+        "Traditional Tanjore technique",
+        "Rich vibrant colors",
+        "Spiritual and decorative value"
+      ],
+      "specifications": {
+        "Medium": "Paint and gold foil on wood",
+        "Size": "18 x 14 inches",
+        "Frame": "Traditional wooden frame included",
+        "Stones": "Semi-precious inlay",
+        "Care": "Dust gently, avoid moisture"
+      },
+      "inStock": true,
+      "featured": true,
+      "tags": ["art", "painting", "tanjore", "religious", "gold-foil"]
+    },
+    {
+      "id": 6,
+      "name": "Dhokra Horse Figurine",
+      "price": 2800,
+      "originalPrice": 3500,
+      "category": "Sculptures",
+      "region": "West Bengal",
+      "artisan": "Sculptor Birendra Karmakar",
+      "rating": 4.7,
+      "reviews": 34,
+      "images": [
+        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Beautiful Dhokra brass horse figurine crafted using the ancient lost-wax casting technique, representing the tribal art form of Eastern India.",
+      "features": [
+        "Traditional Dhokra technique",
+        "Lost-wax casting method",
+        "Brass metal construction",
+        "Intricate tribal patterns",
+        "Symbol of strength and grace"
+      ],
+      "specifications": {
+        "Material": "Brass",
+        "Technique": "Lost-wax casting",
+        "Size": "8 x 6 inches",
+        "Weight": "500 grams",
+        "Care": "Clean with dry cloth"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["sculpture", "dhokra", "brass", "tribal", "figurine"]
+    },
+    {
+      "id": 7,
+      "name": "Kalamkari Wall Hanging",
+      "price": 4500,
+      "originalPrice": 5500,
+      "category": "Textiles",
+      "region": "Andhra Pradesh",
+      "artisan": "Artist Ravi Kumar",
+      "rating": 4.5,
+      "reviews": 42,
+      "images": [
+        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Hand-painted Kalamkari wall hanging featuring mythological scenes, created using natural dyes and traditional pen work technique.",
+      "features": [
+        "Hand-painted with natural dyes",
+        "Traditional Kalamkari technique",
+        "Mythological storytelling",
+        "Cotton fabric base",
+        "Ready to hang wall art"
+      ],
+      "specifications": {
+        "Material": "Cotton fabric",
+        "Size": "36 x 24 inches",
+        "Technique": "Hand-painted Kalamkari",
+        "Colors": "Natural dyes",
+        "Care": "Gentle hand wash"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["textile", "kalamkari", "wall-hanging", "natural-dyes", "mythology"]
+    },
+    {
+      "id": 8,
+      "name": "Wooden Elephant Carving",
+      "price": 6800,
+      "originalPrice": 8000,
+      "category": "Woodwork",
+      "region": "Karnataka",
+      "artisan": "Carver Murugan",
+      "rating": 4.8,
+      "reviews": 67,
+      "images": [
+        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Intricately carved wooden elephant showcasing the traditional woodworking skills of Karnataka artisans, perfect as a decorative centerpiece.",
+      "features": [
+        "Hand-carved from single wood piece",
+        "Intricate detailing and patterns",
+        "Traditional carving techniques",
+        "Natural wood finish",
+        "Symbol of wisdom and prosperity"
+      ],
+      "specifications": {
+        "Material": "Teak wood",
+        "Size": "12 x 8 x 8 inches",
+        "Weight": "1.2 kg",
+        "Finish": "Natural wood polish",
+        "Care": "Dust regularly, avoid moisture"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["woodwork", "carving", "elephant", "teak", "home-decor"]
+    },
+    {
+      "id": 9,
+      "name": "Chikankari Kurta",
+      "price": 3500,
+      "originalPrice": 4200,
+      "category": "Clothing",
+      "region": "Lucknow",
+      "artisan": "Embroiderer Fatima Begum",
+      "rating": 4.6,
+      "reviews": 98,
+      "images": [
+        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Elegant white cotton kurta featuring delicate Chikankari embroidery work, representing the refined needlework tradition of Lucknow.",
+      "features": [
+        "Hand-embroidered Chikankari work",
+        "Pure cotton fabric",
+        "Traditional white-on-white design",
+        "Comfortable and breathable",
+        "Perfect for ethnic occasions"
+      ],
+      "specifications": {
+        "Material": "Pure cotton",
+        "Sizes": "S, M, L, XL available",
+        "Length": "42 inches",
+        "Embroidery": "Hand-done Chikankari",
+        "Care": "Gentle machine wash"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["clothing", "kurta", "chikankari", "cotton", "embroidery"]
+    },
+    {
+      "id": 10,
+      "name": "Brass Temple Bell",
+      "price": 1800,
+      "originalPrice": 2200,
+      "category": "Religious Items",
+      "region": "Uttar Pradesh",
+      "artisan": "Craftsman Shyam Lal",
+      "rating": 4.9,
+      "reviews": 156,
+      "images": [
+        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Traditional brass temple bell with melodious sound, handcrafted with intricate engravings and perfect for religious ceremonies and home temples.",
+      "features": [
+        "Pure brass construction",
+        "Melodious clear sound",
+        "Hand-engraved patterns",
+        "Traditional temple design",
+        "Spiritual significance"
+      ],
+      "specifications": {
+        "Material": "Pure brass",
+        "Height": "4 inches",
+        "Diameter": "3 inches",
+        "Weight": "200 grams",
+        "Care": "Clean with brass cleaner"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["religious", "brass", "bell", "temple", "spiritual"]
+    },
+    {
+      "id": 11,
+      "name": "Kantha Embroidered Throw",
+      "price": 4200,
+      "originalPrice": 5000,
+      "category": "Home Decor",
+      "region": "West Bengal",
+      "artisan": "Embroiderer Mamata Das",
+      "rating": 4.7,
+      "reviews": 73,
+      "images": [
+        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Beautiful Kantha embroidered throw featuring running stitch patterns and vibrant colors, perfect for adding warmth and style to any space.",
+      "features": [
+        "Traditional Kantha embroidery",
+        "Running stitch technique",
+        "Vibrant color combinations",
+        "Soft cotton fabric",
+        "Versatile home accessory"
+      ],
+      "specifications": {
+        "Material": "Cotton with cotton thread",
+        "Size": "60 x 90 inches",
+        "Technique": "Hand-embroidered Kantha",
+        "Weight": "800 grams",
+        "Care": "Machine wash cold"
+      },
+      "inStock": true,
+      "featured": false,
+      "tags": ["home-decor", "throw", "kantha", "embroidery", "cotton"]
+    },
+    {
+      "id": 12,
+      "name": "Silver Filigree Jewelry Box",
+      "price": 9500,
+      "originalPrice": 11000,
+      "category": "Jewelry",
+      "region": "Odisha",
+      "artisan": "Silversmith Prabhu Nayak",
+      "rating": 4.8,
+      "reviews": 45,
+      "images": [
+        "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      ],
+      "description": "Exquisite silver filigree jewelry box showcasing the delicate wirework artistry of Odisha, perfect for storing precious jewelry and keepsakes.",
+      "features": [
+        "Pure silver filigree work",
+        "Intricate wirework patterns",
+        "Velvet-lined interior",
+        "Traditional Odishan craft",
+        "Multiple compartments"
+      ],
+      "specifications": {
+        "Material": "Sterling silver filigree",
+        "Size": "8 x 6 x 4 inches",
+        "Interior": "Velvet lined",
+        "Weight": "400 grams",
+        "Care": "Polish with silver cloth"
+      },
+      "inStock": true,
+      "featured": true,
+      "tags": ["jewelry", "silver", "filigree", "box", "storage"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "textiles",
+      "name": "Textiles",
+      "description": "Handwoven fabrics and traditional textiles",
+      "image": "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "art",
+      "name": "Art",
+      "description": "Traditional paintings and artistic creations",
+      "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "pottery",
+      "name": "Pottery",
+      "description": "Handcrafted ceramic and clay items",
+      "image": "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "sculptures",
+      "name": "Sculptures",
+      "description": "Metal and stone carved sculptures",
+      "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "woodwork",
+      "name": "Woodwork",
+      "description": "Carved wooden artifacts and furniture",
+      "image": "https://images.unsplash.com/photo-1583391733956-6c78276477e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "clothing",
+      "name": "Clothing",
+      "description": "Traditional and contemporary clothing",
+      "image": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "religious-items",
+      "name": "Religious Items",
+      "description": "Spiritual and religious artifacts",
+      "image": "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "home-decor",
+      "name": "Home Decor",
+      "description": "Decorative items for your home",
+      "image": "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      "id": "jewelry",
+      "name": "Jewelry",
+      "description": "Traditional and contemporary jewelry",
+      "image": "https://images.unsplash.com/photo-1565538810643-b5bdb714032a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    }
+  ],
+  "regions": [
+    {
+      "id": "varanasi",
+      "name": "Varanasi",
+      "state": "Uttar Pradesh",
+      "specialties": ["Banarasi Silk", "Textiles", "Religious Items"]
+    },
+    {
+      "id": "bihar",
+      "name": "Bihar",
+      "state": "Bihar",
+      "specialties": ["Madhubani Painting", "Art"]
+    },
+    {
+      "id": "jaipur",
+      "name": "Jaipur",
+      "state": "Rajasthan",
+      "specialties": ["Blue Pottery", "Jewelry", "Textiles"]
+    },
+    {
+      "id": "kashmir",
+      "name": "Kashmir",
+      "state": "Jammu & Kashmir",
+      "specialties": ["Pashmina", "Carpets", "Woodwork"]
+    },
+    {
+      "id": "tamil-nadu",
+      "name": "Tamil Nadu",
+      "state": "Tamil Nadu",
+      "specialties": ["Tanjore Painting", "Bronze Sculptures", "Silk"]
+    },
+    {
+      "id": "west-bengal",
+      "name": "West Bengal",
+      "state": "West Bengal",
+      "specialties": ["Dhokra", "Kantha", "Textiles"]
+    },
+    {
+      "id": "andhra-pradesh",
+      "name": "Andhra Pradesh",
+      "state": "Andhra Pradesh",
+      "specialties": ["Kalamkari", "Textiles", "Toys"]
+    },
+    {
+      "id": "karnataka",
+      "name": "Karnataka",
+      "state": "Karnataka",
+      "specialties": ["Sandalwood Carving", "Mysore Silk", "Woodwork"]
+    },
+    {
+      "id": "lucknow",
+      "name": "Lucknow",
+      "state": "Uttar Pradesh",
+      "specialties": ["Chikankari", "Embroidery", "Textiles"]
+    },
+    {
+      "id": "odisha",
+      "name": "Odisha",
+      "state": "Odisha",
+      "specialties": ["Silver Filigree", "Pattachitra", "Textiles"]
+    }
+  ]
+}
