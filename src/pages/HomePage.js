@@ -62,7 +62,7 @@ const HomePage = () => {
   // };
 
   return (
-    <main className="container mx-auto max-w-7xl px-4 py-8" role="main">
+    <main className="container mx-auto max-w-7xl px-4 py-8 pt-24" role="main">
       {/* Hero Section */}
       <HeroSection />
 

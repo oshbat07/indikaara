@@ -32,11 +32,17 @@ class DataService {
 
       // Transform each item in the category
       categoryData.items.forEach(item => {
+        // Handle new price structure - array of {size, amount}
+        const basePrice = Array.isArray(item.price) && item.price.length > 0 
+          ? item.price[0].amount 
+          : (typeof item.price === 'number' ? item.price : 0);
+
         const transformedProduct = {
           id: item.id,
           name: item.name,
-          price: item.price,
-          originalPrice: item.priceRange ? null : item.price * 1.2, // Simulate original price
+          price: basePrice, // Use first price option as base price
+          priceOptions: Array.isArray(item.price) ? item.price : [{ size: "Standard", amount: basePrice }], // Store all price options
+          originalPrice: basePrice * 1.2, // Simulate original price
           category: categoryData.category,
           region: item.manufacturer || "India", // Use manufacturer as region fallback
           artisan: item.manufacturer,
@@ -47,16 +53,16 @@ class DataService {
           features: item.details || [],
           specifications: {
             Material: Array.isArray(item.material) ? item.material.join(', ') : item.material,
-            Dimensions: Array.isArray(item.dimensionsAvailable) ? item.dimensionsAvailable.join(', ') : item.dimensionsAvailable,
             Color: Array.isArray(item.color) ? item.color.join(', ') : item.color,
             Technique: item.weavingTechnique || "Handcrafted",
-            SKU: item.SKU
+            SKU: item.SKU,
+            // Remove Dimensions from specifications since dimensionsAvailable is removed
+            // Sizes are now handled through price options
           },
           tags: item.tags || [],
           featured: Math.random() > 0.8, // 20% chance of being featured
           inStock: true,
-          story: item.story,
-          priceRange: item.priceRange
+          story: item.story
         };
 
         products.push(transformedProduct);

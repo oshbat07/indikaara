@@ -96,7 +96,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <main className="container mx-auto max-w-7xl px-4 py-8">
+    <main className="container mx-auto max-w-7xl px-4 py-8 pt-24">
       {/* Breadcrumb */}
       <nav className="mb-8" aria-label="Breadcrumb">
         <div className="flex items-center gap-2 text-sm text-text-secondary">

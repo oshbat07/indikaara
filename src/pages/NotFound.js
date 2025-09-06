@@ -8,7 +8,7 @@ import Button from '../components/Button';
  */
 const NotFound = () => {
   return (
-    <main className="container mx-auto max-w-4xl px-4 py-16 text-center" role="main">
+    <main className="container mx-auto max-w-4xl px-4 py-16 pt-24 text-center" role="main">
       <div className="flex flex-col items-center gap-8">
         {/* Error Icon */}
         <div className="text-[var(--primary-color)] text-8xl">

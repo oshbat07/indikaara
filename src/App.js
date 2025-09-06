@@ -8,6 +8,7 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import ArtisansPage from './pages/ArtisansPage';
+import WishlistPage from './pages/WishlistPage';
 import NotFound from './pages/NotFound';
 import './styles/globals.css';
 
@@ -32,6 +33,9 @@ function App() {
             
             {/* Cart Route */}
             <Route path="/cart" element={<CartPage />} />
+            
+            {/* Wishlist Route */}
+            <Route path="/wishlist" element={<WishlistPage />} />
             
             {/* Checkout Route */}
             <Route path="/checkout" element={<CheckoutPage />} />

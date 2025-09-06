@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import logo from '../assets/logo1.png';
@@ -10,7 +10,46 @@ import logo from '../assets/logo1.png';
  */
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { itemCount } = useCart();
+
+  // Track wishlist count
+  useEffect(() => {
+    const updateWishlistCount = () => {
+      try {
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistCount(wishlist.length);
+      } catch (error) {
+        setWishlistCount(0);
+      }
+    };
+
+    // Initial load
+    updateWishlistCount();
+
+    // Listen for localStorage changes (from other tabs)
+    window.addEventListener('storage', updateWishlistCount);
+
+    // Listen for custom wishlist update events
+    window.addEventListener('wishlistUpdated', updateWishlistCount);
+
+    return () => {
+      window.removeEventListener('storage', updateWishlistCount);
+      window.removeEventListener('wishlistUpdated', updateWishlistCount);
+    };
+  }, []);
+
+  // Track scroll position for sticky header transparency
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      setIsScrolled(scrollTop > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -21,8 +60,16 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-surface-primary border-b border-solid border-gray-700 sticky top-0 z-50">
-      <div className="flex items-center justify-between px-4 md:px-10 py-4 max-w-7xl mx-auto">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-[#1a1a1a]/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20' 
+        : 'bg-surface-primary border-b border-gray-700'
+    }`}>
+      {/* Glass effect overlay when scrolled */}
+      {isScrolled && (
+        <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-transparent to-green-500/5 pointer-events-none"></div>
+      )}
+      <div className="flex items-center justify-between px-4 md:px-10 py-4 max-w-7xl mx-auto relative">
         {/* Logo and Navigation Section */}
         <div className="flex items-center gap-8">
           {/* Logo */}
@@ -88,6 +135,36 @@ const Header = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
+            {/* Wishlist Icon */}
+            <Link 
+              to="/wishlist"
+              className="flex items-center gap-2 text-secondary hover:text-primary transition-colors relative"
+              aria-label={`Wishlist with ${wishlistCount} items`}
+            >
+              <div className="relative">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                  </span>
+                )}
+              </div>
+            </Link>
+
+            {/* Cart Icon */}
             <Link 
               to="/cart"
               className="flex items-center gap-2 text-secondary hover:text-primary transition-colors relative"
@@ -139,145 +216,248 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors"
-          onClick={toggleMobileMenu}
-          aria-label="Toggle mobile menu"
-          aria-expanded={isMobileMenuOpen}
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        <div className="md:hidden flex items-center gap-3">
+          {/* Mobile Cart and Wishlist Icons */}
+          <Link 
+            to="/wishlist"
+            className="relative"
+            aria-label={`Wishlist with ${wishlistCount} items`}
           >
-            {isMobileMenuOpen ? (
+            <svg
+              className="w-6 h-6 text-secondary hover:text-primary transition-colors"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
-            ) : (
+            </svg>
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                {wishlistCount > 9 ? '9+' : wishlistCount}
+              </span>
+            )}
+          </Link>
+
+          <Link 
+            to="/cart"
+            className="relative"
+            aria-label={`Shopping cart with ${itemCount} items`}
+          >
+            <svg
+              className="w-6 h-6 text-secondary hover:text-primary transition-colors"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4.5"
+              />
+            </svg>
+            {itemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-accent text-background text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                {itemCount > 9 ? '9+' : itemCount}
+              </span>
+            )}
+          </Link>
+
+          {/* Hamburger Menu Button */}
+          <button
+            className="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
                 d="M4 6h16M4 12h16M4 18h16"
               />
-            )}
-          </svg>
-        </button>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Side Navigation Overlay */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-surface-secondary border-t border-gray-700">
-          <nav className="flex flex-col px-4 py-4 space-y-4" role="navigation" aria-label="Mobile navigation">
-            <Link 
-              to="/" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors py-2"
-              onClick={closeMobileMenu}
-            >
-              Home
-            </Link>
-            <Link 
-              to="/catalogue" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors py-2"
-              onClick={closeMobileMenu}
-            >
-              Catalogue
-            </Link>
-            <Link 
-              to="/artisans" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors py-2"
-              onClick={closeMobileMenu}
-            >
-              Artisans
-            </Link>
-            
-            {/* Mobile Search */}
-            <div className="pt-4 border-t border-gray-700">
-              <div className="flex items-center gap-2 bg-surface-primary rounded-[var(--border-radius-full)] px-4 py-2">
-                <svg
-                  className="w-5 h-5 text-secondary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search treasures..."
-                  className="bg-transparent border-none outline-none text-white placeholder:text-gray-400 text-sm w-full"
-                />
-              </div>
-            </div>
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-60"
+            onClick={closeMobileMenu}
+          ></div>
 
-            {/* Mobile Action Buttons */}
-            <div className="flex items-center justify-center gap-6 pt-4 border-t border-gray-700">
-              <Link 
-                to="/cart"
-                className="flex items-center gap-2 text-secondary hover:text-primary transition-colors"
-                aria-label={`Shopping cart with ${itemCount} items`}
-                onClick={closeMobileMenu}
-              >
-                <div className="relative">
+          {/* Side Navigation Panel */}
+          <div className={`absolute top-0 right-0 h-full w-72 bg-[#1a1a1a] shadow-2xl transform transition-transform duration-300 ease-in-out ${
+            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}>
+            <div className="flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-800">
+                <img src={logo} alt="Indikaara Logo" className="h-8 w-auto" />
+                <button
+                  onClick={closeMobileMenu}
+                  className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
+                  aria-label="Close navigation menu"
+                >
                   <svg
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4.5"
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                  {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-accent text-background text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {itemCount > 99 ? '99+' : itemCount}
-                    </span>
-                  )}
+                </button>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="flex-1 px-4 py-4" role="navigation" aria-label="Mobile navigation">
+                <div className="space-y-2">
+                  <Link 
+                    to="/" 
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Home
+                  </Link>
+                  
+                  <Link 
+                    to="/catalogue" 
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Catalogue
+                  </Link>
+                  
+                  <Link 
+                    to="/artisans" 
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Artisans
+                  </Link>
                 </div>
-                <span className="text-sm">Cart</span>
-              </Link>
-              
-              <button 
-                className="flex items-center gap-2 text-secondary hover:text-primary transition-colors"
-                aria-label="User profile"
-                onClick={closeMobileMenu}
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span className="text-sm">Profile</span>
-              </button>
+
+                {/* Search Section */}
+                <div className="mt-6 mb-6">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Search
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-800 rounded-lg px-3 py-3 mx-3">
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      className="bg-transparent border-none outline-none text-white placeholder:text-gray-500 text-sm w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Account Section */}
+                <div className="space-y-2">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Account
+                  </div>
+                  
+                  <Link 
+                    to="/wishlist"
+                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      Wishlist
+                    </div>
+                    {wishlistCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {wishlistCount > 99 ? '99+' : wishlistCount}
+                      </span>
+                    )}
+                  </Link>
+
+                  <Link 
+                    to="/cart"
+                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9m-9 0V19a2 2 0 002 2h7a2 2 0 002-2v-4.5" />
+                      </svg>
+                      Cart
+                    </div>
+                    {itemCount > 0 && (
+                      <span className="bg-green-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {itemCount > 99 ? '99+' : itemCount}
+                      </span>
+                    )}
+                  </Link>
+
+                  <button 
+                    className="flex items-center w-full px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    onClick={closeMobileMenu}
+                  >
+                    <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </button>
+                </div>
+              </nav>              {/* Made in India with Love - Footer */}
+              <div className="px-4 py-4 border-t border-gray-800 bg-gray-900">
+                <div className="flex items-center justify-center space-x-2 text-xs text-gray-400">
+                  <span>Made in India with</span>
+                  <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
             </div>
-          </nav>
+          </div>
         </div>
       )}
     </header>

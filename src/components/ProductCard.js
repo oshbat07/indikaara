@@ -50,8 +50,21 @@ const ProductCard = ({ product, onClick }) => {
 
   // Display price or price range
   const displayPrice = () => {
-    if (product.priceRange && product.priceRange !== null) {
-      return product.priceRange;
+    // Handle new price structure with multiple sizes
+    if (product.priceOptions && Array.isArray(product.priceOptions) && product.priceOptions.length > 0) {
+      if (product.priceOptions.length === 1) {
+        // Single size option
+        return formatPrice(product.priceOptions[0].amount);
+      } else {
+        // Multiple size options - show range
+        const prices = product.priceOptions.map(option => option.amount);
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        if (minPrice === maxPrice) {
+          return formatPrice(minPrice);
+        }
+        return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+      }
     } else if (product.price) {
       return formatPrice(product.price);
     }

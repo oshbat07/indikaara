@@ -25,6 +25,9 @@ const ProductDetailPage = () => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [selectedSize, setSelectedSize] = useState('');
   const [currentPrice, setCurrentPrice] = useState(null);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistMessage, setWishlistMessage] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
 
   // Load product data
   useEffect(() => {
@@ -45,6 +48,7 @@ const ProductDetailPage = () => {
             name: productData.name,
             description: productData.description,
             price: productData.price,
+            priceOptions: productData.priceOptions, // Add this line to include price options
             priceRange: productData.priceRange,
             originalPrice: productData.originalPrice,
             images: productData.images,
@@ -74,19 +78,14 @@ const ProductDetailPage = () => {
           setProduct(transformedProduct);
           setRawProductData(rawProduct);
           
-          // Set initial size and price
-          if (transformedProduct.dimensions && transformedProduct.dimensions.length > 0) {
-            setSelectedSize(transformedProduct.dimensions[0]);
-            if (transformedProduct.priceRange) {
-              // Extract minimum price as initial price
-              const priceMatch = transformedProduct.priceRange.match(/₹([\d,]+\.?\d*)/);
-              if (priceMatch) {
-                const minPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
-                setCurrentPrice(minPrice);
-              }
-            }
+          // Set initial size and price from new priceOptions structure
+          if (transformedProduct.priceOptions && transformedProduct.priceOptions.length > 0) {
+            const firstOption = transformedProduct.priceOptions[0];
+            setSelectedSize(firstOption.size);
+            setCurrentPrice(firstOption.amount);
           } else if (transformedProduct.price) {
             setCurrentPrice(transformedProduct.price);
+            setSelectedSize('Standard');
           }
           
           // Load related products
@@ -124,6 +123,13 @@ const ProductDetailPage = () => {
   // Handle size selection
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+    // Update price based on selected size from priceOptions
+    if (product.priceOptions) {
+      const selectedOption = product.priceOptions.find(option => option.size === size);
+      if (selectedOption) {
+        setCurrentPrice(selectedOption.amount);
+      }
+    }
   };
 
   // Handle price change when size is selected
@@ -169,6 +175,110 @@ const ProductDetailPage = () => {
     navigate(-1);
   };
 
+  // Handle add to wishlist
+  const handleAddToWishlist = () => {
+    try {
+      // Get existing wishlist from localStorage
+      const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      
+      // Check if product is already in wishlist
+      const isAlreadyInWishlist = existingWishlist.some(item => item.id === product.id);
+      
+      if (isAlreadyInWishlist) {
+        // Remove from wishlist
+        const updatedWishlist = existingWishlist.filter(item => item.id !== product.id);
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        setIsInWishlist(false);
+        setWishlistMessage('Removed from wishlist');
+        
+        // Dispatch custom event to update header count
+        window.dispatchEvent(new Event('wishlistUpdated'));
+      } else {
+        // Add to wishlist
+        const wishlistItem = {
+          id: product.id,
+          name: product.name,
+          price: currentPrice || product.price,
+          priceRange: product.priceRange,
+          image: product.images?.[0] || '',
+          category: product.category,
+          addedAt: new Date().toISOString()
+        };
+        
+        const updatedWishlist = [...existingWishlist, wishlistItem];
+        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+        setIsInWishlist(true);
+        setWishlistMessage('Added to wishlist');
+        
+        // Dispatch custom event to update header count
+        window.dispatchEvent(new Event('wishlistUpdated'));
+      }
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setWishlistMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error managing wishlist:', error);
+      setWishlistMessage('Error updating wishlist');
+      setTimeout(() => {
+        setWishlistMessage('');
+      }, 3000);
+    }
+  };
+
+  // Handle share product
+  const handleShare = async () => {
+    try {
+      const shareData = {
+        title: product.name,
+        text: `Check out this beautiful ${product.category.toLowerCase()} - ${product.name}`,
+        url: window.location.href
+      };
+
+      // Check if Web Share API is supported
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        setShareMessage('Shared successfully');
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        setShareMessage('Link copied to clipboard');
+      }
+      
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setShareMessage('');
+      }, 3000);
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback: Try to copy to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setShareMessage('Link copied to clipboard');
+      } catch (clipboardError) {
+        setShareMessage('Unable to share or copy link');
+      }
+      
+      setTimeout(() => {
+        setShareMessage('');
+      }, 3000);
+    }
+  };
+
+  // Check if product is in wishlist on component mount
+  useEffect(() => {
+    if (product) {
+      try {
+        const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        const isInWishlist = existingWishlist.some(item => item.id === product.id);
+        setIsInWishlist(isInWishlist);
+      } catch (error) {
+        console.error('Error checking wishlist:', error);
+      }
+    }
+  }, [product]);
+
   // Loading state
   if (loading) {
     return (
@@ -207,7 +317,7 @@ const ProductDetailPage = () => {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl" role="main">
+    <main className="container mx-auto px-4 py-8 pt-24 max-w-6xl" role="main">
       {/* Breadcrumb Navigation */}
       <Breadcrumb items={breadcrumbItems} />
 
@@ -227,19 +337,19 @@ const ProductDetailPage = () => {
               {product.description}
             </p>
             {currentPrice ? (
-              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 ₹ {currentPrice.toLocaleString()}
               </div>
             ) : (product.priceRange && product.priceRange !== null) ? (
-              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+              <div className="inline-block  text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 {product.priceRange}
               </div>
             ) : product.price ? (
-              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 ₹ {product.price.toLocaleString()}
               </div>
             ) : (
-              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 Price on request
               </div>
             )}
@@ -286,13 +396,14 @@ const ProductDetailPage = () => {
           </div>
 
           {/* Size Selector */}
-          {product.dimensions && product.dimensions.length > 1 && (
+          {product.priceOptions && product.priceOptions.length > 1 && (
             <SizeSelector
-              dimensions={product.dimensions}
-              priceRange={product.priceRange}
+              priceOptions={product.priceOptions}
               selectedSize={selectedSize}
-              onSizeChange={handleSizeChange}
-              onPriceChange={handlePriceChange}
+              onSizeSelect={(size, amount) => {
+                handleSizeChange(size);
+                handlePriceChange(amount);
+              }}
             />
           )}
 
@@ -363,20 +474,32 @@ const ProductDetailPage = () => {
             <Button
               variant="outline"
               size="md"
-              onClick={() => console.log('Add to wishlist')}
-              className="flex-1"
+              onClick={handleAddToWishlist}
+              className={`flex-1 transition-colors ${isInWishlist ? 'bg-red-100 border-red-300 text-red-700 hover:bg-red-200' : ''}`}
             >
-              Add to Wishlist
+              {isInWishlist ? '❤️ In Wishlist' : '🤍 Add to Wishlist'}
             </Button>
             <Button
               variant="outline"
               size="md"
-              onClick={() => console.log('Share product')}
+              onClick={handleShare}
               className="flex-1"
             >
-              Share
+              📤 Share
             </Button>
           </div>
+          
+          {/* Feedback Messages */}
+          {wishlistMessage && (
+            <div className="mt-2 p-2 bg-green-100 border border-green-300 text-green-700 rounded text-sm text-center">
+              {wishlistMessage}
+            </div>
+          )}
+          {shareMessage && (
+            <div className="mt-2 p-2 bg-blue-100 border border-blue-300 text-blue-700 rounded text-sm text-center">
+              {shareMessage}
+            </div>
+          )}
         </div>
       </div>
 

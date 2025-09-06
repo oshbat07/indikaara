@@ -4,20 +4,21 @@
 
 // Import category images from assets
 import rugsImage from '../assets/category-select-rugs.png';
-import wallHangingImage from '../assets/category-select-wall-hanging.png';
 import homeDecorImage from '../assets/category-select-home-decor.png';
 
 // Category image mapping
 export const categoryImages = {
   'Rugs': rugsImage,
-  'Wall_Hanging': wallHangingImage,
+  'Home Decor': homeDecorImage, // Merged category now includes wall hangings
+  'Vintage Collections': homeDecorImage, // Use home decor image for vintage collections as fallback
+  // Legacy mappings for backward compatibility
+  'Wall_Hanging': homeDecorImage, // Redirect to Home Decor
   'Home_Decor': homeDecorImage,
-  // Add fallback variants for different naming conventions
-  'Wall Hanging': wallHangingImage,
-  'Home Decor': homeDecorImage,
+  'Wall Hanging': homeDecorImage, // Redirect to Home Decor
+  // Case variants
   'rugs': rugsImage,
-  'wall_hanging': wallHangingImage,
-  'home_decor': homeDecorImage
+  'home decor': homeDecorImage,
+  'vintage collections': homeDecorImage
 };
 
 // Function to get category image by name
@@ -44,10 +45,13 @@ export const getCategoryImage = (categoryName) => {
     return categoryImages['Rugs'];
   }
   if (normalizedName.includes('wall') || normalizedName.includes('hanging')) {
-    return categoryImages['Wall_Hanging'];
+    return categoryImages['Home Decor']; // Redirect wall hangings to Home Decor
   }
   if (normalizedName.includes('home') || normalizedName.includes('decor')) {
-    return categoryImages['Home_Decor'];
+    return categoryImages['Home Decor'];
+  }
+  if (normalizedName.includes('vintage') || normalizedName.includes('collection')) {
+    return categoryImages['Vintage Collections'];
   }
   
   return null;
