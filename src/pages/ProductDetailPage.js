@@ -113,7 +113,7 @@ const ProductDetailPage = () => {
   const breadcrumbItems = product ? [
     { label: 'Home', path: '/' },
     { label: 'Catalogue', path: '/catalogue' },
-    { label: product.category, path: `/categories/${product.category.toLowerCase()}` },
+    { label: product.category, path: `/catalogue?categories=${product.category.toLowerCase()}` },
     { label: product.name, path: '' }
   ] : [
     { label: 'Home', path: '/' },

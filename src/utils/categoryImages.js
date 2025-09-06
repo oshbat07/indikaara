@@ -5,12 +5,13 @@
 // Import category images from assets
 import rugsImage from '../assets/category-select-rugs.png';
 import homeDecorImage from '../assets/category-select-home-decor.png';
+import vintageImage from '../assets/cateogy-select-vintage.png';
 
 // Category image mapping
 export const categoryImages = {
   'Rugs': rugsImage,
   'Home Decor': homeDecorImage, // Merged category now includes wall hangings
-  'Vintage Collections': homeDecorImage, // Use home decor image for vintage collections as fallback
+  'Vintage Collections': vintageImage, // Use dedicated vintage image
   // Legacy mappings for backward compatibility
   'Wall_Hanging': homeDecorImage, // Redirect to Home Decor
   'Home_Decor': homeDecorImage,
@@ -18,7 +19,7 @@ export const categoryImages = {
   // Case variants
   'rugs': rugsImage,
   'home decor': homeDecorImage,
-  'vintage collections': homeDecorImage
+  'vintage collections': vintageImage
 };
 
 // Function to get category image by name
