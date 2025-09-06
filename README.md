@@ -1,4 +1,25 @@
-# Getting Started with Create React App
+# Indikaara - Handcrafted Treasures from India
+
+Indikaara is a React-based e-commerce platform showcasing authentic Indian handicrafts and connecting artisans with global customers. The platform features a dark theme design optimized for showcasing beautiful handcrafted products.
+
+## Features
+
+- 🎨 **Dark Theme Design** - Elegant dark interface that highlights product imagery
+- 📱 **Fully Responsive** - Mobile-first design with burger menu navigation
+- 🛍️ **Product Catalogue** - Browse handcrafted items by category and region
+- 🔍 **Advanced Search & Filtering** - Find products by category, region, price, and ratings
+- 👤 **Artisan Profiles** - Learn about the craftspeople behind each product
+- 🌏 **Regional Focus** - Explore crafts from different regions of India
+- 💳 **Modern UI/UX** - Clean, intuitive interface with smooth animations
+
+## Tech Stack
+
+- **Frontend**: React 19.1.1
+- **Routing**: React Router DOM
+- **Styling**: Tailwind CSS with custom CSS variables
+- **Data Management**: JSON-based product data with service layer
+- **Icons**: Custom SVG icons
+- **Fonts**: Google Fonts (Manrope)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

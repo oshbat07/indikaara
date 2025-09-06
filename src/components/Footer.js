@@ -33,7 +33,7 @@ const Footer = () => {
 
         {/* Copyright Notice */}
         <p className="text-sm text-secondary">
-          ©2024 Artisan's Emporium. All rights reserved.
+          ©2024 Indikaara. All rights reserved.
         </p>
       </div>
     </footer>

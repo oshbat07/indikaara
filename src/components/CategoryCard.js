@@ -20,14 +20,18 @@ const CategoryCard = ({ image, title, link = '#', onClick }) => {
       <div className="overflow-hidden rounded-[var(--border-radius-xl)]">
         <div 
           className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-[var(--border-radius-xl)] transition-transform duration-300 group-hover:scale-105"
-          style={{ backgroundImage: `url("${image}")` }}
+          style={{ 
+            backgroundImage: `url("${image}")`,
+            width: '400px',
+            height: '400px'
+          }}
           role="img"
           aria-label={`${title} category`}
         />
       </div>
       
       {/* Category Title */}
-      <p className="mt-4 text-center text-lg font-medium text-primary group-hover:text-[var(--accent-color)] transition-colors">
+      <p className="mt-6 text-center text-2xl font-semibold text-primary group-hover:text-[var(--accent-color)] transition-colors">
         {title}
       </p>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import ImageGallery from '../components/ImageGallery';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductInfoSection from '../components/ProductInfoSection';
@@ -13,10 +14,13 @@ import dataService from '../data/dataService';
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   // Load product data
   useEffect(() => {
@@ -34,6 +38,7 @@ const ProductDetailPage = () => {
             name: productData.name,
             description: productData.description,
             price: productData.price,
+            priceRange: productData.priceRange,
             originalPrice: productData.originalPrice,
             images: productData.images,
             category: productData.category,
@@ -93,9 +98,29 @@ const ProductDetailPage = () => {
   ];
 
   // Handle purchase action
-  const handlePurchase = () => {
-    console.log('Purchase clicked for product:', product?.name);
-    // Future: Implement purchase logic (add to cart, navigate to checkout, etc.)
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart({
+        id: product.id,
+        title: product.name,
+        price: product.price,
+        image: product.images[0],
+        category: product.category
+      }, quantity);
+      
+      setAddedToCart(true);
+      
+      // Reset the added state after 2 seconds
+      setTimeout(() => {
+        setAddedToCart(false);
+      }, 2000);
+    }
+  };
+
+  // Handle buy now (add to cart and navigate to cart)
+  const handleBuyNow = () => {
+    handleAddToCart();
+    navigate('/cart');
   };
 
   // Handle navigation back
@@ -149,7 +174,7 @@ const ProductDetailPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Product Images */}
         <div>
-          <ImageGallery images={product.images} productName={product.name} />
+          <ImageGallery images={product.image || product.images || []} productName={product.name} />
         </div>
 
         {/* Product Information */}
@@ -160,9 +185,17 @@ const ProductDetailPage = () => {
             <p className="text-secondary leading-relaxed mb-4">
               {product.description}
             </p>
-            {product.price && (
-              <div className="text-xl md:text-2xl font-bold text-[var(--accent-color)]">
+            {(product.priceRange && product.priceRange !== null) ? (
+              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+                {product.priceRange}
+              </div>
+            ) : product.price ? (
+              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 ₹ {product.price.toLocaleString()}
+              </div>
+            ) : (
+              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+                Price on request
               </div>
             )}
           </div>
@@ -207,16 +240,65 @@ const ProductDetailPage = () => {
             )}
           </div>
 
-          {/* Purchase Button */}
-          <div className="pt-4">
+          {/* Quantity Selector */}
+          <div className="pt-6">
+            <label htmlFor="quantity" className="block text-sm font-medium text-secondary mb-3">
+              Quantity
+            </label>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-10 h-10 rounded-full bg-card-bg border border-border-color text-primary hover:bg-border-color transition-colors flex items-center justify-center"
+                aria-label="Decrease quantity"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+              <span className="w-12 text-center text-primary font-medium text-lg">
+                {quantity}
+              </span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="w-10 h-10 rounded-full bg-card-bg border border-border-color text-primary hover:bg-border-color transition-colors flex items-center justify-center"
+                aria-label="Increase quantity"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Purchase Buttons */}
+          <div className="pt-6 space-y-3">
             <Button
               variant="primary"
               size="lg"
-              onClick={handlePurchase}
-              className="w-full text-gray-900 hover:bg-[var(--secondary-color)] focus:ring-2 focus:ring-[var(--primary-color)] focus:ring-opacity-50"
-              aria-label={`Purchase ${product.name}`}
+              onClick={handleBuyNow}
+              className="w-full"
+              aria-label={`Buy ${product.name} now`}
             >
-              Own a piece of tradition
+              Buy Now
+            </Button>
+            <Button
+              variant={addedToCart ? "success" : "secondary"}
+              size="lg"
+              onClick={handleAddToCart}
+              className="w-full"
+              aria-label={`Add ${product.name} to cart`}
+              disabled={addedToCart}
+            >
+              {addedToCart ? (
+                <span className="flex items-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Added to Cart!
+                </span>
+              ) : (
+                'Add to Cart'
+              )}
             </Button>
           </div>
 

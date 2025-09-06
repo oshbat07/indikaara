@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import CategoryCard from '../components/CategoryCard';
 import FeaturedArtisan from '../components/FeaturedArtisan';
 import dataService from '../data/dataService';
 
 /**
- * HomePage Component - Main landing page for Artisan's Emporium
+ * HomePage Component - Main landing page for Indikaara
  * Features: Hero section, category browsing, regional shopping, and featured artisan
  */
 const HomePage = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [regions, setRegions] = useState([]);
+  // const [regions, setRegions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,28 +26,16 @@ const HomePage = () => {
           const productCount = dataService.getProductsByCategory(category.name).length;
           return {
             id: category.id,
-            title: category.name,
+            title: category.name.replace(/_/g, ' '), // Remove underscores and replace with spaces
             image: category.image,
             link: `/categories/${category.id}`,
             count: productCount
           };
         });
 
-        // Load regions data
-        const regionsData = dataService.getAllRegions();
-        const regionsWithCount = regionsData.slice(0, 4).map(region => {
-          const productCount = dataService.getProductsByRegion(region.name).length;
-          return {
-            id: region.id,
-            title: region.name,
-            image: region.image || 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-            link: `/regions/${region.id}`,
-            count: productCount
-          };
-        });
+        // Load regions data - removed since regions section is hidden
 
         setCategories(categoriesWithCount);
-        setRegions(regionsWithCount);
         setLoading(false);
       } catch (error) {
         console.error('Error loading data:', error);
@@ -59,14 +49,17 @@ const HomePage = () => {
   // Handle category click
   const handleCategoryClick = (category) => {
     console.log(`Category clicked: ${category.title}`);
-    // Future: Navigate to category page
+    
+    // Navigate to catalogue page with category filter
+    const categoryParam = category.title.toLowerCase().replace(/\s+/g, '');
+    navigate(`/catalogue?category=${categoryParam}`);
   };
 
   // Handle region click
-  const handleRegionClick = (region) => {
-    console.log(`Region clicked: ${region.title}`);
-    // Future: Navigate to region page
-  };
+  // const handleRegionClick = (region) => {
+  //   console.log(`Region clicked: ${region.title}`);
+  //   // Future: Navigate to region page
+  // };
 
   return (
     <main className="container mx-auto max-w-7xl px-4 py-8" role="main">
@@ -90,20 +83,23 @@ const HomePage = () => {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  image={category.image}
-                  title={category.title}
-                  link={category.link}
-                  onClick={() => handleCategoryClick(category)}
-                />
-              ))}
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 gap-16 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 max-w-none">
+                {categories.map((category) => (
+                  <CategoryCard
+                    key={category.id}
+                    image={category.image}
+                    title={category.title}
+                    link={category.link}
+                    onClick={() => handleCategoryClick(category)}
+                  />
+                ))}
+              </div>
             </div>
           </section>
 
-          {/* Shop by Region Section */}
+          {/* Shop by Region Section - Hidden */}
+          {/* 
           <section className="mt-16" aria-labelledby="regions-title">
             <div className="mb-8 text-center">
               <h2 id="regions-title" className="text-4xl font-bold text-primary mb-3">
@@ -126,6 +122,7 @@ const HomePage = () => {
               ))}
             </div>
           </section>
+          */}
 
           {/* Featured Artisan Section */}
           <FeaturedArtisan />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getAllImages, getDefaultImage } from '../utils/imageUtils';
 
 /**
  * ImageGallery Component - Product image gallery with main image and thumbnails
@@ -8,10 +9,27 @@ import React, { useState } from 'react';
 const ImageGallery = ({ images, productName }) => {
   const [selectedImage, setSelectedImage] = useState(0);
 
-  if (!images || images.length === 0) {
+  // Check if images are already processed (from transformed data)
+  let processedImages;
+  if (images && images.length > 0 && typeof images[0] === 'string' && images[0].startsWith('/assets/')) {
+    // Images are already processed by dataService
+    processedImages = images;
+  } else {
+    // Process raw images using utilities
+    processedImages = getAllImages(images || []);
+  }
+  
+  // If no processed images, use default
+  if (!processedImages || processedImages.length === 0) {
+    const defaultImg = getDefaultImage();
     return (
       <div className="w-full h-96 bg-gray-800 rounded-xl flex items-center justify-center">
-        <div className="text-secondary">No images available</div>
+        <div 
+          className="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl"
+          style={{ backgroundImage: `url("${defaultImg}")` }}
+          role="img"
+          aria-label={`${productName} - Default image`}
+        />
       </div>
     );
   }
@@ -22,16 +40,16 @@ const ImageGallery = ({ images, productName }) => {
       <div className="rounded-xl overflow-hidden group cursor-pointer">
         <div 
           className="w-full h-96 bg-center bg-no-repeat bg-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-          style={{ backgroundImage: `url("${images[selectedImage]}")` }}
+          style={{ backgroundImage: `url("${processedImages[selectedImage]}")` }}
           role="img"
           aria-label={`${productName} - Main image`}
         />
       </div>
 
       {/* Thumbnail Grid */}
-      {images.length > 1 && (
+      {processedImages.length > 1 && (
         <div className="grid grid-cols-2 gap-4">
-          {images.slice(1, 3).map((image, index) => (
+          {processedImages.slice(1, 3).map((image, index) => (
             <div 
               key={index + 1}
               className={`rounded-xl overflow-hidden group cursor-pointer ${

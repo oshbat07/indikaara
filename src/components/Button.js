@@ -28,7 +28,8 @@ const Button = ({
   const variantStyles = {
     primary: 'bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)] focus:ring-[var(--primary-color)]',
     secondary: 'bg-[var(--secondary-color)] text-white hover:bg-[var(--primary-color)] focus:ring-[var(--secondary-color)]',
-    outline: 'bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white focus:ring-[var(--primary-color)]'
+    outline: 'bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-white focus:ring-[var(--primary-color)]',
+    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500'
   };
 
   // Size styles

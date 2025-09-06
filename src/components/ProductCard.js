@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getFirstImage, getDefaultImage } from '../utils/imageUtils';
 
 /**
  * ProductCard Component - Displays individual product with hover overlay
@@ -18,6 +19,26 @@ const ProductCard = ({ product, onClick }) => {
     navigate(`/product/${product.id}`);
   };
 
+  // Get the first available image from the product
+  const getProductImage = () => {
+    // Check for transformed data structure (images property)
+    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      return product.images[0]; // Already converted by dataService
+    }
+    // Check if product has image array (raw data structure)
+    if (product.image && Array.isArray(product.image) && product.image.length > 0) {
+      return getFirstImage(product.image);
+    }
+    // Check for single image property
+    if (product.image && typeof product.image === 'string') {
+      return getFirstImage([product.image]);
+    }
+    // Return default fallback
+    return getDefaultImage();
+  };
+
+  const productImageSrc = getProductImage();
+
   // Format price with Indian Rupee symbol
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
@@ -25,6 +46,16 @@ const ProductCard = ({ product, onClick }) => {
       currency: 'INR',
       maximumFractionDigits: 0
     }).format(price);
+  };
+
+  // Display price or price range
+  const displayPrice = () => {
+    if (product.priceRange && product.priceRange !== null) {
+      return product.priceRange;
+    } else if (product.price) {
+      return formatPrice(product.price);
+    }
+    return 'Price on request';
   };
 
   return (
@@ -45,7 +76,7 @@ const ProductCard = ({ product, onClick }) => {
       <div className="relative w-full aspect-square bg-cover bg-center rounded-t-[var(--border-radius-lg)] bg-gray-800">
         <div 
           className={`w-full h-full bg-cover bg-center transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          style={{ backgroundImage: `url("${product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'}")` }}
+          style={{ backgroundImage: `url("${productImageSrc}")` }}
         />
         
         {/* Loading placeholder */}
@@ -57,7 +88,7 @@ const ProductCard = ({ product, onClick }) => {
         
         {/* Hidden image for loading detection */}
         <img 
-          src={product.image || product.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'} 
+          src={productImageSrc} 
           alt={product.name}
           className="hidden"
           onLoad={() => setImageLoaded(true)}
@@ -92,7 +123,7 @@ const ProductCard = ({ product, onClick }) => {
         {/* Price */}
         <div className="flex items-center gap-2">
           <span className="text-primary text-lg font-bold">
-            {formatPrice(product.price)}
+            {displayPrice()}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
             <span className="text-sm text-gray-400 line-through">
@@ -106,29 +137,30 @@ const ProductCard = ({ product, onClick }) => {
           <span className="px-2 py-1 bg-primary/10 text-primary rounded-md">
             {product.category}
           </span>
-          {(product.region || product.state) && (
+          {/* Region tag hidden to avoid showing manufacturer names */}
+          {/* {(product.region || product.state) && (
             <span className="px-2 py-1 bg-gray-700 text-gray-300 rounded-md">
               {product.region || product.state}
             </span>
-          )}
+          )} */}
         </div>
 
-        {/* Rating */}
-        {product.rating && (
+        {/* Rating - Hidden as requested */}
+        {/* {product.rating && (
           <div className="flex items-center gap-1 text-xs">
             <span className="text-yellow-400">★</span>
             <span className="text-gray-400">
               {product.rating} ({product.reviews || 0})
             </span>
           </div>
-        )}
+        )} */}
 
-        {/* Artisan */}
-        {product.artisan && (
+        {/* Artisan/Manufacturer - Hidden as requested */}
+        {/* {product.artisan && (
           <p className="text-gray-400 text-xs">
             By {product.artisan}
           </p>
-        )}
+        )} */}
       </div>
     </div>
   );

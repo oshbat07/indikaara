@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import FilterDropdown from '../components/FilterDropdown';
 import ProductCard from '../components/ProductCard';
 import dataService from '../data/dataService';
@@ -8,6 +9,7 @@ import dataService from '../data/dataService';
  * Features: Product grid, filtering, search, and product stories
  */
 const CataloguePage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -15,12 +17,30 @@ const CataloguePage = () => {
   const [selectedSort, setSelectedSort] = useState('featured');
   const [loading, setLoading] = useState(true);
 
-  // Load products on component mount
+  // Load products on component mount and handle URL parameters
   useEffect(() => {
     const loadProducts = () => {
       try {
         const allProducts = dataService.getAllProducts();
         setProducts(allProducts);
+        
+        // Check for category parameter in URL
+        const categoryParam = searchParams.get('category');
+        if (categoryParam) {
+          // Convert URL param back to display format
+          const rawCategoryNames = dataService.getCategoryNames();
+          const displayCategoryNames = rawCategoryNames.map(name => name.replace(/_/g, ' '));
+          
+          // Find matching category by comparing URL param with display names
+          const matchedCategory = displayCategoryNames.find(cat => 
+            cat.toLowerCase().replace(/\s+/g, '') === categoryParam.toLowerCase()
+          );
+          
+          if (matchedCategory) {
+            setSelectedCategory(matchedCategory);
+          }
+        }
+        
         setLoading(false);
       } catch (error) {
         console.error('Error loading products:', error);
@@ -29,11 +49,13 @@ const CataloguePage = () => {
     };
 
     loadProducts();
-  }, []);
+  }, [searchParams]);
 
   // Get filter options from data
   const categories = useMemo(() => {
-    return ['All', ...dataService.getCategoryNames()];
+    const rawCategoryNames = dataService.getCategoryNames();
+    const displayCategoryNames = rawCategoryNames.map(name => name.replace(/_/g, ' '));
+    return ['All', ...displayCategoryNames];
   }, []);
 
   const regions = useMemo(() => {
@@ -78,6 +100,17 @@ const CataloguePage = () => {
   // Handle filter changes
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
+    
+    // Update URL parameters
+    const newSearchParams = new URLSearchParams(searchParams);
+    if (value === 'All') {
+      newSearchParams.delete('category');
+    } else {
+      // Convert display name to URL param (e.g., "Wall Hanging" -> "wallhanging")
+      const urlParam = value.toLowerCase().replace(/\s+/g, '');
+      newSearchParams.set('category', urlParam);
+    }
+    setSearchParams(newSearchParams);
   };
 
   const handleRegionChange = (value) => {
@@ -153,12 +186,15 @@ const CataloguePage = () => {
           value={selectedCategory}
           onChange={handleCategoryChange}
         />
+        {/* Region filter hidden as requested */}
+        {/* 
         <FilterDropdown
           label="Region"
           options={regions}
           value={selectedRegion}
           onChange={handleRegionChange}
         />
+        */}
         <FilterDropdown
           label="Sort By"
           options={sortOptions.map(opt => opt.label)}
@@ -171,7 +207,7 @@ const CataloguePage = () => {
       </div>
 
       {/* Active Filters Display */}
-      {(selectedCategory !== 'All' || selectedRegion !== 'All' || searchTerm) && (
+      {(selectedCategory !== 'All' || searchTerm) && (
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {selectedCategory !== 'All' && (
             <span className="inline-flex items-center px-3 py-1 text-sm bg-[var(--primary-color)] text-white rounded-[var(--border-radius-full)]">
@@ -185,6 +221,8 @@ const CataloguePage = () => {
               </button>
             </span>
           )}
+          {/* Region filter badge hidden as requested */}
+          {/* 
           {selectedRegion !== 'All' && (
             <span className="inline-flex items-center px-3 py-1 text-sm bg-[var(--primary-color)] text-white rounded-[var(--border-radius-full)]">
               Region: {selectedRegion}
@@ -197,6 +235,7 @@ const CataloguePage = () => {
               </button>
             </span>
           )}
+          */}
           {searchTerm && (
             <span className="inline-flex items-center px-3 py-1 text-sm bg-[var(--primary-color)] text-white rounded-[var(--border-radius-full)]">
               Search: {searchTerm}
@@ -231,13 +270,12 @@ const CataloguePage = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
         {filteredProducts.map((product) => (
           <ProductCard
             key={product.id}
             product={{
               ...product,
-              image: product.images[0], // Use first image for grid display
               category: product.category,
               state: product.region,
               craftType: product.category,

@@ -1,4 +1,8 @@
-import productsData from './products.json';
+import productsJson from './products.json';
+import { rawProductData } from './productsdata.js';
+import { getImagePath } from '../utils/imageUtils.js';
+import { getCategoryImage, getDefaultCategoryImage } from '../utils/categoryImages.js';
+import { getRegionImage, getDefaultRegionImage } from '../utils/regionImages.js';
 
 /**
  * Data Service - Handles all data operations for products, categories, and regions
@@ -7,39 +11,134 @@ import productsData from './products.json';
 
 class DataService {
   constructor() {
-    this.data = productsData;
+    this.data = productsJson;
+    this.rawData = rawProductData;
+    this.transformedData = this.transformRawData();
+  }
+
+  // Transform rawProductData to flat structure compatible with existing code
+  transformRawData() {
+    const products = [];
+    const categories = [];
+    const regions = new Set();
+
+    this.rawData.products.forEach(categoryData => {
+      // Add category to categories array
+      categories.push({
+        id: categoryData.categoryId,
+        name: categoryData.category,
+        image: this.getDefaultCategoryImage(categoryData.category)
+      });
+
+      // Transform each item in the category
+      categoryData.items.forEach(item => {
+        const transformedProduct = {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          originalPrice: item.priceRange ? null : item.price * 1.2, // Simulate original price
+          category: categoryData.category,
+          region: item.manufacturer || "India", // Use manufacturer as region fallback
+          artisan: item.manufacturer,
+          rating: Math.round((Math.random() * 2 + 3) * 10) / 10, // Random rating 3-5
+          reviews: Math.floor(Math.random() * 200 + 10), // Random reviews 10-210
+          images: item.image.map(img => this.convertImagePath(img)),
+          description: item.description,
+          features: item.details || [],
+          specifications: {
+            Material: Array.isArray(item.material) ? item.material.join(', ') : item.material,
+            Dimensions: Array.isArray(item.dimensionsAvailable) ? item.dimensionsAvailable.join(', ') : item.dimensionsAvailable,
+            Color: Array.isArray(item.color) ? item.color.join(', ') : item.color,
+            Technique: item.weavingTechnique || "Handcrafted",
+            SKU: item.SKU
+          },
+          tags: item.tags || [],
+          featured: Math.random() > 0.8, // 20% chance of being featured
+          inStock: true,
+          story: item.story,
+          priceRange: item.priceRange
+        };
+
+        products.push(transformedProduct);
+        
+        // Add region to set
+        if (item.manufacturer) {
+          regions.add(item.manufacturer);
+        }
+      });
+    });
+
+    return {
+      products,
+      categories,
+      regions: Array.from(regions).map((region, index) => ({
+        id: index + 1,
+        name: region,
+        image: this.getDefaultRegionImage(region)
+      }))
+    };
+  }
+
+  // Convert relative image paths to absolute URLs or use placeholder
+  convertImagePath(imagePath) {
+    // Convert the relative path to public folder path
+    return getImagePath(imagePath);
+  }
+
+  // Get default category images
+  getDefaultCategoryImage(category) {
+    // Try to get image from local assets first
+    const localImage = getCategoryImage(category);
+    if (localImage) {
+      return localImage;
+    }
+    
+    // Fallback to default category image
+    return getDefaultCategoryImage();
+  }
+
+  // Get default region images  
+  getDefaultRegionImage(region) {
+    // Try to get image from local assets first
+    const localImage = getRegionImage(region);
+    if (localImage) {
+      return localImage;
+    }
+    
+    // Fallback to default region image
+    return getDefaultRegionImage();
   }
 
   // Product Methods
   getAllProducts() { 
-    return this.data.products;
+    return this.transformedData.products;
   }
 
   getProductById(id) {
-    return this.data.products.find(product => product.id === parseInt(id));
+    return this.transformedData.products.find(product => product.id === parseInt(id));
   }
 
   getFeaturedProducts() {
-    return this.data.products.filter(product => product.featured);
+    return this.transformedData.products.filter(product => product.featured);
   }
 
   getProductsByCategory(category) {
-    return this.data.products.filter(product => 
+    return this.transformedData.products.filter(product => 
       product.category.toLowerCase() === category.toLowerCase()
     );
   }
 
   getProductsByRegion(region) {
-    return this.data.products.filter(product => 
+    return this.transformedData.products.filter(product => 
       product.region.toLowerCase().includes(region.toLowerCase())
     );
   }
 
   searchProducts(query) {
-    if (!query) return this.data.products;
+    if (!query) return this.transformedData.products;
     
     const searchTerm = query.toLowerCase();
-    return this.data.products.filter(product =>
+    return this.transformedData.products.filter(product =>
       product.name.toLowerCase().includes(searchTerm) ||
       product.description.toLowerCase().includes(searchTerm) ||
       product.category.toLowerCase().includes(searchTerm) ||
@@ -50,13 +149,27 @@ class DataService {
   }
 
   filterProducts(filters) {
-    let filteredProducts = this.data.products;
+    let filteredProducts = this.transformedData.products;
 
     // Filter by category
     if (filters.category && filters.category !== 'All') {
-      filteredProducts = filteredProducts.filter(product =>
-        product.category === filters.category
-      );
+      filteredProducts = filteredProducts.filter(product => {
+        // Handle both display format ("Wall Hanging") and raw format ("Wall_Hanging")
+        const productCategory = product.category;
+        const filterCategory = filters.category;
+        
+        // Try exact match first
+        if (productCategory === filterCategory) {
+          return true;
+        }
+        
+        // Try comparing normalized versions (replace underscores with spaces and vice versa)
+        const normalizedProductCategory = productCategory.replace(/_/g, ' ');
+        const normalizedFilterCategory = filterCategory.replace(/\s/g, '_');
+        
+        return normalizedProductCategory === filterCategory || 
+               productCategory === normalizedFilterCategory;
+      });
     }
 
     // Filter by region
@@ -119,51 +232,53 @@ class DataService {
 
   // Category Methods
   getAllCategories() {
-    return this.data.categories;
+    return this.transformedData.categories;
   }
 
   getCategoryById(id) {
-    return this.data.categories.find(category => category.id === id);
+    return this.transformedData.categories.find(category => category.id === id);
   }
 
   getCategoryNames() {
-    return this.data.categories.map(category => category.name);
+    return this.transformedData.categories.map(category => category.name);
   }
 
   // Region Methods
   getAllRegions() {
-    return this.data.regions;
+    return this.transformedData.regions;
   }
 
   getRegionById(id) {
-    return this.data.regions.find(region => region.id === id);
+    return this.transformedData.regions.find(region => region.id === id);
   }
 
   getRegionNames() {
-    return this.data.regions.map(region => region.name);
+    return this.transformedData.regions.map(region => region.name);
   }
 
   getUniqueRegionsFromProducts() {
-    const regions = [...new Set(this.data.products.map(product => product.region))];
+    const regions = [...new Set(this.transformedData.products.map(product => product.region))];
     return regions.sort();
   }
 
   // Statistics Methods
   getProductCount() {
-    return this.data.products.length;
+    return this.transformedData.products.length;
   }
 
   getCategoryCount() {
-    return this.data.categories.length;
+    return this.transformedData.categories.length;
   }
 
   getAveragePrice() {
-    const total = this.data.products.reduce((sum, product) => sum + product.price, 0);
-    return Math.round(total / this.data.products.length);
+    const productsWithPrice = this.transformedData.products.filter(product => product.price);
+    const total = productsWithPrice.reduce((sum, product) => sum + product.price, 0);
+    return Math.round(total / productsWithPrice.length);
   }
 
   getPriceRange() {
-    const prices = this.data.products.map(product => product.price);
+    const productsWithPrice = this.transformedData.products.filter(product => product.price);
+    const prices = productsWithPrice.map(product => product.price);
     return {
       min: Math.min(...prices),
       max: Math.max(...prices)
@@ -176,7 +291,7 @@ class DataService {
     if (!product) return [];
 
     // Get products from same category, excluding current product
-    const related = this.data.products.filter(p => 
+    const related = this.transformedData.products.filter(p => 
       p.id !== product.id && 
       (p.category === product.category || p.region === product.region)
     );
@@ -190,7 +305,7 @@ class DataService {
   // Recommendations
   getRecommendations(limit = 6) {
     // Return highest rated products that are in stock
-    return this.data.products
+    return this.transformedData.products
       .filter(product => product.inStock)
       .sort((a, b) => b.rating - a.rating)
       .slice(0, limit);
