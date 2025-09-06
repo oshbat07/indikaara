@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import ImageGallery from '../components/ImageGallery';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductInfoSection from '../components/ProductInfoSection';
+import SizeSelector from '../components/SizeSelector';
 import Button from '../components/Button';
 import dataService from '../data/dataService';
 
@@ -16,11 +17,14 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [rawProductData, setRawProductData] = useState(null);
+  // const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [currentPrice, setCurrentPrice] = useState(null);
 
   // Load product data
   useEffect(() => {
@@ -32,6 +36,9 @@ const ProductDetailPage = () => {
         const productData = dataService.getProductById(parseInt(id));
         
         if (productData) {
+          // Get raw product data to access dimensions
+          const rawProduct = dataService.getRawProductById(parseInt(id));
+          
           // Transform product data to match component expectations
           const transformedProduct = {
             id: productData.id,
@@ -49,6 +56,7 @@ const ProductDetailPage = () => {
             inStock: productData.inStock,
             features: productData.features,
             tags: productData.tags,
+            dimensions: rawProduct?.dimensionsAvailable || [],
             artisan: {
               name: productData.artisan,
               location: productData.region,
@@ -64,10 +72,26 @@ const ProductDetailPage = () => {
           };
 
           setProduct(transformedProduct);
+          setRawProductData(rawProduct);
+          
+          // Set initial size and price
+          if (transformedProduct.dimensions && transformedProduct.dimensions.length > 0) {
+            setSelectedSize(transformedProduct.dimensions[0]);
+            if (transformedProduct.priceRange) {
+              // Extract minimum price as initial price
+              const priceMatch = transformedProduct.priceRange.match(/₹([\d,]+\.?\d*)/);
+              if (priceMatch) {
+                const minPrice = parseFloat(priceMatch[1].replace(/,/g, ''));
+                setCurrentPrice(minPrice);
+              }
+            }
+          } else if (transformedProduct.price) {
+            setCurrentPrice(transformedProduct.price);
+          }
           
           // Load related products
-          const related = dataService.getRelatedProducts(parseInt(id), 4);
-          setRelatedProducts(related);
+          // const related = dataService.getRelatedProducts(parseInt(id), 4);
+          // setRelatedProducts(related);
           
           setError(null);
         } else {
@@ -97,15 +121,32 @@ const ProductDetailPage = () => {
     { label: 'Catalogue', path: '/catalogue' }
   ];
 
+  // Handle size selection
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+  };
+
+  // Handle price change when size is selected
+  const handlePriceChange = (price) => {
+    setCurrentPrice(price);
+  };
+
   // Handle purchase action
   const handleAddToCart = () => {
     if (product) {
+      // Use current price if available, otherwise fallback to product price
+      const priceToUse = currentPrice || product.price;
+      
       addToCart({
         id: product.id,
         title: product.name,
-        price: product.price,
+        price: priceToUse,
         image: product.images[0],
-        category: product.category
+        category: product.category,
+        size: selectedSize || (product.dimensions && product.dimensions.length > 0 ? product.dimensions[0] : 'Standard'),
+        color: rawProductData?.color?.[0] || 'Standard',
+        material: rawProductData?.material || 'Handcrafted',
+        dimensions: selectedSize || (product.dimensions && product.dimensions.length > 0 ? product.dimensions[0] : null)
       }, quantity);
       
       setAddedToCart(true);
@@ -185,7 +226,11 @@ const ProductDetailPage = () => {
             <p className="text-secondary leading-relaxed mb-4">
               {product.description}
             </p>
-            {(product.priceRange && product.priceRange !== null) ? (
+            {currentPrice ? (
+              <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
+                ₹ {currentPrice.toLocaleString()}
+              </div>
+            ) : (product.priceRange && product.priceRange !== null) ? (
               <div className="inline-block bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color)]">
                 {product.priceRange}
               </div>
@@ -239,6 +284,17 @@ const ProductDetailPage = () => {
               </div>
             )}
           </div>
+
+          {/* Size Selector */}
+          {product.dimensions && product.dimensions.length > 1 && (
+            <SizeSelector
+              dimensions={product.dimensions}
+              priceRange={product.priceRange}
+              selectedSize={selectedSize}
+              onSizeChange={handleSizeChange}
+              onPriceChange={handlePriceChange}
+            />
+          )}
 
           {/* Quantity Selector */}
           <div className="pt-6">

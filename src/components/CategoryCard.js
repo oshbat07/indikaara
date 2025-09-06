@@ -21,9 +21,7 @@ const CategoryCard = ({ image, title, link = '#', onClick }) => {
         <div 
           className="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-[var(--border-radius-xl)] transition-transform duration-300 group-hover:scale-105"
           style={{ 
-            backgroundImage: `url("${image}")`,
-            width: '400px',
-            height: '400px'
+            backgroundImage: `url("${image}")`
           }}
           role="img"
           aria-label={`${title} category`}
@@ -31,7 +29,7 @@ const CategoryCard = ({ image, title, link = '#', onClick }) => {
       </div>
       
       {/* Category Title */}
-      <p className="mt-6 text-center text-2xl font-semibold text-primary group-hover:text-[var(--accent-color)] transition-colors">
+      <p className="mt-2 sm:mt-4 md:mt-6 text-center text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-semibold text-primary group-hover:text-[var(--accent-color)] transition-colors">
         {title}
       </p>
     </div>

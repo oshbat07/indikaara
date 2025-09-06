@@ -1,14 +1,29 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from './Button';
+import leelaDeviImage from '../assets/featured-artisan-weave.png';
 
 /**
  * FeaturedArtisan Component - Showcases a featured artisan
  * Features: Artisan image, story excerpt, and call-to-action
  */
 const FeaturedArtisan = () => {
+  const navigate = useNavigate();
+
+  // Featured artisan data - Leela Devi from ArtisansPage
+  const featuredArtisan = {
+    id: 2, // Matches Leela Devi's ID in ArtisansPage
+    name: "Leela Devi",
+    title: "Textile Weaver",
+    image: leelaDeviImage,
+    story: "The rhythmic click of Leela's loom is a song her village has known for decades. She transforms threads into vibrant tapestries, each one a canvas of intricate patterns and bold colors. Leela uses only natural dyes, a skill she learned from her grandmother, ensuring every piece is as kind to the earth as it is beautiful to behold.",
+    craft: "Textile Weaving",
+    location: "Bhuj, Gujarat"
+  };
+
   const handleReadStoryClick = () => {
-    // Handle read story action - could navigate to artisan profile
-    console.log('Read Her Story clicked');
+    // Navigate to artisans page with artisan ID to open specific dialog
+    navigate(`/artisans?openDialog=${featuredArtisan.id}`);
   };
 
   return (
@@ -31,22 +46,30 @@ const FeaturedArtisan = () => {
         {/* Artisan Image */}
         <div className="w-full md:w-1/2">
           <div 
-            className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-[var(--border-radius-xl)]"
+            className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-[var(--border-radius-xl)] shadow-lg"
             style={{
-              backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBFW6qZutv6UDIzT0tSBsalJoT_IO7gUzXm7XTJR8-atjb978hgqweinKOGxsCYpfLFtbtWP7RQwraxpkUufJY6KsvYWxC0QaT1ft0zHS7h-SvZk4etMZsGd9Gqo7uKsqvi8H2BAjgnhJWouSfISTrKVA0Gm5A0KARNA0GOH1ROcb2-vIX_VruzRc9FJxYleUHBTWdAAIZGZ3GqOo8ZyyWg1kQ3_fg2D6LatNLEC9xGe3rR7tDHKywsPzqSHf60pZCyjx5glz3Oaoc")'
+              backgroundImage: `url("${featuredArtisan.image}")`
             }}
             role="img"
-            aria-label="Fatima Khan, master weaver from Rajasthan"
+            aria-label={`${featuredArtisan.name}, ${featuredArtisan.title} from ${featuredArtisan.location}`}
           />
         </div>
         
         {/* Artisan Story */}
         <div className="flex flex-col gap-4 text-center md:text-left md:w-1/2">
-          <h3 className="text-2xl font-bold text-primary">
-            The Weaver of Dreams
+          <div className="mb-2">
+            <span className="inline-block bg-[#A4604F] text-white px-3 py-1 rounded-full text-sm font-medium mb-3">
+              {featuredArtisan.craft}
+            </span>
+          </div>
+          <h3 className="text-3xl font-bold text-primary mb-2">
+            {featuredArtisan.name}
           </h3>
-          <p className="text-lg text-secondary leading-relaxed">
-            Meet Fatima Khan, a master weaver from Rajasthan, whose intricate textiles preserve a centuries-old tradition.
+          <p className="text-[#A4604F] font-medium mb-4">
+            {featuredArtisan.title} • {featuredArtisan.location}
+          </p>
+          <p className="text-lg text-secondary leading-relaxed mb-6">
+            {featuredArtisan.story}
           </p>
           
           {/* Call-to-Action */}
@@ -55,7 +78,7 @@ const FeaturedArtisan = () => {
             size="md"
             onClick={handleReadStoryClick}
             className="mt-2 self-center md:self-start"
-            aria-label="Read Fatima Khan's full story"
+            aria-label={`Read ${featuredArtisan.name}'s full story and meet other artisans`}
           >
             Read Her Story
           </Button>

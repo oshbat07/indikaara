@@ -58,9 +58,9 @@ const CataloguePage = () => {
     return ['All', ...displayCategoryNames];
   }, []);
 
-  const regions = useMemo(() => {
-    return ['All', ...dataService.getUniqueRegionsFromProducts()];
-  }, []);
+  // const regions = useMemo(() => {
+  //   return ['All', ...dataService.getUniqueRegionsFromProducts()];
+  // }, []);
 
   const sortOptions = [
     { value: 'featured', label: 'Featured' },
@@ -113,9 +113,9 @@ const CataloguePage = () => {
     setSearchParams(newSearchParams);
   };
 
-  const handleRegionChange = (value) => {
-    setSelectedRegion(value);
-  };
+  // const handleRegionChange = (value) => {
+  //   setSelectedRegion(value);
+  // };
 
   const handleSortChange = (value) => {
     setSelectedSort(value);

@@ -105,7 +105,36 @@ const CartPage = () => {
                     <p className="text-text-secondary text-sm mt-1">
                       {item.category || 'Handcrafted Item'}
                     </p>
-                    <p className="text-primary font-semibold mt-2">
+                    
+                    {/* Additional Product Info */}
+                    <div className="mt-2 space-y-1">
+                      {item.dimensions && (
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                          </svg>
+                          <span>Size: {item.dimensions}</span>
+                        </div>
+                      )}
+                      {item.color && item.color !== 'Standard' && (
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a4 4 0 004-4V5z" />
+                          </svg>
+                          <span>Color: {item.color}</span>
+                        </div>
+                      )}
+                      {item.material && item.material !== 'Handcrafted' && (
+                        <div className="flex items-center gap-2 text-xs text-text-secondary">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                          </svg>
+                          <span>Material: {item.material}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <p className="text-primary font-semibold mt-3">
                       {formatCurrency(item.price)}
                     </p>
                   </div>

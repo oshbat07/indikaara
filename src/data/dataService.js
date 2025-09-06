@@ -118,6 +118,17 @@ class DataService {
     return this.transformedData.products.find(product => product.id === parseInt(id));
   }
 
+  getRawProductById(id) {
+    // Find raw product data by searching through rawData.products
+    for (const categoryData of this.rawData.products) {
+      const product = categoryData.items.find(item => item.id === parseInt(id));
+      if (product) {
+        return product;
+      }
+    }
+    return null;
+  }
+
   getFeaturedProducts() {
     return this.transformedData.products.filter(product => product.featured);
   }

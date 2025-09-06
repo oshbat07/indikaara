@@ -84,7 +84,7 @@ const HomePage = () => {
             </div>
             
             <div className="flex justify-center">
-              <div className="grid grid-cols-1 gap-16 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 max-w-none">
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16 max-w-none">
                 {categories.map((category) => (
                   <CategoryCard
                     key={category.id}

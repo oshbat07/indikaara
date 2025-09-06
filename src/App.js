@@ -7,6 +7,7 @@ import CataloguePage from './pages/CataloguePage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import ArtisansPage from './pages/ArtisansPage';
 import NotFound from './pages/NotFound';
 import './styles/globals.css';
 
@@ -35,8 +36,8 @@ function App() {
             {/* Checkout Route */}
             <Route path="/checkout" element={<CheckoutPage />} />
             
-            {/* Artisan Routes - Placeholder for future implementation */}
-            <Route path="/artisans" element={<div className="p-8 text-center text-primary">Artisans page coming soon...</div>} />
+            {/* Artisan Routes */}
+            <Route path="/artisans" element={<ArtisansPage />} />
             
             {/* Other Routes - Placeholder for future implementation */}
             <Route path="/about" element={<div className="p-8 text-center text-primary">About Us page coming soon...</div>} />
