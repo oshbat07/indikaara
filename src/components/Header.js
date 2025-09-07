@@ -52,15 +52,53 @@ const Header = () => {
   }, []);
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+  setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
+  // Apply/remove body class to neutralize header backdrop when menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+
+    return () => document.body.classList.remove('menu-open');
+  }, [isMobileMenuOpen]);
+
+  // Prevent side-nav from becoming transparent on scroll, and optionally close it
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    // Force the menu to stay opaque on scroll
+    const handleScroll = () => {
+      // Force opacity refresh by accessing the DOM element
+      const sideNav = document.querySelector('.fixed[style*="z-index: 9999995"]');
+      if (sideNav) {
+        sideNav.style.backgroundColor = '#1a1a1a';
+        sideNav.style.opacity = '1';
+      }
+      
+      // Uncommenting the line below would close the menu on scroll
+      // setIsMobileMenuOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // also listen for touchmove for some mobile browser behaviours
+    window.addEventListener('touchmove', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchmove', handleScroll);
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <header className={`fixed top-0 left-0 right-0 ${isMobileMenuOpen ? 'z-40' : 'z-50'} transition-all duration-300 ${
       isScrolled 
         ? 'bg-[#1a1a1a]/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20' 
         : 'bg-surface-primary border-b border-gray-700'
@@ -295,21 +333,27 @@ const Header = () => {
 
       {/* Mobile Side Navigation Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 md:hidden" style={{ zIndex: 9999999 }}>
           {/* Backdrop */}
           <div 
-            className="absolute inset-0 bg-black bg-opacity-60"
+            className="fixed inset-0 bg-black/90"
             onClick={closeMobileMenu}
+            style={{ zIndex: 9999990 }}
           ></div>
 
           {/* Side Navigation Panel */}
-          <div className={`absolute top-0 right-0 h-full w-72 bg-[#1a1a1a] shadow-2xl transform transition-transform duration-300 ease-in-out ${
-            isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}>
-            <div className="flex flex-col h-full">
+          <div 
+            className={`fixed top-0 right-0 h-full w-56 bg-[#1a1a1a] shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-700 ${
+              isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{ zIndex: 9999995, backgroundColor: '#1a1a1a', opacity: 1 }}
+          >
+            {/* Solid background overlay to prevent transparency */}
+            <div className="fixed inset-0 right-[224px] w-56 bg-[#1a1a1a]"></div>
+            <div className="flex flex-col h-full bg-[#1a1a1a] relative z-30" style={{ backgroundColor: '#1a1a1a', opacity: 1 }}>
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-800">
-                <img src={logo} alt="Indikaara Logo" className="h-8 w-auto" />
+              <div className="flex items-center justify-between p-4 border-b border-gray-800" style={{ backgroundColor: '#1a1a1a' }}>
+                {/* <img src={logo} alt="Indikaara Logo" className="h-8 w-auto" /> */}
                 <button
                   onClick={closeMobileMenu}
                   className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
@@ -332,7 +376,7 @@ const Header = () => {
               </div>
 
               {/* Navigation Links */}
-              <nav className="flex-1 px-4 py-4" role="navigation" aria-label="Mobile navigation">
+              <nav className="flex-1 px-4 py-4 bg-[#1a1a1a]" role="navigation" aria-label="Mobile navigation" style={{ backgroundColor: '#1a1a1a', opacity: 1 }}>
                 <div className="space-y-2">
                   <Link 
                     to="/" 
@@ -447,9 +491,11 @@ const Header = () => {
                     Profile
                   </button>
                 </div>
-              </nav>              {/* Made in India with Love - Footer */}
-              <div className="px-4 py-4 border-t border-gray-800 bg-gray-900">
-                <div className="flex items-center justify-center space-x-2 text-xs text-gray-400">
+              </nav>              
+              {/* Made in India with Love - Footer */}
+              <div className="px-4 py-4 border-t border-gray-800 bg-[#1a1a1a] relative z-40" style={{ backgroundColor: '#1a1a1a', opacity: 1 }}>
+                <div className="absolute inset-0 bg-[#1a1a1a]" style={{ opacity: 1 }}></div>
+                <div className="flex items-center justify-center space-x-2 text-xs text-gray-400 relative z-50" style={{ backgroundColor: '#1a1a1a' }}>
                   <span>Made in India with</span>
                   <svg className="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />

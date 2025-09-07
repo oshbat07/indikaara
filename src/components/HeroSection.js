@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
+import heroBg from '../assets/hero-bg.png';
 
 /**
  * HeroSection Component - Main hero banner with call-to-action
@@ -19,7 +20,7 @@ const HeroSection = () => {
         <div 
           className="relative flex min-h-[400px] md:min-h-[520px] flex-col items-center justify-center gap-6 overflow-hidden rounded-[var(--border-radius-2xl)] bg-cover bg-center p-4 text-center"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCTqWHBKMvOPlnbZl0nX_S1l_kIl4alhmOEGm12cGhPQlXNnXxApO94FjPO48C_TSMUe-y0zNGYuGMfm7S3fYV7ldCjMLdjhQ7PLIBDk3Lb6k33SidRweL1TG3aTxQfAg5inBERAhouGu4b104JBIMjfVCjWE8FEglsoYDXTw8sD9NiRskSfF0K3HbMa7ZYdx-FUS6DmK14gWKQLR9fLXYRxvRP5Jh0fQb9kaw5uyfj2eOGGlKp81qcIbZpEqU46M_8v3Ps00fuVQo")'
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%), url(${heroBg})`
           }}
           role="banner"
           aria-labelledby="hero-title"

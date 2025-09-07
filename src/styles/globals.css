@@ -138,6 +138,29 @@ body {
     border-color 0.2s ease-in-out;
 }
 
+/* When mobile menu is open we want the header to stop applying backdrop filters
+   and semi-transparency so the overlay/panel can remain opaque above content */
+.no-backdrop,
+body.menu-open header {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(26, 26, 26, 1) !important; /* solid dark */
+  opacity: 1 !important;
+}
+
+/* Ensure mobile side navigation always stays opaque and fixed */
+body.menu-open .fixed[style*="z-index: 9999999"] {
+  isolation: isolate;
+}
+
+body.menu-open .fixed[style*="z-index: 9999995"] {
+  background-color: #1a1a1a !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
+}
+
 /* Base styles */
 * {
   box-sizing: border-box;
