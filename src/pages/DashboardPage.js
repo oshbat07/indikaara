@@ -38,7 +38,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 px-4 sm:px-6 lg:px-8 mt-20">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden mb-10 border border-white/20">
