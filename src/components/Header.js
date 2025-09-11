@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import logo from '../assets/logo1.png';
+import logo2 from '../assets/logo2.png'
 
 /**
  * Header Component - Main navigation header for the application
@@ -108,16 +109,74 @@ const Header = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-transparent to-green-500/5 pointer-events-none"></div>
       )}
       <div className="flex items-center justify-between px-4 md:px-10 py-4 max-w-7xl mx-auto relative">
+        {/* Mobile Left Section - Burger Menu and Search */}
+        <div className="flex items-center gap-3 md:hidden">
+          {/* Hamburger Menu Button */}
+          <button
+            className="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle mobile menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* Mobile Search Icon */}
+          <button
+            className="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors"
+            aria-label="Search"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </button>
+        </div>
+
         {/* Logo and Navigation Section */}
         <div className="flex items-center gap-8">
-          {/* Logo */}
-          <div className="flex items-center gap-4 text-primary">
+          {/* Logo - Centered on mobile, left-aligned on desktop */}
+          <div className="flex items-center gap-4 text-primary md:static absolute left-1/2 md:left-auto transform -translate-x-1/2 md:transform-none">
             <Link 
               to="/" 
               className="text-primary text-xl font-bold leading-tight tracking-[-0.015em] hover:text-[var(--accent-color)] transition-colors"
               onClick={closeMobileMenu}
             >
-              <img src={logo} alt="Indikaara Logo" className="h-10 md:h-12 w-auto" />
+              {/* Mobile Logo - logo2.png with 100% increased size */}
+              <img 
+                src={logo2} 
+                alt="Indikaara Logo" 
+                className="h-16 w-auto md:hidden" 
+              />
+              {/* Desktop Logo - logo1.png */}
+              <img 
+                src={logo} 
+                alt="Indikaara Logo" 
+                className="hidden md:block h-10 lg:h-12 w-auto" 
+              />
             </Link>
           </div>
 
@@ -125,23 +184,29 @@ const Header = () => {
           <nav className="hidden lg:flex items-center gap-9" role="navigation" aria-label="Main navigation">
             <Link 
               to="/" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors"
+              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors focus:outline-none"
               aria-current="page"
             >
               Home
             </Link>
             <Link 
               to="/catalogue" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors"
+              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors focus:outline-none"
             >
               Catalogue
             </Link>
             <Link 
               to="/artisans" 
-              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors"
+              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors focus:outline-none"
             >
               Artisans
             </Link>
+            {/* <Link 
+              to="/blog" 
+              className="text-secondary hover:text-primary text-sm font-medium leading-normal transition-colors focus:outline-none"
+            >
+              Blog
+            </Link> */}
           </nav>
         </div>
 
@@ -255,32 +320,7 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center gap-3">
-          {/* Mobile Cart and Wishlist Icons */}
-          <Link 
-            to="/wishlist"
-            className="relative"
-            aria-label={`Wishlist with ${wishlistCount} items`}
-          >
-            <svg
-              className="w-6 h-6 text-secondary hover:text-primary transition-colors"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-            {wishlistCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                {wishlistCount > 9 ? '9+' : wishlistCount}
-              </span>
-            )}
-          </Link>
-
+          {/* Mobile Cart and User Icons */}
           <Link 
             to="/cart"
             className="relative"
@@ -306,12 +346,10 @@ const Header = () => {
             )}
           </Link>
 
-          {/* Hamburger Menu Button */}
-          <button
+          {/* Mobile User/Login Icon */}
+          <button 
             className="flex items-center justify-center p-2 text-secondary hover:text-primary transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-            aria-expanded={isMobileMenuOpen}
+            aria-label="User profile"
           >
             <svg
               className="w-6 h-6"
@@ -324,7 +362,7 @@ const Header = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
           </button>
@@ -343,7 +381,7 @@ const Header = () => {
 
           {/* Side Navigation Panel */}
           <div 
-            className={`fixed top-0 right-0 h-full w-56 bg-[#1a1a1a] shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-700 ${
+            className={`fixed top-0 left-0 h-full w-56 bg-[#1a1a1a] shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-700 ${
               isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
             style={{ zIndex: 9999995, backgroundColor: '#1a1a1a', opacity: 1 }}
@@ -380,7 +418,7 @@ const Header = () => {
                 <div className="space-y-2">
                   <Link 
                     to="/" 
-                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -391,7 +429,7 @@ const Header = () => {
                   
                   <Link 
                     to="/catalogue" 
-                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,13 +440,24 @@ const Header = () => {
                   
                   <Link 
                     to="/artisans" 
-                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     Artisans
+                  </Link>
+                  
+                  <Link 
+                    to="/blog" 
+                    className="flex items-center px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
+                    onClick={closeMobileMenu}
+                  >
+                    <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Blog
                   </Link>
                 </div>
 
@@ -447,7 +496,7 @@ const Header = () => {
                   
                   <Link 
                     to="/wishlist"
-                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <div className="flex items-center">
@@ -465,7 +514,7 @@ const Header = () => {
 
                   <Link 
                     to="/cart"
-                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center justify-between px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <div className="flex items-center">
@@ -482,7 +531,7 @@ const Header = () => {
                   </Link>
 
                   <button 
-                    className="flex items-center w-full px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium"
+                    className="flex items-center w-full px-3 py-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-sm font-medium focus:outline-none"
                     onClick={closeMobileMenu}
                   >
                     <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

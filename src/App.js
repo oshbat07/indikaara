@@ -9,6 +9,9 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import ArtisansPage from './pages/ArtisansPage';
 import WishlistPage from './pages/WishlistPage';
+import BlogPage from './pages/BlogPage';
+import BlogDetailPage from './pages/BlogDetailPage';
+import CreateBlogPage from './pages/CreateBlogPage';
 import NotFound from './pages/NotFound';
 import './styles/globals.css';
 
@@ -42,6 +45,11 @@ function App() {
             
             {/* Artisan Routes */}
             <Route path="/artisans" element={<ArtisansPage />} />
+            
+            {/* Blog Routes */}
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogDetailPage />} />
+            <Route path="/blog/create" element={<CreateBlogPage />} />
             
             {/* Other Routes - Placeholder for future implementation */}
             <Route path="/about" element={<div className="p-8 text-center text-primary">About Us page coming soon...</div>} />

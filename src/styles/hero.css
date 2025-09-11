@@ -1,0 +1,70 @@
+/* Hero Carousel Specific Styles */
+.hero-carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-slide {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-nav-arrow {
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.hero-nav-arrow:hover {
+  transform: scale(1.05);
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.hero-nav-dot {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-nav-dot:hover {
+  transform: scale(1.2);
+}
+
+.hero-nav-dot.active {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive text sizing for hero */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.875rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .hero-arrivals-text {
+    font-size: 1.5rem !important;
+    letter-spacing: 0.2em !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.25rem !important;
+  }
+
+  .hero-arrivals-text {
+    font-size: 1.25rem !important;
+    letter-spacing: 0.15em !important;
+  }
+}
+
+/* Ensure smooth image loading */
+.hero-slide img {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Prevent flash of unstyled content */
+.hero-carousel .flex {
+  will-change: transform;
+}
