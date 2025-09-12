@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeroImage1 from "../assets/hero-1.jpg";
-import HeroImage2 from "../assets/hero-2.webp";
-import HeroImage3 from "../assets/hero-3.jpg";
+import HeroImage1 from "../assets/hero-1.png";
+import HeroImage2 from "../assets/hero-2.png";
+import HeroImage3 from "../assets/hero-3.png";
+import HeroImage4 from "../assets/hero-4.png";
+
 import "../styles/hero.css";
 
 /**
@@ -33,6 +35,13 @@ const HeroSection = () => {
     {
       id: 3,
       image: HeroImage3,
+      title: "Vintage Collections",
+      subtitle: "Timeless pieces with cultural heritage",
+      cta: "Browse Vintage",
+    },
+    {
+      id: 4,
+      image: HeroImage4,
       title: "Vintage Collections",
       subtitle: "Timeless pieces with cultural heritage",
       cta: "Browse Vintage",
