@@ -6,40 +6,76 @@ import FeaturedArtisan from "../components/FeaturedArtisan";
 import dataService from "../data/dataService";
 
 /**
- * HomePage Component - Main landing page for Indikaara
- * Features: Hero section, category browsing, regional shopping, and featured artisan
+ * HomePage
+ * --------------------------------------------------------------------------
+ * Purpose:
+ * - Acts as the primary landing page for Indikaara.
+ * - Composes major homepage sections: Hero carousel, Brand Story, Brand Values,
+ *   Category discovery grid, and a Featured Artisan highlight.
+ *
+ * Data Flow:
+ * - Synchronously imports presentational components.
+ * - On mount, fetches category metadata from dataService (local JSON layer),
+ *   derives product counts per category, and stores a denormalized array of
+ *   category items for rendering the discovery grid.
+ *
+ * Routing/Navigation:
+ * - Leverages React Router's useNavigate to deep-link into Catalogue with a
+ *   category query param (e.g., /catalogue?category=rugs).
+ *
+ * Accessibility & Semantics:
+ * - Wraps page content in a <main role="main"> landmark for screen readers.
+ * - Section headings use id/aria-labelledby pairs to improve nav and announce.
+ *
+ * Responsiveness:
+ * - Tailwind utility classes drive spacing/typography per breakpoint.
+ * - Hero and Brand Story are full-width; content sections are constrained to a
+ *   max width container for readability.
+ *
+ * Performance Considerations:
+ * - Simple client-side mapping; no eager network calls beyond dataService.
+ * - Minimal state; derived props computed once on load.
  */
 const HomePage = () => {
   const navigate = useNavigate();
+
+  // State: list of category objects projected for the grid. Each item shape:
+  // { id: string|number, title: string, image: string, link: string, count: number }
   const [categories, setCategories] = useState([]);
-  // const [regions, setRegions] = useState([]);
+
+  // State: simple UI flag to guard content rendering while computing/collecting data.
   const [loading, setLoading] = useState(true);
 
+  // Effect: bootstrap page data (categories) once on initial mount.
+  // - Reads raw categories from dataService
+  // - Computes product counts per category (via dataService.getProductsByCategory)
+  // - Normalizes underscore_names to human titles
+  // - Stores result and clears loading
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load categories from JSON
+        // Source category metadata (local JSON-backed service)
         const categoriesData = dataService.getAllCategories();
 
-        // Add product count for each category
+        // Enrich with computed product counts and friendly titles
         const categoriesWithCount = categoriesData.map((category) => {
           const productCount = dataService.getProductsByCategory(
             category.name
           ).length;
           return {
             id: category.id,
-            title: category.name.replace(/_/g, " "), // Remove underscores and replace with spaces
+            // Transform snake_case to Title Case friendly label for display
+            title: category.name.replace(/_/g, " "),
             image: category.image,
             link: `/categories/${category.id}`,
             count: productCount,
           };
         });
 
-        // Load regions data - removed since regions section is hidden
-
         setCategories(categoriesWithCount);
         setLoading(false);
       } catch (error) {
+        // Defensive: ensure UI continues rendering even if data fails
         console.error("Error loading data:", error);
         setLoading(false);
       }
@@ -48,32 +84,42 @@ const HomePage = () => {
     loadData();
   }, []);
 
-  // Handle category click
+  // Handler: when a category tile is clicked, navigate to Catalogue filtered
+  // by category. We normalize the title to a compact param (lowercase, no spaces)
+  // e.g., "Vintage Rugs" -> /catalogue?category=vendagerugs
   const handleCategoryClick = (category) => {
     console.log(`Category clicked: ${category.title}`);
 
-    // Navigate to catalogue page with category filter
     const categoryParam = category.title.toLowerCase().replace(/\s+/g, "");
     navigate(`/catalogue?category=${categoryParam}`);
   };
 
-  // Handle region click
-  // const handleRegionClick = (region) => {
-  //   console.log(`Region clicked: ${region.title}`);
-  //   // Future: Navigate to region page
-  // };
+  // NOTE (Future): Regions discovery section
+  // The regions block is intentionally disabled. To re-enable:
+  // - Add `const [regions, setRegions] = useState([])` state
+  // - Populate via dataService.getAllRegions() (shape: id, title, image, link)
+  // - Render a grid of CategoryCard with onClick navigating similarly to categories
+  // - Ensure aria-labelledby+heading structure mirrors other sections
 
   return (
     <main role="main">
-      {/* Hero Section - Full Width */}
+      {/* HERO: Full-bleed carousel with slides, text overlays, and nav dots.
+          - Composed in HeroSection
+          - Visually anchors the page and sets brand tone
+          - Full-viewport width irrespective of container constraints */}
       <HeroSection />
 
-      {/* Brand Story Section - Full Width */}
+      {/* BRAND STORY: Full-width storytelling band directly under hero.
+          - Provides short narrative of brand ethos
+          - Has a soft gradient background for separation without heavy contrast
+          - Center-constrained text for readability */}
       <section
         className="py-8 md:py-12 bg-gradient-to-b from-gray-900/50 to-gray-800/30 border-b border-gray-700/30"
         aria-labelledby="brand-story"
       >
         <div className="container mx-auto max-w-4xl px-4">
+          {/* Lead-in sentence styled with a script font to create an emotional hook
+              followed by a supporting paragraph in a serif for warmth. */}
           <p className="text-text-primary text-lg md:text-xl leading-relaxed text-center">
             <span
               style={{
@@ -102,10 +148,11 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Main Content Container */}
+      {/* MAIN CONTENT CONTAINER: constrains reading width for dense sections */}
       <div className="container mx-auto max-w-7xl px-4 py-8">
-        {" "}
-        {/* Brand Values Section */}
+        {/* BRAND VALUES: Three themed cards describing Vision, Motto, Values
+            - Each card uses a subtle gradient and matching border
+            - Content is balanced, centered, and responsive across breakpoints */}
         <section className="pt-16 mb-16" aria-labelledby="brand-values">
           <div className="text-center mb-12">
             <h2
@@ -121,7 +168,7 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Brand Vision Card */}
+            {/* Card: Vision */}
             <div className="bg-gradient-to-br from-emerald-900/30 to-green-800/20 backdrop-blur-sm border border-emerald-700/30 rounded-xl p-6 text-center hover:from-emerald-800/40 hover:to-green-700/30 hover:border-emerald-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-emerald-500/30">
                 <img
@@ -141,7 +188,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            {/* Brand Motto Card */}
+            {/* Card: Motto */}
             <div className="bg-gradient-to-br from-amber-900/30 to-orange-800/20 backdrop-blur-sm border border-amber-700/30 rounded-xl p-6 text-center hover:from-amber-800/40 hover:to-orange-700/30 hover:border-amber-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-500/30">
                 <img
@@ -163,7 +210,7 @@ const HomePage = () => {
               </p>
             </div>
 
-            {/* Brand Values Card */}
+            {/* Card: Values */}
             <div className="bg-gradient-to-br from-blue-900/30 to-indigo-800/20 backdrop-blur-sm border border-blue-700/30 rounded-xl p-6 text-center hover:from-blue-800/40 hover:to-indigo-700/30 hover:border-blue-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-blue-500/30">
                 <img
@@ -189,13 +236,18 @@ const HomePage = () => {
             </div>
           </div>
         </section>
+
+        {/* Loading gate: keeps layout stable while category data is prepared. */}
         {loading ? (
           <div className="flex justify-center items-center min-h-64">
             <div className="text-primary text-xl">Loading...</div>
           </div>
         ) : (
           <>
-            {/* Shop by Category Section */}
+            {/* CATEGORY DISCOVERY GRID
+                - A compact grid of CategoryCard tiles enabling quick nav.
+                - Keyed by stable category id; click navigates to Catalogue with
+                  a category query param. */}
             <section className="mt-16" aria-labelledby="categories-title">
               <div className="mb-8 text-center">
                 <h2
@@ -223,32 +275,8 @@ const HomePage = () => {
                 </div>
               </div>
             </section>
-            {/* Shop by Region Section - Hidden */}
-            {/* 
-          <section className="mt-16" aria-labelledby="regions-title">
-            <div className="mb-8 text-center">
-              <h2 id="regions-title" className="text-4xl font-bold text-primary mb-3">
-                Shop by Region
-              </h2>
-              <p className="text-text-secondary text-lg">
-                Explore crafts from different regions of India
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {regions.map((region) => (
-                <CategoryCard
-                  key={region.id}
-                  image={region.image}
-                  title={region.title}
-                  link={region.link}
-                  onClick={() => handleRegionClick(region)}
-                />
-              ))}
-            </div>
-          </section>
-          */}
-            {/* Featured Artisan Section */}
+
+            {/* FEATURED ARTISAN: spotlight module highlighting a maker/story. */}
             <FeaturedArtisan />
           </>
         )}
