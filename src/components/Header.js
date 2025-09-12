@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import logo from "../assets/logo1.png";
-import logo2 from "../assets/logo2.png";
 
 /**
  * Header Component - Main navigation header for the application

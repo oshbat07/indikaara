@@ -1,6 +1,6 @@
-import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
+import React from "react";
+import Header from "./Header";
+import Footer from "./Footer";
 
 /**
  * Layout Component - Main layout wrapper for all pages
@@ -9,14 +9,14 @@ import Footer from './Footer';
  */
 const Layout = ({ children }) => {
   return (
-    <div className="relative flex size-full min-h-screen flex-col overflow-x-hidden bg-background text-primary">
+    <div className="relative flex size-full min-h-screen flex-col bg-background text-primary">
       <div className="flex h-full grow flex-col">
         {/* Header */}
         <Header />
-        
+
         {/* Main Content */}
         {children}
-        
+
         {/* Footer */}
         <Footer />
       </div>
