@@ -64,143 +64,150 @@ const HomePage = () => {
   // };
 
   return (
-    <main className="container mx-auto max-w-7xl px-4 py-8 pt-24" role="main">
-      {/* Hero Section */}
+    <main role="main">
+      {/* Hero Section - Full Width */}
       <HeroSection />
 
-      {/* Brand Story Section */}
-      <section
-        className="mt-16 mb-16 bg-surface-secondary/30 rounded-lg px-3 py-1 md:px-8 md:py-6"
-        aria-labelledby="brand-story"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-text-primary text-lg md:text-xl leading-relaxed">
-            Every piece tells a tale. Our handpicked collection of unique rugs,
-            vintage finds, and beautiful decor is here to help you create a home
-            that feels uniquely you. We've traveled to find the perfect blend of
-            warmth and character, so you can fill your space with items that
-            bring you joy and comfort.
-          </p>
-        </div>
-      </section>
-      <div className="border-b border-gray-700 mx-3"></div>
+      {/* Main Content Container */}
+      <div className="container mx-auto max-w-7xl px-4 py-8 pt-24">
+        {/* Brand Story Section */}
+        <section
+          className="mt-16 mb-16 bg-surface-secondary/30 rounded-lg px-3 py-1 md:px-8 md:py-6"
+          aria-labelledby="brand-story"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-text-primary text-lg md:text-xl leading-relaxed">
+              Every piece tells a tale. Our handpicked collection of unique
+              rugs, vintage finds, and beautiful decor is here to help you
+              create a home that feels uniquely you. We've traveled to find the
+              perfect blend of warmth and character, so you can fill your space
+              with items that bring you joy and comfort.
+            </p>
+          </div>
+        </section>
+        <div className="border-b border-gray-700 mx-3"></div>
 
-      {/* Brand Values Section */}
-      <section className="mt-16 mb-16" aria-labelledby="brand-values">
-        <div className="text-center mb-12">
-          <h2
-            id="brand-values"
-            className="text-4xl font-bold text-primary mb-3"
-          >
-            Our Foundation
-          </h2>
-          <p className="text-text-secondary text-lg">
-            The values that guide our journey in preserving Indian craftsmanship
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Brand Vision Card */}
-          <div className="bg-gradient-to-br from-emerald-900/30 to-green-800/20 backdrop-blur-sm border border-emerald-700/30 rounded-xl p-6 text-center hover:from-emerald-800/40 hover:to-green-700/30 hover:border-emerald-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-emerald-500/30">
-              <img
-                src={require("../assets/artisan-potter.png")}
-                alt="Brand Vision"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-semibold text-primary mb-3">
-              Our Vision
-            </h3>
-            <p className="text-text-secondary leading-relaxed">
-              To preserve and celebrate India's rich artisan heritage by
-              connecting traditional craftspeople with modern homes, ensuring
-              every piece carries forward centuries of cultural wisdom and
-              artistic excellence.
+        {/* Brand Values Section */}
+        <section className="mt-16 mb-16" aria-labelledby="brand-values">
+          <div className="text-center mb-12">
+            <h2
+              id="brand-values"
+              className="text-4xl font-bold text-primary mb-3"
+            >
+              Our Foundation
+            </h2>
+            <p className="text-text-secondary text-lg">
+              The values that guide our journey in preserving Indian
+              craftsmanship
             </p>
           </div>
 
-          {/* Brand Motto Card */}
-          <div className="bg-gradient-to-br from-amber-900/30 to-orange-800/20 backdrop-blur-sm border border-amber-700/30 rounded-xl p-6 text-center hover:from-amber-800/40 hover:to-orange-700/30 hover:border-amber-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-500/30">
-              <img
-                src={require("../assets/artisan-rug-weaver.png")}
-                alt="Brand Motto"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-semibold text-primary mb-3">
-              Our Motto
-            </h3>
-            <p className="text-text-secondary leading-relaxed font-medium italic text-lg mb-2">
-              "Handcrafted with Heart, Treasured Forever"
-            </p>
-            <p className="text-text-secondary leading-relaxed text-sm">
-              Every piece we curate is more than just decor—it's a testament to
-              the passion, skill, and soul of Indian artisans who pour their
-              heritage into every creation.
-            </p>
-          </div>
-
-          {/* Brand Values Card */}
-          <div className="bg-gradient-to-br from-blue-900/30 to-indigo-800/20 backdrop-blur-sm border border-blue-700/30 rounded-xl p-6 text-center hover:from-blue-800/40 hover:to-indigo-700/30 hover:border-blue-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-blue-500/30">
-              <img
-                src={require("../assets/artisan-wood-carver.png")}
-                alt="Brand Values"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-semibold text-primary mb-3">
-              Our Values
-            </h3>
-            <div className="text-text-secondary leading-relaxed space-y-2">
-              <p className="font-medium">• Authenticity in every thread</p>
-              <p className="font-medium">• Sustainable artisan partnerships</p>
-              <p className="font-medium">• Cultural heritage preservation</p>
-              <p className="font-medium">• Quality craftsmanship excellence</p>
-              <p className="font-medium">• Empowering local communities</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {loading ? (
-        <div className="flex justify-center items-center min-h-64">
-          <div className="text-primary text-xl">Loading...</div>
-        </div>
-      ) : (
-        <>
-          {/* Shop by Category Section */}
-          <section className="mt-16" aria-labelledby="categories-title">
-            <div className="mb-8 text-center">
-              <h2
-                id="categories-title"
-                className="text-4xl font-bold text-primary mb-3"
-              >
-                Shop by Category
-              </h2>
-              <p className="text-text-secondary text-lg">
-                Discover authentic Indian handicrafts by category
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Brand Vision Card */}
+            <div className="bg-gradient-to-br from-emerald-900/30 to-green-800/20 backdrop-blur-sm border border-emerald-700/30 rounded-xl p-6 text-center hover:from-emerald-800/40 hover:to-green-700/30 hover:border-emerald-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-emerald-500/30">
+                <img
+                  src={require("../assets/artisan-potter.png")}
+                  alt="Brand Vision"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-3">
+                Our Vision
+              </h3>
+              <p className="text-text-secondary leading-relaxed">
+                To preserve and celebrate India's rich artisan heritage by
+                connecting traditional craftspeople with modern homes, ensuring
+                every piece carries forward centuries of cultural wisdom and
+                artistic excellence.
               </p>
             </div>
 
-            <div className="flex justify-center">
-              <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16 max-w-none">
-                {categories.map((category) => (
-                  <CategoryCard
-                    key={category.id}
-                    image={category.image}
-                    title={category.title}
-                    link={category.link}
-                    onClick={() => handleCategoryClick(category)}
-                  />
-                ))}
+            {/* Brand Motto Card */}
+            <div className="bg-gradient-to-br from-amber-900/30 to-orange-800/20 backdrop-blur-sm border border-amber-700/30 rounded-xl p-6 text-center hover:from-amber-800/40 hover:to-orange-700/30 hover:border-amber-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-500/30">
+                <img
+                  src={require("../assets/artisan-rug-weaver.png")}
+                  alt="Brand Motto"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-3">
+                Our Motto
+              </h3>
+              <p className="text-text-secondary leading-relaxed font-medium italic text-lg mb-2">
+                "Handcrafted with Heart, Treasured Forever"
+              </p>
+              <p className="text-text-secondary leading-relaxed text-sm">
+                Every piece we curate is more than just decor—it's a testament
+                to the passion, skill, and soul of Indian artisans who pour
+                their heritage into every creation.
+              </p>
+            </div>
+
+            {/* Brand Values Card */}
+            <div className="bg-gradient-to-br from-blue-900/30 to-indigo-800/20 backdrop-blur-sm border border-blue-700/30 rounded-xl p-6 text-center hover:from-blue-800/40 hover:to-indigo-700/30 hover:border-blue-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-blue-500/30">
+                <img
+                  src={require("../assets/artisan-wood-carver.png")}
+                  alt="Brand Values"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-3">
+                Our Values
+              </h3>
+              <div className="text-text-secondary leading-relaxed space-y-2">
+                <p className="font-medium">• Authenticity in every thread</p>
+                <p className="font-medium">
+                  • Sustainable artisan partnerships
+                </p>
+                <p className="font-medium">• Cultural heritage preservation</p>
+                <p className="font-medium">
+                  • Quality craftsmanship excellence
+                </p>
+                <p className="font-medium">• Empowering local communities</p>
               </div>
             </div>
-          </section>
-          {/* Shop by Region Section - Hidden */}
-          {/* 
+          </div>
+        </section>
+
+        {loading ? (
+          <div className="flex justify-center items-center min-h-64">
+            <div className="text-primary text-xl">Loading...</div>
+          </div>
+        ) : (
+          <>
+            {/* Shop by Category Section */}
+            <section className="mt-16" aria-labelledby="categories-title">
+              <div className="mb-8 text-center">
+                <h2
+                  id="categories-title"
+                  className="text-4xl font-bold text-primary mb-3"
+                >
+                  Shop by Category
+                </h2>
+                <p className="text-text-secondary text-lg">
+                  Discover authentic Indian handicrafts by category
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16 max-w-none">
+                  {categories.map((category) => (
+                    <CategoryCard
+                      key={category.id}
+                      image={category.image}
+                      title={category.title}
+                      link={category.link}
+                      onClick={() => handleCategoryClick(category)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+            {/* Shop by Region Section - Hidden */}
+            {/* 
           <section className="mt-16" aria-labelledby="regions-title">
             <div className="mb-8 text-center">
               <h2 id="regions-title" className="text-4xl font-bold text-primary mb-3">
@@ -224,10 +231,11 @@ const HomePage = () => {
             </div>
           </section>
           */}
-          {/* Featured Artisan Section */}
-          <FeaturedArtisan />
-        </>
-      )}
+            {/* Featured Artisan Section */}
+            <FeaturedArtisan />
+          </>
+        )}
+      </div>
     </main>
   );
 };
