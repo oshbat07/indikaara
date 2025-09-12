@@ -75,13 +75,13 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative w-full bg-[#1a1a1a] overflow-hidden hero-carousel">
+    <section className="relative w-screen bg-[#1a1a1a] overflow-hidden hero-carousel -mx-4 md:-mx-10">
       {/* NEW ARRIVALS Header */}
       <div className="absolute top-6 md:top-8 left-0 right-0 z-30 text-center">
       </div>
 
       {/* Carousel Container */}
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] overflow-hidden">
+      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] overflow-hidden w-full">
         {/* Slides */}
         <div 
           className="flex transition-transform duration-700 ease-in-out h-full hero-slide"
@@ -90,11 +90,11 @@ const HeroSection = () => {
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className="w-full h-full flex-shrink-0 relative"
+              className="w-screen h-full flex-shrink-0 relative"
             >
               {/* Background Image */}
               <div 
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center w-full h-full"
                 style={{ backgroundImage: `url("${slide.image}")` }}
               />
               
