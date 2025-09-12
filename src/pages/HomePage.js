@@ -68,27 +68,45 @@ const HomePage = () => {
       {/* Hero Section - Full Width */}
       <HeroSection />
 
-      {/* Main Content Container */}
-      <div className="container mx-auto max-w-7xl px-4 py-8 pt-24">
-        {/* Brand Story Section */}
-        <section
-          className="mt-16 mb-16 bg-surface-secondary/30 rounded-lg px-3 py-1 md:px-8 md:py-6"
-          aria-labelledby="brand-story"
-        >
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-text-primary text-lg md:text-xl leading-relaxed">
-              Every piece tells a tale. Our handpicked collection of unique
-              rugs, vintage finds, and beautiful decor is here to help you
-              create a home that feels uniquely you. We've traveled to find the
-              perfect blend of warmth and character, so you can fill your space
-              with items that bring you joy and comfort.
+      {/* Brand Story Section - Full Width */}
+      <section
+        className="py-8 md:py-12 bg-gradient-to-b from-gray-900/50 to-gray-800/30 border-b border-gray-700/30"
+        aria-labelledby="brand-story"
+      >
+        <div className="container mx-auto max-w-4xl px-4">
+          <p className="text-text-primary text-lg md:text-xl leading-relaxed text-center">
+            <span
+              style={{
+                fontFamily: "'Dancing Script', cursive",
+                fontSize: "3rem",
+                fontWeight: "700",
+                color: "var(--accent-color)",
+              }}
+            >
+              Every piece tells a tale.
+            </span>{" "}
+            <p
+              style={{
+                fontFamily: "'Libre Baskerville', serif",
+                marginTop: "1rem",
+                fontStyle: "italic",
+              }}
+            >
+              Our handpicked collection of unique rugs, vintage finds, and
+              beautiful decor is here to help you create a home that feels
+              uniquely you. We've traveled to find the perfect blend of warmth
+              and character, so you can fill your space with items that bring
+              you joy and comfort.
             </p>
-          </div>
-        </section>
-        <div className="border-b border-gray-700 mx-3"></div>
+          </p>
+        </div>
+      </section>
 
+      {/* Main Content Container */}
+      <div className="container mx-auto max-w-7xl px-4 py-8">
+        {" "}
         {/* Brand Values Section */}
-        <section className="mt-16 mb-16" aria-labelledby="brand-values">
+        <section className="pt-16 mb-16" aria-labelledby="brand-values">
           <div className="text-center mb-12">
             <h2
               id="brand-values"
@@ -171,7 +189,6 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-
         {loading ? (
           <div className="flex justify-center items-center min-h-64">
             <div className="text-primary text-xl">Loading...</div>
