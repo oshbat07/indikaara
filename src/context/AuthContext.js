@@ -2,6 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
+// Set base URL for axios from environment variable
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://backend-wei5.onrender.com';
+
 const SECONDS_TO_MILLISECONDS = 1000;
 
 const AuthContext = createContext();
