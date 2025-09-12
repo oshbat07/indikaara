@@ -7,6 +7,9 @@
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.11.0",
+    "env-cmd": "^11.0.0",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
@@ -14,9 +17,12 @@
     "web-vitals": "^2.1.4"
   },
   "homepage": "https://www.indikaara.com",
+  "proxy": "https://backend-wei5.onrender.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build",
+    "dev": "react-scripts build && react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postbuild": "shx cp build/index.html build/404.html",
