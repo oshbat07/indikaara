@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeroSection from "../components/HeroSection";
-import CategoryCard from "../components/CategoryCard";
+import ArtisanStorySection from "../components/ArtisanStorySection";
+import CategoryCarousel from "../components/CategoryCarousel";
 import FeaturedArtisan from "../components/FeaturedArtisan";
 import dataService from "../data/dataService";
 
@@ -109,6 +110,8 @@ const HomePage = () => {
           - Full-viewport width irrespective of container constraints */}
       <HeroSection />
 
+
+
       {/* BRAND STORY: Full-width storytelling band directly under hero.
           - Provides short narrative of brand ethos
           - Has a soft gradient background for separation without heavy contrast
@@ -120,11 +123,11 @@ const HomePage = () => {
         <div className="container mx-auto max-w-4xl px-4">
           {/* Lead-in sentence styled with a script font to create an emotional hook
               followed by a supporting paragraph in a serif for warmth. */}
-          <p className="text-text-primary text-lg md:text-xl leading-relaxed text-center">
+          <p className="text-text-primary text-sm md:text-xl leading-relaxed text-center">
             <span
               style={{
                 fontFamily: "'Dancing Script', cursive",
-                fontSize: "3rem",
+                fontSize: "2rem",
                 fontWeight: "700",
                 color: "var(--accent-color)",
               }}
@@ -134,7 +137,7 @@ const HomePage = () => {
             <p
               style={{
                 fontFamily: "'Libre Baskerville', serif",
-                marginTop: "1rem",
+                marginTop: "0.8rem",
                 fontStyle: "italic",
               }}
             >
@@ -244,12 +247,13 @@ const HomePage = () => {
           </div>
         ) : (
           <>
-            {/* CATEGORY DISCOVERY GRID
-                - A compact grid of CategoryCard tiles enabling quick nav.
+            {/* CATEGORY DISCOVERY CAROUSEL
+                - A beautiful carousel of CategoryCard tiles enabling quick nav.
+                - Auto-scrolling with navigation controls and responsive design
                 - Keyed by stable category id; click navigates to Catalogue with
                   a category query param. */}
             <section className="mt-16" aria-labelledby="categories-title">
-              <div className="mb-8 text-center">
+              <div className="mb-12 text-center">
                 <h2
                   id="categories-title"
                   className="text-4xl font-bold text-primary mb-3"
@@ -261,21 +265,18 @@ const HomePage = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center">
-                <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-16 max-w-none">
-                  {categories.map((category) => (
-                    <CategoryCard
-                      key={category.id}
-                      image={category.image}
-                      title={category.title}
-                      link={category.link}
-                      onClick={() => handleCategoryClick(category)}
-                    />
-                  ))}
-                </div>
-              </div>
+              <CategoryCarousel 
+                categories={categories}
+                onCategoryClick={handleCategoryClick}
+              />
             </section>
-
+      {/* ARTISAN STORY: Compelling section with scrolling banner and powerful messaging
+          - Highlights the authentic craftsmanship narrative
+          - Features scrolling text banner with key values
+          - Call-to-action to explore artisan stories */}
+          <section className="artisan-story-section" style={{marginTop: "4rem"}}>
+            <ArtisanStorySection />
+          </section>
             {/* FEATURED ARTISAN: spotlight module highlighting a maker/story. */}
             <FeaturedArtisan />
           </>

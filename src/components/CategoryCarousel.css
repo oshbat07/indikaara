@@ -1,0 +1,106 @@
+/* CategoryCarousel specific styles */
+.category-carousel {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.category-carousel .carousel-container {
+  touch-action: pan-y;
+}
+
+.category-carousel .carousel-slides {
+  will-change: transform;
+}
+
+.category-carousel .carousel-slides.dragging {
+  transition: none !important;
+  cursor: grabbing;
+}
+
+.category-carousel .carousel-slides:not(.dragging) {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced card hover effects */
+.category-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Navigation arrows enhancement */
+.carousel-nav-arrow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.carousel-nav-arrow:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Progress bar animation */
+.carousel-progress-bar {
+  transition: width 0.1s ease-out;
+}
+
+/* Responsive touch targets */
+@media (max-width: 768px) {
+  .carousel-nav-arrow {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+/* Smooth scrolling for keyboard navigation */
+.category-carousel:focus-within .carousel-slides {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading animation for images */
+.category-image {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.category-image:not(.loaded) {
+  opacity: 0.7;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Accessibility improvements */
+.category-carousel button:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.category-carousel .carousel-dot:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Enhanced mobile interactions */
+@media (hover: none) and (pointer: coarse) {
+  .category-card:active {
+    transform: scale(0.98);
+  }
+  
+  .carousel-nav-arrow:active {
+    transform: scale(0.95);
+  }
+}

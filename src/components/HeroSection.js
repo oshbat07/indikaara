@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeroImage1 from "../assets/hero-1.png";
-import HeroImage2 from "../assets/hero-2.png";
-import HeroImage3 from "../assets/hero-3.png";
-import HeroImage4 from "../assets/hero-4.png";
+import HeroImage1 from '../assets/hero-1.jpeg';
+import HeroImage2 from '../assets/hero-2.jpeg'
+import HeroImage3 from '../assets/hero-3.jpeg'
+import HeroImage4 from '../assets/hero-4.png'
 
 import "../styles/hero.css";
 
@@ -21,29 +21,21 @@ const HeroSection = () => {
     {
       id: 1,
       image: HeroImage1,
-      title: "Handwoven Persian Rugs",
-      subtitle: "Timeless elegance for your home",
       cta: "Shop Rugs",
     },
     {
       id: 2,
       image: HeroImage2,
-      title: "Artisan Home Decor",
-      subtitle: "Unique pieces by master artisans",
       cta: "Explore Decor",
     },
     {
       id: 3,
       image: HeroImage3,
-      title: "Vintage Collections",
-      subtitle: "Timeless pieces with cultural heritage",
       cta: "Browse Vintage",
     },
     {
       id: 4,
       image: HeroImage4,
-      title: "Vintage Collections",
-      subtitle: "Timeless pieces with cultural heritage",
       cta: "Browse Vintage",
     },
   ];
@@ -79,7 +71,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative w-screen bg-[#1a1a1a] overflow-hidden hero-carousel">
+    <section className="relative w-screen bg-[#1a1a1a] overflow-hidden hero-carousel mt-16 md:mt-20 lg:mt-24 xl:mt-28">
       {/* NEW ARRIVALS Header */}
       <div className="absolute top-6 md:top-8 left-0 right-0 z-30 text-center"></div>
 
@@ -107,12 +99,6 @@ const HeroSection = () => {
               {/* Content */}
               <div className="relative z-20 h-full flex flex-col justify-end pb-20 md:pb-24 lg:pb-32 text-center px-4">
                 <div className="max-w-4xl mx-auto">
-                  <h3 className="text-white text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold mb-2 md:mb-3 lg:mb-4 hero-title">
-                    {slide.title}
-                  </h3>
-                  <p className="text-white/90 text-sm md:text-base lg:text-lg mb-4 md:mb-5 lg:mb-6 hero-subtitle">
-                    {slide.subtitle}
-                  </p>
                   {/* <Button
                     variant="primary"
                     size="lg"

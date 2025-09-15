@@ -1,0 +1,170 @@
+/* Artisan Story Section Styles */
+.artisan-story-section {
+  position: relative;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+  color: white;
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.hero-container {
+  max-width: 800px;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-headline {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-cta {
+  margin-top: 2rem;
+}
+
+.cta-button {
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 1rem 2.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.cta-button:hover::before {
+  left: 100%;
+}
+
+.cta-button:hover {
+  background: var(--accent-color, #e67e22);
+  border-color: var(--accent-color, #e67e22);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+}
+
+/* Decorative Elements */
+.artisan-story-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(230, 126, 34, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-content {
+    min-height: 400px;
+    padding: 3rem 1rem;
+  }
+  
+  .hero-headline {
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+    padding: 0.8rem 2rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content {
+    min-height: 350px;
+    padding: 2rem 1rem;
+  }
+  
+  .cta-button {
+    padding: 0.7rem 1.5rem;
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* Animation for entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-headline,
+.hero-subtitle,
+.cta-button {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero-subtitle {
+  animation-delay: 0.2s;
+}
+
+.cta-button {
+  animation-delay: 0.4s;
+}
