@@ -23,7 +23,7 @@ const ArtisanStorySection = () => {
       <div className="hero-content">
         <div className="hero-container">
           <h1 className="hero-headline">
-            They don't make crafts
+            They <strike>don't</strike> make crafts
             <br />
             like they used to.
           </h1>
