@@ -491,12 +491,12 @@ const ProductDetailPage = () => {
           
           {/* Feedback Messages */}
           {wishlistMessage && (
-            <div className="mt-2 p-2 bg-green-100 border border-green-300 text-green-700 rounded text-sm text-center">
+            <div className="mt-2 p-2 bg-teal-100 border border-teal-300 text-teal-700 rounded text-sm text-center">
               {wishlistMessage}
             </div>
           )}
           {shareMessage && (
-            <div className="mt-2 p-2 bg-blue-100 border border-blue-300 text-blue-700 rounded text-sm text-center">
+            <div className="mt-2 p-2 bg-amber-100 border border-amber-300 text-amber-700 rounded text-sm text-center">
               {shareMessage}
             </div>
           )}

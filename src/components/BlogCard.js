@@ -34,9 +34,9 @@ const BlogCard = ({ blog, featured = false }) => {
   // Get category color
   const getCategoryColor = (category) => {
     const colors = {
-      'Crafts': 'bg-blue-500',
+      'Crafts': 'bg-teal-500',
       'Textiles': 'bg-purple-500',
-      'Sustainability': 'bg-green-500',
+      'Sustainability': 'bg-teal-500',
       'Culture': 'bg-orange-500',
       'Artists': 'bg-pink-500'
     };

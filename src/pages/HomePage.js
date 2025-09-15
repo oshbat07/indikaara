@@ -172,8 +172,8 @@ const HomePage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Card: Vision */}
-            <div className="bg-gradient-to-br from-emerald-900/30 to-green-800/20 backdrop-blur-sm border border-emerald-700/30 rounded-xl p-6 text-center hover:from-emerald-800/40 hover:to-green-700/30 hover:border-emerald-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-emerald-500/30">
+            <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 backdrop-blur-sm border border-red-700/30 rounded-xl p-6 text-center hover:from-red-800/40 hover:to-red-700/30 hover:border-red-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-red-500/30">
                 <img
                   src={require("../assets/artisan-potter.png")}
                   alt="Brand Vision"
@@ -214,8 +214,8 @@ const HomePage = () => {
             </div>
 
             {/* Card: Values */}
-            <div className="bg-gradient-to-br from-blue-900/30 to-indigo-800/20 backdrop-blur-sm border border-blue-700/30 rounded-xl p-6 text-center hover:from-blue-800/40 hover:to-indigo-700/30 hover:border-blue-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-blue-500/30">
+            <div className="bg-gradient-to-br from-teal-900/30 to-teal-800/20 backdrop-blur-sm border border-teal-700/30 rounded-xl p-6 text-center hover:from-teal-800/40 hover:to-teal-700/30 hover:border-teal-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden border-2 border-teal-500/30">
                 <img
                   src={require("../assets/artisan-wood-carver.png")}
                   alt="Brand Values"

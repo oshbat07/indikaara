@@ -89,7 +89,8 @@ const ArtisansPage = () => {
   return (
     <main className="bg-[#1a1a1a] min-h-screen pt-20">
       {/* Header Section */}
-      <header className="bg-gradient-to-r from-green-600 to-green-700 text-white py-8 sm:py-12 px-4 sm:px-6">
+      <header className="bg-[#8C0000] text-white py-8 sm:py-12 px-4 sm:px-6">
+      {/* <header className="bg-gradient-to-r from-red-600 to-red-700 text-white py-8 sm:py-12 px-4 sm:px-6"> */}
         <div className="container mx-auto text-center max-w-6xl">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2">The Artisans of Indikaara</h1>
           <p className="text-sm sm:text-lg opacity-90">Celebrating the heart and soul behind every creation.</p>
@@ -112,14 +113,14 @@ const ArtisansPage = () => {
                   className="w-full h-32 sm:h-48 object-cover"
                   loading="lazy"
                 />
-                <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-green-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
+                <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                   {artisan.craft}
                 </div>
               </div>
 
               {/* Artisan Details */}
               <div className="p-3 sm:p-6">
-                <h2 className="text-sm sm:text-xl lg:text-2xl font-semibold text-green-400 mb-1">
+                <h2 className="text-sm sm:text-xl lg:text-2xl font-semibold text-teal-400 mb-1">
                   {artisan.name}
                 </h2>
                 <p className="text-gray-400 mb-2 sm:mb-4 font-medium text-xs sm:text-base">
@@ -132,7 +133,7 @@ const ArtisansPage = () => {
                 {/* Read Story Button */}
                 <button 
                   onClick={() => openDialog(artisan)}
-                  className="w-full sm:w-auto bg-green-600 text-white px-3 sm:px-6 py-1 sm:py-2 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform hover:scale-105"
+                  className="w-full sm:w-auto bg-red-600 text-white px-3 sm:px-6 py-1 sm:py-2 rounded-full font-medium text-xs sm:text-sm transition-all duration-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transform hover:scale-105"
                   aria-label={`Read more about ${artisan.name}'s story`}
                 >
                   Read Story
@@ -145,7 +146,7 @@ const ArtisansPage = () => {
         {/* Additional Content Section */}
         <div className="mt-12 sm:mt-16 text-center">
           <div className="bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 mx-auto max-w-4xl">
-            <h2 className="text-2xl sm:text-3xl font-bold text-green-400 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-teal-400 mb-4">
               Preserving Traditional Arts
             </h2>
             <p className="text-gray-300 leading-relaxed text-sm sm:text-lg mb-4 sm:mb-6">
@@ -156,34 +157,34 @@ const ArtisansPage = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8">
               <div className="text-center">
-                <div className="bg-green-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <div className="bg-red-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                   <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">50+ Artisans</h3>
+                <h3 className="font-semibold text-teal-400 mb-2 text-sm sm:text-base">50+ Artisans</h3>
                 <p className="text-gray-400 text-xs sm:text-sm">
                   Skilled craftspeople from across India
                 </p>
               </div>
               <div className="text-center">
-                <div className="bg-green-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <div className="bg-red-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                   <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">Fair Trade</h3>
+                <h3 className="font-semibold text-teal-400 mb-2 text-sm sm:text-base">Fair Trade</h3>
                 <p className="text-gray-400 text-xs sm:text-sm">
                   Ensuring fair wages and working conditions
                 </p>
               </div>
               <div className="text-center">
-                <div className="bg-green-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                <div className="bg-red-600 text-white w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                   <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                 </div>
-                <h3 className="font-semibold text-green-400 mb-2 text-sm sm:text-base">Heritage</h3>
+                <h3 className="font-semibold text-teal-400 mb-2 text-sm sm:text-base">Heritage</h3>
                 <p className="text-gray-400 text-xs sm:text-sm">
                   Preserving centuries-old traditional techniques
                 </p>
@@ -198,10 +199,10 @@ const ArtisansPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
             {/* Dialog Header */}
-            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700 bg-green-600 text-white">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-700 bg-red-600 text-white">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold">{selectedArtisan.name}</h2>
-                <p className="text-green-100 opacity-90 text-sm sm:text-base">{selectedArtisan.title}</p>
+                <p className="text-red-100 opacity-90 text-sm sm:text-base">{selectedArtisan.title}</p>
               </div>
               <button
                 onClick={closeDialog}
@@ -225,7 +226,7 @@ const ArtisansPage = () => {
                     className="w-full h-48 sm:h-64 lg:h-80 object-cover rounded-lg shadow-md"
                   />
                   <div className="mt-4 text-center">
-                    <span className="inline-block bg-green-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
+                    <span className="inline-block bg-red-600 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-medium">
                       {selectedArtisan.craft}
                     </span>
                   </div>
@@ -233,7 +234,7 @@ const ArtisansPage = () => {
 
                 {/* Full Story */}
                 <div className="lg:col-span-2">
-                  <h3 className="text-lg sm:text-xl font-semibold text-green-400 mb-4">The Complete Story</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold text-teal-400 mb-4">The Complete Story</h3>
                   <div className="prose prose-gray max-w-none">
                     {selectedArtisan.fullDescription.split('\n\n').map((paragraph, index) => (
                       <p key={index} className="text-gray-300 leading-relaxed mb-4 text-xs sm:text-sm">
@@ -249,7 +250,7 @@ const ArtisansPage = () => {
             <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-700 bg-gray-900 flex justify-end">
               <button
                 onClick={closeDialog}
-                className="bg-green-600 text-white px-4 sm:px-6 py-1 sm:py-2 rounded-full font-medium text-sm transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                className="bg-red-600 text-white px-4 sm:px-6 py-1 sm:py-2 rounded-full font-medium text-sm transition-all duration-300 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Close
               </button>

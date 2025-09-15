@@ -424,7 +424,7 @@ const Header = () => {
                     onClick={closeMobileMenu}
                   >
                     <svg
-                      className="w-5 h-5 mr-3 text-green-500"
+                      className="w-5 h-5 mr-3 text-teal-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -446,7 +446,7 @@ const Header = () => {
                     onClick={closeMobileMenu}
                   >
                     <svg
-                      className="w-5 h-5 mr-3 text-green-500"
+                      className="w-5 h-5 mr-3 text-teal-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -468,7 +468,7 @@ const Header = () => {
                     onClick={closeMobileMenu}
                   >
                     <svg
-                      className="w-5 h-5 mr-3 text-green-500"
+                      className="w-5 h-5 mr-3 text-teal-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -490,7 +490,7 @@ const Header = () => {
                     onClick={closeMobileMenu}
                   >
                     <svg
-                      className="w-5 h-5 mr-3 text-green-500"
+                      className="w-5 h-5 mr-3 text-teal-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -520,7 +520,7 @@ const Header = () => {
                   >
                     <div className="flex items-center">
                       <svg
-                        className="w-5 h-5 mr-3 text-green-500"
+                        className="w-5 h-5 mr-3 text-teal-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -549,7 +549,7 @@ const Header = () => {
                   >
                     <div className="flex items-center">
                       <svg
-                        className="w-5 h-5 mr-3 text-green-500"
+                        className="w-5 h-5 mr-3 text-teal-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -564,7 +564,7 @@ const Header = () => {
                       Cart
                     </div>
                     {itemCount > 0 && (
-                      <span className="bg-green-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      <span className="bg-teal-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                         {itemCount > 99 ? "99+" : itemCount}
                       </span>
                     )}
@@ -576,7 +576,7 @@ const Header = () => {
                     onClick={closeMobileMenu}
                   >
                     <svg
-                      className="w-5 h-5 mr-3 text-green-500"
+                      className="w-5 h-5 mr-3 text-teal-500"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

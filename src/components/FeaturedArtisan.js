@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button';
-import leelaDeviImage from '../assets/featured-artisan-weave.png';
+import leelaDeviImage from '../assets/featured-artisan-homepage.jpg';
 
 /**
  * FeaturedArtisan Component - Showcases a featured artisan
@@ -58,14 +58,14 @@ const FeaturedArtisan = () => {
         {/* Artisan Story */}
         <div className="flex flex-col gap-4 text-center md:text-left md:w-1/2">
           <div className="mb-2">
-            <span className="inline-block bg-[#A4604F] text-white px-3 py-1 rounded-full text-sm font-medium mb-3">
+            <span className="inline-block bg-[var(--primary-color)] text-white px-3 py-1 rounded-full text-sm font-medium mb-3">
               {featuredArtisan.craft}
             </span>
           </div>
           <h3 className="text-3xl font-bold text-primary mb-2">
             {featuredArtisan.name}
           </h3>
-          <p className="text-[#A4604F] font-medium mb-4">
+          <p className="text-[var(--secondary-color)] font-medium mb-4">
             {featuredArtisan.title} • {featuredArtisan.location}
           </p>
           <p className="text-lg text-secondary leading-relaxed mb-6">
