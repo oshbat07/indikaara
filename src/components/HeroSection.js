@@ -71,12 +71,13 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative w-screen bg-[#1a1a1a] overflow-hidden hero-carousel mt-16 md:mt-20 lg:mt-24 xl:mt-28">
-      {/* NEW ARRIVALS Header */}
-      <div className="absolute top-6 md:top-8 left-0 right-0 z-30 text-center"></div>
+    <div className="pt-6 mt-20 md:mt-24 lg:mt-28 xl:mt-32">
+      <section className="relative w-screen bg-[#1a1a1a] overflow-hidden hero-carousel">
+        {/* NEW ARRIVALS Header */}
+        <div className="absolute top-6 md:top-8 left-0 right-0 z-30 text-center"></div>
 
-      {/* Carousel Container */}
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] overflow-hidden w-full">
+        {/* Carousel Container */}
+        <div className="relative h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px] overflow-hidden w-full">
         {/* Slides */}
         <div
           className="flex transition-transform duration-700 ease-in-out h-full hero-slide"
@@ -183,6 +184,7 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

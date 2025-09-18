@@ -37,6 +37,12 @@ const Footer = () => {
                 Artisans
               </Link>
               <Link
+                to="/foundation"
+                className="block text-text-secondary hover:text-primary text-sm transition-colors"
+              >
+                Foundation
+              </Link>
+              <Link
                 to="/blog"
                 className="block text-text-secondary hover:text-primary text-sm transition-colors"
               >
