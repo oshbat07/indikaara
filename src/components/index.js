@@ -14,3 +14,5 @@ export { default as ProductCard } from './ProductCard';
 export { default as ImageGallery } from './ImageGallery';
 export { default as Breadcrumb } from './Breadcrumb';
 export { default as ProductInfoSection } from './ProductInfoSection';
+export { default as EnquiryButton } from './EnquiryButton';
+export { default as ContactModal } from './ContactModal';

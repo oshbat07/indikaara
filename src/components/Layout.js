@@ -1,10 +1,11 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import EnquiryButton from "./EnquiryButton";
 
 /**
  * Layout Component - Main layout wrapper for all pages
- * Features: Header, main content area, and footer
+ * Features: Header, main content area, footer, and sticky enquiry button
  * @param {React.ReactNode} children - Page content to render
  */
 const Layout = ({ children }) => {
@@ -20,6 +21,9 @@ const Layout = ({ children }) => {
         {/* Footer */}
         <Footer />
       </div>
+      
+      {/* Sticky Enquiry Button */}
+      <EnquiryButton />
     </div>
   );
 };
