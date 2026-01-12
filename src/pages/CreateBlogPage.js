@@ -27,29 +27,83 @@ const CreateBlogPage = () => {
   });
   const [errors, setErrors] = useState({});
 
-  // Quill editor modules configuration
+  // Quill editor modules configuration - Industry standard setup
   const quillModules = useMemo(() => ({
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      [{ 'font': [] }],
-      [{ 'size': [] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ],
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        [{ 'font': [] }],
+        [{ 'size': ['small', false, 'large', 'huge'] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'align': [] }],
+        ['blockquote', 'code-block'],
+        ['link', 'image', 'video'],
+        ['clean']
+      ],
+      handlers: {
+        image: function() {
+          const tooltip = this.quill.theme.tooltip;
+          const originalHide = tooltip.hide;
+          
+          tooltip.save = function() {
+            const range = this.quill.getSelection(true);
+            const value = this.textbox.value;
+            if (value) {
+              // Validate URL
+              if (value.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) || value.startsWith('http://') || value.startsWith('https://')) {
+                this.quill.insertEmbed(range.index, 'image', value, 'user');
+              } else {
+                alert('Please enter a valid image URL');
+                return;
+              }
+            }
+            tooltip.hide();
+          };
+          tooltip.hide = originalHide;
+          tooltip.edit('image');
+          tooltip.textbox.placeholder = 'Enter image URL';
+        }
+      }
+    },
+    clipboard: {
+      matchVisual: false
+    },
+    keyboard: {
+      bindings: {
+        tab: {
+          key: 9,
+          handler: function() {
+            return true; // Allow tab to work normally
+          }
+        }
+      }
+    }
   }), []);
 
   const quillFormats = [
     'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background', 'script',
     'list', 'bullet', 'indent',
-    'color', 'background',
-    'align',
-    'link', 'image'
+    'direction', 'align',
+    'blockquote', 'code-block',
+    'link', 'image', 'video'
   ];
+
+  // Calculate word and character count
+  const contentStats = useMemo(() => {
+    const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
+    const words = textContent.split(/\s+/).filter(word => word.length > 0);
+    return {
+      characters: textContent.length,
+      words: words.length,
+      charactersNoSpaces: textContent.replace(/\s/g, '').length
+    };
+  }, [formData.content]);
 
   // Cleanup image preview URL on unmount
   React.useEffect(() => {
@@ -335,17 +389,21 @@ const CreateBlogPage = () => {
               placeholder="Write your blog content here. Use the toolbar to format your text."
             />
           </div>
-          <div className="flex justify-between mt-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-2">
+            <div className="flex flex-wrap gap-4 text-sm text-[var(--text-secondary)]">
+              <span>{contentStats.words} {contentStats.words === 1 ? 'word' : 'words'}</span>
+              <span>{contentStats.characters.toLocaleString()} characters</span>
+              <span>{contentStats.charactersNoSpaces.toLocaleString()} characters (no spaces)</span>
+            </div>
             {errors.content && (
               <p className="text-sm text-red-400">{errors.content}</p>
             )}
-            <p className="text-sm text-[var(--text-secondary)] ml-auto">
-              {formData.content.replace(/<[^>]*>/g, '').length} characters
+          </div>
+          <div className="mt-2 text-sm text-[var(--text-secondary)]">
+            <p className="mb-1">
+              Use the toolbar to format your content. Keyboard shortcuts: <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+B</kbd> Bold, <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+I</kbd> Italic, <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+K</kbd> Link
             </p>
           </div>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            Use the toolbar above to format your content with headings, lists, links, and more.
-          </p>
         </div>
 
         {/* Submit Buttons */}
