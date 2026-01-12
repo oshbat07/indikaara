@@ -5,7 +5,6 @@ import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import "./styles/globals.css";
 import ScrollToTop from "./utils/scrollToTop";
 import axiosClient from "./api/axiosClient";
@@ -108,40 +107,12 @@ function App() {
                 {/* Blog Routes */}
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogDetailPage />} />
-                <Route
-                  path="/blog/create"
-                  element={
-                    <AdminProtectedRoute>
-                      <CreateBlogPage />
-                    </AdminProtectedRoute>
-                  }
-                />
+                <Route path="/blog/create" element={<CreateBlogPage />} />
                 
                 {/* Admin Blog Routes */}
-                <Route
-                  path="/blog/admin"
-                  element={
-                    <AdminProtectedRoute>
-                      <AdminBlogPage />
-                    </AdminProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/blog/admin/edit/:id"
-                  element={
-                    <AdminProtectedRoute>
-                      <EditBlogPage />
-                    </AdminProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/blog/admin/comments"
-                  element={
-                    <AdminProtectedRoute>
-                      <CommentModerationPage />
-                    </AdminProtectedRoute>
-                  }
-                />
+                <Route path="/blog/admin" element={<AdminBlogPage />} />
+                <Route path="/blog/admin/edit/:id" element={<EditBlogPage />} />
+                <Route path="/blog/admin/comments" element={<CommentModerationPage />} />
 
                 {/* Support & Legal Pages */}
                 <Route path="/faq" element={<FAQPage />} />

@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import '../styles/blog.css';
+import '../styles/quill-editor.css';
 import { createBlogPost } from '../api/blogApi';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,11 +14,10 @@ import { useAuth } from '../context/AuthContext';
  */
 const CreateBlogPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, token, user } = useAuth();
+  const { token } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [isDragOver, setIsDragOver] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -24,17 +26,30 @@ const CreateBlogPage = () => {
     tags: '',
   });
   const [errors, setErrors] = useState({});
-  
-  // Check if user is admin
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/blog/create' } });
-    } else if (user && !user.isAdmin) {
-      // User is authenticated but not admin
-      setError('You need admin privileges to create blog posts.');
-    }
-  }, [isAuthenticated, user, navigate]);
 
+  // Quill editor modules configuration
+  const quillModules = useMemo(() => ({
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': [] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  }), []);
+
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'color', 'background',
+    'align',
+    'link', 'image'
+  ];
 
   // Cleanup image preview URL on unmount
   React.useEffect(() => {
@@ -84,6 +99,21 @@ const CreateBlogPage = () => {
     }));
   };
 
+  const handleContentChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      content: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors.content) {
+      setErrors(prev => ({
+        ...prev,
+        content: ''
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -91,7 +121,9 @@ const CreateBlogPage = () => {
       newErrors.title = 'Title is required';
     }
 
-    if (!formData.content.trim()) {
+    // Check if content has actual text (not just HTML tags)
+    const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
+    if (!textContent) {
       newErrors.content = 'Content is required';
     }
 
@@ -122,9 +154,10 @@ const CreateBlogPage = () => {
         : [];
 
       // Prepare post data
+      // formData.content is already HTML from Quill editor
       const postData = {
         title: formData.title.trim(),
-        content: formData.content.trim(),
+        content: formData.content.trim(), // This is HTML from Quill
       };
 
       if (formData.excerpt.trim()) {
@@ -151,45 +184,6 @@ const CreateBlogPage = () => {
       setLoading(false);
     }
   };
-
-  // Show authentication/authorization required message
-  if (!isAuthenticated || (user && !user.isAdmin)) {
-    return (
-      <main className="container mx-auto max-w-4xl px-4 py-8 pt-24">
-        <div className="text-center py-12">
-          <div className="mb-8">
-            <svg className="w-16 h-16 mx-auto text-[var(--text-secondary)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-3">
-              {!isAuthenticated ? 'Authentication Required' : 'Admin Access Required'}
-            </h2>
-            <p className="text-[var(--text-secondary)] text-lg mb-6">
-              {error || (!isAuthenticated 
-                ? 'You need to sign in to create blog posts.'
-                : 'You need admin privileges to create blog posts.')}
-            </p>
-            <div className="flex gap-4 justify-center">
-              {!isAuthenticated && (
-                <Link 
-                  to="/login"
-                  className="px-6 py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--secondary-color)] transition-colors"
-                >
-                  Sign In
-                </Link>
-              )}
-              <Link 
-                to="/blog"
-                className="px-6 py-3 bg-[#2a2a2a] text-[var(--text-primary)] rounded-lg hover:bg-[#3a3a3a] transition-colors"
-              >
-                Back to Blog
-              </Link>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="container mx-auto max-w-4xl px-4 py-8 pt-24">
@@ -331,27 +325,26 @@ const CreateBlogPage = () => {
           <label htmlFor="content" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
             Content *
           </label>
-          <textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleInputChange}
-            rows={20}
-            placeholder="Write your blog content here. You can use HTML tags for formatting."
-            className={`w-full p-4 bg-[#2a2a2a] border rounded-lg text-[var(--text-primary)] placeholder-gray-400 focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors resize-y ${
-              errors.content ? 'border-red-500' : 'border-gray-600'
-            }`}
-          />
+          <div className={`quill-editor-container ${errors.content ? 'error' : ''}`}>
+            <ReactQuill
+              theme="snow"
+              value={formData.content}
+              onChange={handleContentChange}
+              modules={quillModules}
+              formats={quillFormats}
+              placeholder="Write your blog content here. Use the toolbar to format your text."
+            />
+          </div>
           <div className="flex justify-between mt-2">
             {errors.content && (
               <p className="text-sm text-red-400">{errors.content}</p>
             )}
             <p className="text-sm text-[var(--text-secondary)] ml-auto">
-              {formData.content.length} characters
+              {formData.content.replace(/<[^>]*>/g, '').length} characters
             </p>
           </div>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            Tip: You can use basic HTML tags like &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; for formatting.
+            Use the toolbar above to format your content with headings, lists, links, and more.
           </p>
         </div>
 

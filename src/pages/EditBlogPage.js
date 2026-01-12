@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import '../styles/blog.css';
+import '../styles/quill-editor.css';
 import { getAdminPostById, updateBlogPost } from '../api/blogApi';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +23,30 @@ const EditBlogPage = () => {
     tags: '',
   });
   const [errors, setErrors] = useState({});
+
+  // Quill editor modules configuration
+  const quillModules = useMemo(() => ({
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': [] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  }), []);
+
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'color', 'background',
+    'align',
+    'link', 'image'
+  ];
 
   useEffect(() => {
     if (token && id) {
@@ -89,6 +116,20 @@ const EditBlogPage = () => {
     }));
   };
 
+  const handleContentChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      content: value
+    }));
+
+    if (errors.content) {
+      setErrors(prev => ({
+        ...prev,
+        content: ''
+      }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -96,7 +137,9 @@ const EditBlogPage = () => {
       newErrors.title = 'Title is required';
     }
 
-    if (!formData.content.trim()) {
+    // Check if content has actual text (not just HTML tags)
+    const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
+    if (!textContent) {
       newErrors.content = 'Content is required';
     }
 
@@ -119,9 +162,10 @@ const EditBlogPage = () => {
         ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : [];
 
+      // formData.content is already HTML from Quill editor
       const postData = {
         title: formData.title.trim(),
-        content: formData.content.trim(),
+        content: formData.content.trim(), // This is HTML from Quill
       };
 
       if (formData.excerpt.trim()) {
@@ -301,20 +345,27 @@ const EditBlogPage = () => {
           <label htmlFor="content" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
             Content *
           </label>
-          <textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleInputChange}
-            rows={20}
-            placeholder="Write your blog content here. You can use HTML tags for formatting."
-            className={`w-full p-4 bg-[#2a2a2a] border rounded-lg text-[var(--text-primary)] placeholder-gray-400 focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors resize-y ${
-              errors.content ? 'border-red-500' : 'border-gray-600'
-            }`}
-          />
-          {errors.content && (
-            <p className="mt-2 text-sm text-red-400">{errors.content}</p>
-          )}
+          <div className={`quill-editor-container ${errors.content ? 'error' : ''}`}>
+            <ReactQuill
+              theme="snow"
+              value={formData.content}
+              onChange={handleContentChange}
+              modules={quillModules}
+              formats={quillFormats}
+              placeholder="Write your blog content here. Use the toolbar to format your text."
+            />
+          </div>
+          <div className="flex justify-between mt-2">
+            {errors.content && (
+              <p className="text-sm text-red-400">{errors.content}</p>
+            )}
+            <p className="text-sm text-[var(--text-secondary)] ml-auto">
+              {formData.content.replace(/<[^>]*>/g, '').length} characters
+            </p>
+          </div>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            Use the toolbar above to format your content with headings, lists, links, and more.
+          </p>
         </div>
 
         {/* Submit Buttons */}
