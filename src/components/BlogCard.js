@@ -8,18 +8,28 @@ import { Link } from 'react-router-dom';
  */
 const BlogCard = ({ blog, featured = false }) => {
   const {
-    id,
+    _id,
+    slug,
     title,
     excerpt,
-    author,
-    category,
-    tags,
+    coverImage,
+    tags = [],
     publishedAt,
-    readTime,
-    image,
-    likes,
-    comments
+    createdAt,
   } = blog;
+  
+  // Use slug for URL, fallback to _id
+  const blogId = slug || _id;
+  
+  // Default values for missing fields
+  const image = coverImage || "/api/placeholder/400/300";
+  const author = {
+    name: "Indikaara Team",
+    avatar: "/api/placeholder/40/40",
+  };
+  
+  // Calculate read time from content length (if available)
+  const readTime = 5; // Default, can be calculated from content if needed
 
   // Format date
   const formatDate = (dateString) => {
@@ -31,21 +41,10 @@ const BlogCard = ({ blog, featured = false }) => {
     });
   };
 
-  // Get category color
-  const getCategoryColor = (category) => {
-    const colors = {
-      'Crafts': 'bg-teal-500',
-      'Textiles': 'bg-purple-500',
-      'Sustainability': 'bg-teal-500',
-      'Culture': 'bg-orange-500',
-      'Artists': 'bg-pink-500'
-    };
-    return colors[category] || 'bg-gray-500';
-  };
 
   return (
     <article className={`group cursor-pointer ${featured ? 'md:col-span-1' : ''}`}>
-      <Link to={`/blog/${id}`} className="block">
+      <Link to={`/blog/${blogId}`} className="block">
         <div className="bg-[#2a2a2a] border border-gray-700 rounded-xl overflow-hidden hover:border-[var(--primary-color)] transition-all duration-300 hover:shadow-lg hover:shadow-[var(--primary-color)]/20">
           {/* Blog Image */}
           <div className="relative overflow-hidden">
@@ -55,12 +54,14 @@ const BlogCard = ({ blog, featured = false }) => {
               role="img"
               aria-label={title}
             >
-              {/* Category Badge */}
-              <div className="absolute top-4 left-4">
-                <span className={`inline-flex items-center px-3 py-1 text-xs font-medium text-white rounded-full ${getCategoryColor(category)}`}>
-                  {category}
-                </span>
-              </div>
+              {/* Tags Badge */}
+              {tags.length > 0 && (
+                <div className="absolute top-4 left-4">
+                  <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-white rounded-full bg-[var(--primary-color)]">
+                    {tags[0]}
+                  </span>
+                </div>
+              )}
 
               {/* Featured Badge */}
               {featured && (
@@ -124,20 +125,12 @@ const BlogCard = ({ blog, featured = false }) => {
               </div>
             </div>
 
-            {/* Engagement Stats */}
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-700">
-              <div className="flex items-center gap-1 text-[var(--text-secondary)] text-sm">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                <span>{likes}</span>
-              </div>
-              <div className="flex items-center gap-1 text-[var(--text-secondary)] text-sm">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-                <span>{comments}</span>
-              </div>
+            {/* Published Date */}
+            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-700 text-[var(--text-secondary)] text-sm">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>{formatDate(publishedAt || createdAt)}</span>
             </div>
           </div>
         </div>

@@ -1,97 +1,73 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import BlogCard from "../components/BlogCard";
 import "../styles/blog.css";
-import BlogImage from "../assets/blogs/blog-1.png";
+import { getPublishedPosts, getPublishedTags } from "../api/blogApi";
 
 /**
  * BlogPage Component - Main blog listing page
- * Features: Blog post listing, search, categories, pagination
- * Ready for API integration
+ * Features: Blog post listing, search, tag filtering, sorting
  */
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Set to true for demo - Will be updated when auth is integrated
+  const [selectedTag, setSelectedTag] = useState("");
+  const [sort, setSort] = useState("newest");
 
-  // Mock data - Replace with API call later
-  const mockBlogs = [
-    {
-      id: 1,
-      title: "Understanding Indian Handcrafted Rugs: A Buyer’s Guide",
-      excerpt:
-        "Handcrafted rugs are created knot by knot or weave by weave, guided by the artisan’s eye and experience. ",
-      content: "Full blog content here...",
-      author: {
-        name: "Shradha Sharma",
-        avatar: "",
-        bio: "Fashion Blogger from YourStory",
-      },
-      category: "Rugs",
-      tags: ["Luxury Living", "The_Craft", "handmade"],
-      publishedAt: "2025-08-15",
-      readTime: 5,
-      image: BlogImage,
-      likes: 121,
-      comments: 5,
-      featured: true,
-    },
-  ];
-  // const mockBlogs = [];
-  const categories = [
-    "all",
-    "Crafts",
-    "Textiles",
-    "Sustainability",
-    "Culture",
-    "Artists",
-  ];
-
-  // Simulate API call
+  // Fetch published posts and tags
   useEffect(() => {
-    // TODO: Replace with actual API call
-    // fetchBlogs();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch posts with search and tag filters
+        const params = {
+          sort,
+        };
+        if (searchTerm) params.q = searchTerm;
+        if (selectedTag) params.tag = selectedTag;
+        
+        const [postsData, tagsData] = await Promise.all([
+          getPublishedPosts(params),
+          getPublishedTags(),
+        ]);
+        
+        setBlogs(postsData.posts || []);
+        setTags(tagsData.tags || []);
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+        setError(err.response?.data?.message || "Failed to load blog posts");
+        setBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchData();
+  }, [searchTerm, selectedTag, sort]);
+
+  // Debounced search - update searchTerm after user stops typing
+  useEffect(() => {
     const timer = setTimeout(() => {
-      setBlogs(mockBlogs);
-      setLoading(false);
-    }, 1000);
+      // Search is handled by API, so we just need to trigger refetch
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [searchTerm]);
 
-  // TODO: Implement actual API call
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      // const response = await fetch('/api/blogs');
-      // const data = await response.json();
-      // setBlogs(data);
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-    } finally {
-      setLoading(false);
-    }
+  // Handle search input with debounce
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
-  // Filter blogs based on search and category
-  const filteredBlogs = blogs.filter((blog) => {
-    const matchesSearch =
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    const matchesCategory =
-      selectedCategory === "all" || blog.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  // Get featured blogs
-  const featuredBlogs = blogs.filter((blog) => blog.featured);
+  // Handle tag filter
+  const handleTagClick = (tag) => {
+    setSelectedTag(selectedTag === tag ? "" : tag);
+  };
 
   if (loading) {
     return (
@@ -191,42 +167,74 @@ const BlogPage = () => {
             type="text"
             placeholder="Search blog posts..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="block w-full pl-10 pr-3 py-3 text-sm bg-[#2a2a2a] border border-gray-600 placeholder-gray-400 text-[var(--text-primary)] rounded-lg focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-colors"
           />
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === category
-                  ? "bg-[var(--primary-color)] text-white"
-                  : "bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              {category === "all" ? "All" : category}
-            </button>
-          ))}
+        {/* Tag Filter and Sort */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          {/* Tags */}
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedTag("")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  !selectedTag
+                    ? "bg-[var(--primary-color)] text-white"
+                    : "bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a] hover:text-[var(--text-primary)]"
+                }`}
+              >
+                All
+              </button>
+              {tags.slice(0, 10).map((tagObj) => (
+                <button
+                  key={tagObj.tag}
+                  onClick={() => handleTagClick(tagObj.tag)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedTag === tagObj.tag
+                      ? "bg-[var(--primary-color)] text-white"
+                      : "bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  {tagObj.tag} ({tagObj.count})
+                </button>
+              ))}
+            </div>
+          )}
+          
+          {/* Sort */}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="px-4 py-2 bg-[#2a2a2a] border border-gray-600 rounded-lg text-[var(--text-primary)] text-sm focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-colors"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
         </div>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400">
+          {error}
+        </div>
+      )}
 
       {/* Blog Grid */}
       <section>
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-            {searchTerm || selectedCategory !== "all"
-              ? `${filteredBlogs.length} ${
-                  filteredBlogs.length === 1 ? "post" : "posts"
+            {searchTerm || selectedTag
+              ? `${blogs.length} ${
+                  blogs.length === 1 ? "post" : "posts"
                 } found`
               : "Latest Posts"}
           </h2>
         </div>
 
-        {filteredBlogs.length === 0 ? (
+        {blogs.length === 0 && !loading ? (
           <div className="text-center py-12">
             <svg
               className="w-16 h-16 mx-auto text-[var(--text-secondary)] mb-4"
@@ -245,13 +253,15 @@ const BlogPage = () => {
               No posts found
             </h3>
             <p className="text-[var(--text-secondary)]">
-              Try adjusting your search or filter criteria.
+              {searchTerm || selectedTag
+                ? "Try adjusting your search or filter criteria."
+                : "No blog posts have been published yet."}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {filteredBlogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+            {blogs.map((blog) => (
+              <BlogCard key={blog._id} blog={blog} />
             ))}
           </div>
         )}

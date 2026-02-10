@@ -23,6 +23,9 @@ const WishlistPage = lazy(() => import("./pages/WishlistPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 const CreateBlogPage = lazy(() => import("./pages/CreateBlogPage"));
+const AdminBlogPage = lazy(() => import("./pages/AdminBlogPage"));
+const EditBlogPage = lazy(() => import("./pages/EditBlogPage"));
+const CommentModerationPage = lazy(() => import("./pages/CommentModerationPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
@@ -105,6 +108,11 @@ function App() {
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogDetailPage />} />
                 <Route path="/blog/create" element={<CreateBlogPage />} />
+                
+                {/* Admin Blog Routes */}
+                <Route path="/blog/admin" element={<AdminBlogPage />} />
+                <Route path="/blog/admin/edit/:id" element={<EditBlogPage />} />
+                <Route path="/blog/admin/comments" element={<CommentModerationPage />} />
 
                 {/* Support & Legal Pages */}
                 <Route path="/faq" element={<FAQPage />} />
