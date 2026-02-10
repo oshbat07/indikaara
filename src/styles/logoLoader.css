@@ -13,7 +13,7 @@
 }
 
 .logo-loader__image {
-  animation: logo-spin 1.2s linear infinite;
+  animation: logo-spin 2s linear infinite;
 }
 
 @keyframes logo-spin {

@@ -2,11 +2,7 @@ import React from "react";
 import "./OfferBanner.css";
 
 // Fixed top announcement bar with continuous scrolling text (marquee-style)
-const messages = [
-  "Christmas Offer!! 10% Off on First Order",
-  "Easy returns",
-  "Handcrafted • Authentic • Ethical",
-];
+const messages = ["Easy returns", "Handcrafted • Authentic • Ethical"];
 
 const OfferBanner = () => {
   return (

@@ -1,7 +1,7 @@
 import logo from "../assets/logo1.png"; // ⬅️ change path to your logo
 import "../styles/logoLoader.css";
 
-const LogoLoader = ({ width = 150, height = 150 }) => {
+const LogoLoader = ({ width = 80, height = 80 }) => {
   return (
     <div className="logo-loader">
       <img
