@@ -61,8 +61,17 @@ const ProductCard = ({ product, onClick }) => {
     // Handle new price structure with multiple sizes
     if (product.category === "Rugs") {
       return <span className="border-5">Price on Request</span>;
-    } else {
+    } else if (
+      product.price &&
+      Array.isArray(product.price) &&
+      product.price.length > 0 &&
+      product.price[0]?.amount
+    ) {
       return formatPrice(product.price[0].amount);
+    } else if (product.price && typeof product.price === "number") {
+      return formatPrice(product.price);
+    } else {
+      return <span>Price unavailable</span>;
     }
   };
 
@@ -111,7 +120,7 @@ const ProductCard = ({ product, onClick }) => {
             {Math.round(
               ((product.originalPrice - product.price) /
                 product.originalPrice) *
-                100
+                100,
             )}
             % OFF
           </div>
