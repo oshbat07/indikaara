@@ -58,18 +58,25 @@ const ProductCard = ({ product, onClick }) => {
 
   // Display price or price range
   const displayPrice = () => {
-    // Handle new price structure with multiple sizes
-    if (product.category === "Rugs") {
-      return <span className="border-5">Price on Request</span>;
-    } else if (
-      product.price &&
-      Array.isArray(product.price) &&
-      product.price.length > 0 &&
-      product.price[0]?.amount
-    ) {
-      return formatPrice(product.price[0].amount);
-    } else if (product.price && typeof product.price === "number") {
-      return formatPrice(product.price);
+    console.log("Product price:", product);
+    if (product?.price) {
+      // Handle new price array structure [{size, price}]
+      let actualPrice;
+      if (Array.isArray(product.price) && product.price.length > 0) {
+        actualPrice = product.price[0].price;
+      } else if (typeof product.price === "number") {
+        // Backward compatibility for numeric price
+        actualPrice = product.price;
+      } else {
+        return <span>Price unavailable</span>;
+      }
+
+      const priceFormatted = formatPrice(actualPrice);
+      // Display price with "per sq ft" suffix for Rugs
+      if (product.category === "Rugs") {
+        return `${priceFormatted} / sq ft`;
+      }
+      return priceFormatted;
     } else {
       return <span>Price unavailable</span>;
     }
@@ -136,7 +143,7 @@ const ProductCard = ({ product, onClick }) => {
 
       {/* Product Info */}
       <div className="p-2 space-y-2">
-        <p className="text-primary text-base font-semibold mb-1 line-clamp-2">
+        <p className="text-primary text-xl font-semibold mb-1 line-clamp-2">
           {product.name}
         </p>
 
@@ -155,7 +162,7 @@ const ProductCard = ({ product, onClick }) => {
         {/* Category*/}
         <div className="flex flex-wrap gap-1 text-xs">
           <span className="px-2 py-1 bg-primary/10 text-primary rounded-md">
-            {product.category}
+            {product.collection}
           </span>
         </div>
       </div>

@@ -42,9 +42,16 @@ const LoginPage = () => {
         if (result.success) {
           setTimeout(
             () => setGoogleUserProfile(null),
-            GOOGLE_PROFILE_CLEAR_DELAY
+            GOOGLE_PROFILE_CLEAR_DELAY,
           );
-          navigate("/dashboard");
+          // Check for redirect path after login
+          const redirectPath = localStorage.getItem("redirect_after_login");
+          if (redirectPath) {
+            localStorage.removeItem("redirect_after_login");
+            navigate(redirectPath);
+          } else {
+            navigate("/dashboard");
+          }
         } else {
           setError(result.error);
         }
@@ -55,7 +62,7 @@ const LoginPage = () => {
         setLoading(false);
       }
     },
-    [googleLogin, navigate]
+    [googleLogin, navigate],
   );
 
   const handleSubmit = async (e) => {
@@ -80,7 +87,14 @@ const LoginPage = () => {
       : await register(userName, email, password);
 
     if (result.success) {
-      navigate("/dashboard");
+      // Check for redirect path after login
+      const redirectPath = localStorage.getItem("redirect_after_login");
+      if (redirectPath) {
+        localStorage.removeItem("redirect_after_login");
+        navigate(redirectPath);
+      } else {
+        navigate("/dashboard");
+      }
     } else {
       setError(result.error);
     }
@@ -107,7 +121,7 @@ const LoginPage = () => {
           size: "large",
           text: "signin_with",
           shape: "rectangular",
-        }
+        },
       );
     }
   }, [location.pathname, handleGoogleSuccess]);

@@ -14,10 +14,7 @@ const CART_ACTIONS = {
 
 // Helper: compute minimum quantity based on product category
 const getMinQtyFromCategory = (category) => {
-  if (!category) return 1;
-  const cat = String(category).toLowerCase();
-  if (/\brug\b|\brugs\b/.test(cat)) return 25;
-  // Home Decor, handicraft, and most others default to 1
+  // All products have minimum quantity of 1
   return 1;
 };
 
@@ -29,7 +26,7 @@ const cartReducer = (state, action) => {
       const addQty = Math.max(1, action.payload.quantity || 1);
       const requestedQty = Math.max(min, addQty);
       const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
+        (item) => item.id === action.payload.id,
       );
 
       if (existingItem) {
@@ -41,7 +38,7 @@ const cartReducer = (state, action) => {
                   ...item,
                   quantity: item.quantity,
                 }
-              : item
+              : item,
           ),
         };
       }
@@ -117,7 +114,7 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem(
       "indikaara-cart",
-      JSON.stringify({ items: state.items })
+      JSON.stringify({ items: state.items }),
     );
     try {
       window.dispatchEvent(new Event("cartUpdated"));
@@ -150,7 +147,7 @@ export const CartProvider = ({ children }) => {
   // Calculate totals
   const subtotal = state.items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
   // Shipping and tax are not applied; order total equals items subtotal
   const shipping = 0;
@@ -159,7 +156,7 @@ export const CartProvider = ({ children }) => {
 
   const itemCount = state.items.reduce(
     (count, item) => count + item.quantity,
-    0
+    0,
   );
 
   // Cart actions

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
 const AddressPage = () => {
   const navigate = useNavigate();
   const { items, clearCart } = useCart();
+  const { user } = useAuth();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [formData, setFormData] = useState({
@@ -22,6 +24,14 @@ const AddressPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  // Check if user is authenticated, redirect to login if not
+  React.useEffect(() => {
+    if (!user) {
+      localStorage.setItem("redirect_after_login", "/address");
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   const indianStates = [
     "Andhra Pradesh",
@@ -125,11 +135,48 @@ const AddressPage = () => {
       setOrderError("");
 
       try {
-        // Transform cart items to required format
-        const orderProducts = items.map((item) => ({
-          product: item._id, // MongoDB _id of the product
-          quantity: item.quantity,
-        }));
+        // Transform cart items to required format with price information
+        const orderProducts = items.map((item) => {
+          // Ensure price is always a valid number
+          const itemPrice = parseFloat(item.price) || 0;
+          const itemQuantity = parseInt(item.quantity) || 1;
+          const itemTotalPrice = itemPrice * itemQuantity;
+
+          return {
+            product: item._id || item.id, // MongoDB _id of the product
+            quantity: itemQuantity,
+            price: Math.round(itemPrice), // Ensure it's a valid integer
+            totalPrice: Math.round(itemTotalPrice), // Ensure it's a valid integer
+          };
+        });
+
+        // Validate that we have products
+        if (orderProducts.length === 0) {
+          setOrderError(
+            "Cart is empty. Please add products before creating an order.",
+          );
+          setIsCreatingOrder(false);
+          return;
+        }
+
+        // Validate all prices are numbers
+        const hasInvalidPrice = orderProducts.some(
+          (p) => isNaN(p.price) || isNaN(p.totalPrice) || p.price < 0,
+        );
+        if (hasInvalidPrice) {
+          console.error("Invalid prices found:", orderProducts);
+          setOrderError(
+            "Invalid product prices. Please go back to cart and try again.",
+          );
+          setIsCreatingOrder(false);
+          return;
+        }
+
+        // Calculate total price for the order
+        const totalOrderPrice = orderProducts.reduce(
+          (sum, item) => sum + (item.totalPrice || 0),
+          0,
+        );
 
         // Create order payload
         const orderPayload = {
@@ -145,12 +192,19 @@ const AddressPage = () => {
             email: formData.email,
             additionalInfo: formData.additionalInfo,
           },
+          totalPrice: totalOrderPrice,
         };
+
+        // Debug logging
+        console.log(
+          "Order payload being sent:",
+          JSON.stringify(orderPayload, null, 2),
+        );
 
         // Call the create-pending order API
         const response = await axios.post(
           "/api/orders/create-pending",
-          orderPayload
+          orderPayload,
         );
         const { txnid, order } = response.data;
 
@@ -161,7 +215,7 @@ const AddressPage = () => {
           JSON.stringify({
             txnid,
             totalPrice: order.totalPrice,
-          })
+          }),
         );
 
         // Clear the cart as we've created a new pending order
@@ -180,9 +234,12 @@ const AddressPage = () => {
         });
       } catch (error) {
         console.error("Error creating order:", error);
+        console.error("Error details:", error.response?.data);
+
         setOrderError(
           error.response?.data?.message ||
-            "Failed to create order. Please try again."
+            error.message ||
+            "Failed to create order. Please try again.",
         );
       } finally {
         setIsCreatingOrder(false);

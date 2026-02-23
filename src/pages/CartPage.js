@@ -1,12 +1,26 @@
 import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 /**
  * CartPage Component - Shopping cart page with items and summary
  */
 const CartPage = () => {
   const { items, itemCount, total, updateQuantity, removeFromCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Handle checkout with authentication check
+  const handleProceedToCheckout = () => {
+    if (!user) {
+      // Store the intended redirect path
+      localStorage.setItem("redirect_after_login", "/address");
+      navigate("/login");
+      return;
+    }
+    navigate("/address");
+  };
 
   // Handle quantity change
   const MIN_QTY = 1;
@@ -28,7 +42,7 @@ const CartPage = () => {
   // Determine if any rugs are in cart
   const hasRugs = useMemo(
     () => items.some((i) => (i.category || "").toLowerCase() === "rugs"),
-    [items]
+    [items],
   );
 
   if (items.length === 0) {
@@ -352,29 +366,45 @@ const CartPage = () => {
                 Order Summary
               </h2>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 font-medium">Order Total</span>
+                  <span className="text-gray-600 font-medium">Subtotal</span>
                   <span className="text-gray-900 font-bold">
-                    {hasRugs ? (
-                      <span className="text-gray-500 italic">—</span>
-                    ) : (
-                      formatCurrency(total)
-                    )}
+                    {formatCurrency(total)}
                   </span>
                 </div>
 
-                {hasRugs && (
-                  <div className="text-[11px] leading-relaxed text-gray-600 bg-gray-50 border border-gray-300 rounded-md p-3 font-medium">
-                    One or more Rug items require a custom quotation. Order
-                    total will be provided after enquiry.
+                <div className="border-t border-gray-300 pt-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-900 font-bold text-lg">
+                      Total Amount
+                    </span>
+                    <span className="text-[#ac1f23] font-bold text-lg">
+                      {formatCurrency(total)}
+                    </span>
                   </div>
-                )}
+                </div>
               </div>
 
               <div className="mt-8 space-y-4">
                 {/* Enquiry + Payment Actions */}
                 <div className="flex flex-col gap-3">
+                  <button onClick={handleProceedToCheckout} className="w-full">
+                    <Button variant="primary" size="lg" className="w-full">
+                      {user ? "Proceed to Checkout" : "Login to Checkout"}
+                    </Button>
+                  </button>
+                  <div className="flex items-center gap-3 justify-center text-xs uppercase tracking-wider text-gray-600 font-semibold">
+                    <span
+                      className="flex-1 h-px bg-gray-300"
+                      aria-hidden="true"
+                    />
+                    <span>OR</span>
+                    <span
+                      className="flex-1 h-px bg-gray-300"
+                      aria-hidden="true"
+                    />
+                  </div>
                   <Link
                     to="/enquiry"
                     className="block"
@@ -384,33 +414,6 @@ const CartPage = () => {
                       Enquire Now
                     </Button>
                   </Link>
-                  {!hasRugs && (
-                    <>
-                      <div className="flex items-center gap-3 justify-center text-xs uppercase tracking-wider text-gray-600 font-semibold">
-                        <span
-                          className="flex-1 h-px bg-gray-300"
-                          aria-hidden="true"
-                        />
-                        <span>OR</span>
-                        <span
-                          className="flex-1 h-px bg-gray-300"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <Link to="/address" className="block">
-                        <Button variant="primary" size="lg" className="w-full">
-                          Proceed to Checkout
-                        </Button>
-                      </Link>
-                    </>
-                  )}
-                  {hasRugs && (
-                    <div className="text-xs text-gray-600 bg-gray-50 border border-gray-300 rounded-md p-3 leading-relaxed font-medium">
-                      Checkout / direct payment is disabled because your cart
-                      contains Rug items requiring a custom quotation. Please
-                      use "Enquire Now" to request pricing & shipping details.
-                    </div>
-                  )}
                   <Link to="/catalogue" className="block">
                     <Button variant="outline" size="lg" className="w-full">
                       Continue Shopping
