@@ -226,12 +226,12 @@ const FoundationPage = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
                 <img
-                  src={require("../assets/hero-vintage-1.png")}
+                  src={require("../assets/hero-1.jpg")}
                   alt="Upcycled Textile"
                   className="w-full h-48 object-cover rounded-lg"
                 />
                 <img
-                  src={require("../assets/hero-vintage-2.jpg")}
+                  src={require("../assets/hero-2.jpg")}
                   alt="Repurposed Metal Craft"
                   className="w-full h-32 object-cover rounded-lg"
                 />

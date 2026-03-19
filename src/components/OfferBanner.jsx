@@ -2,7 +2,16 @@ import React from "react";
 import "./OfferBanner.css";
 
 // Fixed top announcement bar with continuous scrolling text (marquee-style)
-const messages = ["Easy returns", "Handcrafted • Authentic • Ethical"];
+const messages = [
+  "Authentic Artisan Crafts",
+  "Heritage Preservation",
+  "Handmade Excellence",
+  "Cultural Legacy",
+  "Sustainable Craftsmanship",
+  "Traditional Techniques",
+  "Artisan Empowerment",
+  "Timeless Beauty",
+];
 
 const OfferBanner = () => {
   return (

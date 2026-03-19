@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import HeroImage1 from "../assets/hero-rugs-2.jpeg";
-import HeroImage2 from "../assets/hero-vintage-1.png";
-import HeroImage3 from "../assets/hero-vintage-2.jpg";
+import HeroImage1 from "../assets/hero-1.jpg";
+import HeroImage2 from "../assets/hero-2.jpg";
+import HeroImage3 from "../assets/hero-3.jpg";
 // import HeroImage4 from "../assets/hero-5.jpg";
 // import HeroImage5 from "../assets/";
 import "../styles/hero.css";
@@ -33,16 +33,6 @@ const HeroSection = () => {
       image: HeroImage3,
       cta: "Browse Vintage",
     },
-    // {
-    //   id: 4,
-    //   image: HeroImage4,
-    //   cta: "Browse Vintage Arts",
-    // },
-    // {
-    //   id: 5,
-    //   image: HeroImage4,
-    //   cta: "Browse Vintage Arts",
-    // },
   ];
 
   // Auto-play functionality
@@ -92,11 +82,11 @@ const HeroSection = () => {
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className="w-screen h-full flex-shrink-0 relative"
+              className="w-full h-full flex-shrink-0 relative"
             >
               {/* Background Image */}
               <div
-                className="absolute inset-0 bg-cover bg-center w-full h-full"
+                className="absolute inset-0 bg-contain bg-no-repeat bg-center w-full h-full"
                 style={{ backgroundImage: `url("${slide.image}")` }}
               />
 

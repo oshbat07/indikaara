@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
-import loginBackground from "../assets/hero-vintage-1.png";
-import { Button, Divider } from "@mui/material";
+import loginBackground from "../assets/hero-1.jpg";
 import Backdrop from "../components/Backdrop";
 
 const GOOGLE_PROFILE_CLEAR_DELAY = 2000;
