@@ -23,7 +23,8 @@ const CataloguePage = () => {
 
       const matchedCategory = allCategories.find(
         (cat) =>
-          cat?.toLowerCase().replace(/\s+/g, "") === categoryParam.toLowerCase()
+          cat?.toLowerCase().replace(/\s+/g, "") ===
+          categoryParam.toLowerCase(),
       );
 
       if (matchedCategory) setSelectedCategory(matchedCategory);
@@ -56,14 +57,14 @@ const CataloguePage = () => {
       result = result.filter(
         (p) =>
           p.name.toLowerCase().includes(term) ||
-          p.description?.toLowerCase().includes(term)
+          p.description?.toLowerCase().includes(term),
       );
     }
 
     // Category filter
     if (selectedCategory !== "All") {
       result = result.filter(
-        (p) => p.category?.replace(/_/g, " ") === selectedCategory
+        (p) => p.category?.replace(/_/g, " ") === selectedCategory,
       );
     }
 
@@ -232,18 +233,23 @@ const CataloguePage = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-        {filteredProducts.map((product) => (
-          <ProductCard
-            key={product._id}
-            product={{
-              ...product,
-              category: product.category,
-              storyTitle: product.name,
-              storyDescription: product.description,
-            }}
-            onClick={handleProductClick}
-          />
-        ))}
+        {filteredProducts.map(
+          (product) =>
+            Array.isArray(product.imageUrl) &&
+            product.imageUrl.length > 0 &&
+            product.imageUrl.every((item) => typeof item === "string") && (
+              <ProductCard
+                key={product._id}
+                product={{
+                  ...product,
+                  category: product.category,
+                  storyTitle: product.name,
+                  storyDescription: product.description,
+                }}
+                onClick={handleProductClick}
+              />
+            ),
+        )}
       </div>
 
       {/* No Results */}

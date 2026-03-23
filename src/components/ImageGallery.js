@@ -20,7 +20,7 @@ const ImageGallery = ({ images, productName }) => {
     images &&
     images.length > 0 &&
     typeof images[0] === "string" &&
-    images[0].startsWith("/assets/")
+    images[0].startsWith("https://")
   ) {
     // Images are already processed by dataService
     processedImages = images;
@@ -63,7 +63,6 @@ const ImageGallery = ({ images, productName }) => {
     swipe: true,
     lazyLoad: "ondemand",
   };
-
   return (
     <div className="relative">
       <div className="relative">

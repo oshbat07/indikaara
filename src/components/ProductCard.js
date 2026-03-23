@@ -23,23 +23,23 @@ const ProductCard = ({ product, onClick }) => {
   const getProductImage = () => {
     // Check for transformed data structure (images property)
     if (
-      product.images &&
-      Array.isArray(product.images) &&
-      product.images.length > 0
+      product.imageUrl &&
+      Array.isArray(product.imageUrl) &&
+      product.imageUrl.length > 0
     ) {
-      return product.images[0]; // Already converted by dataService
+      return product.imageUrl[0]; // Already converted by dataService
     }
     // Check if product has image array (raw data structure)
     if (
-      product.image &&
-      Array.isArray(product.image) &&
-      product.image.length > 0
+      product.imageUrl &&
+      Array.isArray(product.imageUrl) &&
+      product.imageUrl.length > 0
     ) {
-      return getFirstImage(product.image);
+      return getFirstImage(product.imageUrl);
     }
     // Check for single image property
-    if (product.image && typeof product.image === "string") {
-      return getFirstImage([product.image]);
+    if (product.imageUrl && typeof product.imageUrl === "string") {
+      return getFirstImage([product.imageUrl]);
     }
     // Return default fallback
     return getDefaultImage();
@@ -58,7 +58,6 @@ const ProductCard = ({ product, onClick }) => {
 
   // Display price or price range
   const displayPrice = () => {
-    console.log("Product price:", product);
     if (product?.price) {
       // Handle new price array structure [{size, price}]
       let actualPrice;
@@ -120,18 +119,6 @@ const ProductCard = ({ product, onClick }) => {
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageLoaded(true)}
         />
-
-        {/* Price badge if there's a discount */}
-        {product.originalPrice && product.originalPrice > product.price && (
-          <div className="absolute top-3 right-3 bg-accent text-white text-xs font-semibold px-2 py-1 rounded-full">
-            {Math.round(
-              ((product.originalPrice - product.price) /
-                product.originalPrice) *
-                100,
-            )}
-            % OFF
-          </div>
-        )}
 
         {/* Featured badge */}
         {product.featured && (

@@ -159,7 +159,7 @@ const ProductDetailPage = () => {
               amount: p.price,
             })),
             SKU: productData.SKU,
-            images: productData.image || [],
+            images: productData.imageUrl || [],
             category: productData.category,
             subcategory: productData.manufacturer,
             region: "India", // From details: "Made in India"
@@ -511,7 +511,7 @@ const ProductDetailPage = () => {
           ></div>
           <div className="lg:top-36 xl:top-40" ref={galleryInnerRef}>
             <ImageGallery
-              images={product.image || product.images || []}
+              images={product.images || []}
               productName={product.name}
             />
           </div>
