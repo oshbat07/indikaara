@@ -13,13 +13,13 @@ const RugsShowcase = () => {
     if (!products || products.length === 0) return [];
 
     const primary = products.filter(
-      (p) => p.category && p.category.toLowerCase() === "rugs"
+      (p) => p.category && p.category.toLowerCase() === "rugs",
     );
     const categoryContains = products.filter(
-      (p) => p.category && /rug/i.test(p.category)
+      (p) => p.category && /rug/i.test(p.category),
     );
     const nameContains = products.filter((p) =>
-      /rug|knotted|tibetan|weave|carpet/i.test(p.name)
+      /rug|knotted|tibetan|weave|carpet/i.test(p.name),
     );
 
     const merged = [...primary, ...categoryContains, ...nameContains];
@@ -68,10 +68,42 @@ const RugsShowcase = () => {
       { breakpoint: 900, settings: { slidesToShow: 3 } },
       { breakpoint: 820, settings: { slidesToShow: 3 } },
       { breakpoint: 768, settings: { slidesToShow: 3 } },
-      { breakpoint: 640, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3500 } },
-      { breakpoint: 520, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3500 } },
-      { breakpoint: 460, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3500 } },
-      { breakpoint: 400, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3500 } },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3500,
+        },
+      },
+      {
+        breakpoint: 520,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3500,
+        },
+      },
+      {
+        breakpoint: 460,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3500,
+        },
+      },
+      {
+        breakpoint: 400,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3500,
+        },
+      },
     ],
   };
 
@@ -107,7 +139,7 @@ const RugsShowcase = () => {
               <div key={item.id || idx} className="px-2 select-none">
                 <div className="relative flex items-end justify-center h-[340px] sm:h-[400px]">
                   <img
-                    src={item.image && item.image[0]}
+                    src={item.imageUrl && item.imageUrl[0]}
                     onClick={() => navigate(`/product/${item._id}`)}
                     alt={item.name}
                     loading="lazy"
