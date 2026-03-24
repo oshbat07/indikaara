@@ -25,18 +25,23 @@ const cartReducer = (state, action) => {
       const min = getMinQtyFromCategory(action.payload.category);
       const addQty = Math.max(1, action.payload.quantity || 1);
       const requestedQty = Math.max(min, addQty);
+
+      // differentiate items by product id + selected size (if present)
       const existingItem = state.items.find(
-        (item) => item.id === action.payload.id,
+        (item) =>
+          item.id === action.payload.id &&
+          (item.size || "") === (action.payload.size || ""),
       );
 
       if (existingItem) {
         return {
           ...state,
           items: state.items.map((item) =>
-            item.id === action.payload.id
+            item.id === action.payload.id &&
+            (item.size || "") === (action.payload.size || "")
               ? {
                   ...item,
-                  quantity: item.quantity,
+                  quantity: item.quantity + requestedQty,
                 }
               : item,
           ),

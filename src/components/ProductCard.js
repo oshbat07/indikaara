@@ -22,15 +22,7 @@ const ProductCard = ({ product, onClick }) => {
 
   // Get the first available image from the product
   const getProductImage = () => {
-    // Check for transformed data structure (images property)
-    if (
-      product.imageUrl &&
-      Array.isArray(product.imageUrl) &&
-      product.imageUrl.length > 0
-    ) {
-      return product.imageUrl[0]; // Already converted by dataService
-    }
-    // Check if product has image array (raw data structure)
+    // Prioritize CDN image URLs (new API structure)
     if (
       product.imageUrl &&
       Array.isArray(product.imageUrl) &&
@@ -38,10 +30,23 @@ const ProductCard = ({ product, onClick }) => {
     ) {
       return getFirstImage(product.imageUrl);
     }
-    // Check for single image property
+
+    if (
+      product.image &&
+      Array.isArray(product.image) &&
+      product.image.length > 0
+    ) {
+      return getFirstImage(product.image);
+    }
+
+    if (product.image && typeof product.image === "string") {
+      return getFirstImage([product.image]);
+    }
+
     if (product.imageUrl && typeof product.imageUrl === "string") {
       return getFirstImage([product.imageUrl]);
     }
+
     // Return default fallback
     return getDefaultImage();
   };

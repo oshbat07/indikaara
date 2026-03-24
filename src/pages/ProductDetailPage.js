@@ -550,10 +550,10 @@ const ProductDetailPage = () => {
             {/* <p className="text-secondary text-xl leading-relaxed my-5">
               {product.description}
             </p> */}
-            {/* Price Display: Rugs => Price per sq ft; others => normal pricing logic */}
+            {/* Price Display: Rugs => Price per sq ft (fixed), others => dynamic price */}
             {product.category && product.category.toLowerCase() === "rugs" ? (
               <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[#ac1f23]">
-                ₹ {(currentPrice || product.price)?.toLocaleString()} / sq ft
+                ₹ {Number(product.price || 0).toLocaleString()} / sq ft
               </div>
             ) : currentPrice ? (
               <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[#ac1f23]">
@@ -679,24 +679,18 @@ const ProductDetailPage = () => {
                       <p className="text-secondary text-xs mb-2">
                         {item.sqft} sq ft
                       </p>
-                      <p className="text-[#ac1f23] font-bold text-sm mb-3">
+                      <p className="text-[#ac1f23] font-bold text-sm mb-2">
                         ₹ {totalPrice.toLocaleString()}
                       </p>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedSize(item.size);
-                          setCurrentPrice(totalPrice);
-                          handleAddToCart();
-                        }}
-                        className={`w-full py-2 rounded-md text-xs font-semibold transition-all ${
+                      <p
+                        className={`text-xs font-medium text-center ${
                           isSelected
-                            ? "bg-[#ac1f23] text-white hover:bg-[#9a1820]"
-                            : "bg-primary/20 text-primary hover:bg-primary/40"
+                            ? "text-green-500"
+                            : "text-secondary"
                         }`}
                       >
-                        {isSelected ? "Add to Cart" : "Select & Add"}
-                      </button>
+                        {isSelected ? "Selected" : "Tap to select"}
+                      </p>
                     </div>
                   );
                 })}
@@ -765,13 +759,24 @@ const ProductDetailPage = () => {
                 </button>
               </div>
             </div>
+            {selectedSize ? (
+              <div className="mb-4 text-center">
+                <p className="text-sm text-secondary">Current Size Selection</p>
+                <p className="text-lg font-semibold text-primary">{selectedSize}</p>
+              </div>
+            ) : (
+              <div className="mb-4 text-center text-sm text-yellow-400">
+                Select a size before adding to cart
+              </div>
+            )}
+
             <div className="mt-8 flex justify-center">
               <Button
                 size="lg"
                 onClick={handleAddToCart}
                 className="min-w-[260px] sm:min-w-[320px]"
                 aria-label={`Add ${product.name} to cart`}
-                disabled={addedToCart}
+                disabled={addedToCart || !selectedSize}
               >
                 {addedToCart ? (
                   <span className="flex items-center gap-2">
