@@ -684,9 +684,7 @@ const ProductDetailPage = () => {
                       </p>
                       <p
                         className={`text-xs font-medium text-center ${
-                          isSelected
-                            ? "text-green-500"
-                            : "text-secondary"
+                          isSelected ? "text-green-500" : "text-secondary"
                         }`}
                       >
                         {isSelected ? "Selected" : "Tap to select"}
@@ -762,7 +760,9 @@ const ProductDetailPage = () => {
             {selectedSize ? (
               <div className="mb-4 text-center">
                 <p className="text-sm text-secondary">Current Size Selection</p>
-                <p className="text-lg font-semibold text-primary">{selectedSize}</p>
+                <p className="text-lg font-semibold text-primary">
+                  {selectedSize}
+                </p>
               </div>
             ) : (
               <div className="mb-4 text-center text-sm text-yellow-400">
