@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from "react";
-import HeroImage1 from "../assets/hero-1.jpg";
-import HeroImage2 from "../assets/hero-2.jpg";
-import HeroImage3 from "../assets/hero-3.jpg";
-// import HeroImage4 from "../assets/hero-5.jpg";
-// import HeroImage5 from "../assets/";
 import "../styles/hero.css";
 /**
  * HeroSection Component - Hero carousel with new arrivals
@@ -18,19 +13,22 @@ const HeroSection = () => {
     {
       id: 1,
       category: "Rugs",
-      image: HeroImage1,
+      image:
+        "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/50013eca-9726-4af3-1459-a0a80affbf00/public",
       cta: "Shop Rugs",
     },
     {
       id: 2,
       category: "Vintage Art",
-      image: HeroImage2,
+      image:
+        "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/caed5894-1e93-4a77-5cfd-6e3dd031cd00/public",
       cta: "Explore Decor",
     },
     {
       id: 3,
       category: "Vintage Art",
-      image: HeroImage3,
+      image:
+        "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/c5adbfa6-acdb-4d6d-fbb7-e90c8c4d2100/public",
       cta: "Browse Vintage",
     },
   ];

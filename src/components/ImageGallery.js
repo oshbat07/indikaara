@@ -1,9 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./ImageGalleryCarousel.css";
-import { getAllImages, getDefaultImage } from "../utils/imageUtils";
+import {
+  getAllImages,
+  getDefaultImage,
+  getAllImagesOptimized,
+} from "../utils/imageUtils";
 
 /**
  * ImageGallery Component - Product image gallery with main image and thumbnails
@@ -12,22 +16,41 @@ import { getAllImages, getDefaultImage } from "../utils/imageUtils";
  */
 const ImageGallery = ({ images, productName }) => {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [processedImages, setProcessedImages] = useState([]);
   const mainSliderRef = useRef(null);
 
-  // Check if images are already processed (from transformed data)
-  let processedImages;
-  if (
-    images &&
-    images.length > 0 &&
-    typeof images[0] === "string" &&
-    images[0].startsWith("https://")
-  ) {
-    // Images are already processed by dataService
-    processedImages = images;
-  } else {
-    // Process raw images using utilities
-    processedImages = getAllImages(images || []);
-  }
+  // Function to process images based on current device
+  const processImages = () => {
+    let processed;
+    if (
+      images &&
+      images.length > 0 &&
+      typeof images[0] === "string" &&
+      images[0].startsWith("https://")
+    ) {
+      // Images are already processed by dataService, apply device optimization
+      processed = images.map((img) => getAllImagesOptimized([img])[0]);
+    } else {
+      // Process raw images using utilities with device optimization
+      processed = getAllImagesOptimized(images || []);
+    }
+    setProcessedImages(processed);
+  };
+
+  // Process images on mount and when images prop changes
+  useEffect(() => {
+    processImages();
+  }, [images]);
+
+  // Re-process images on window resize to handle device changes
+  useEffect(() => {
+    const handleResize = () => {
+      processImages();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [images]);
 
   // If no processed images, use default
   if (!processedImages || processedImages.length === 0) {

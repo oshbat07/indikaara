@@ -6,7 +6,9 @@ import Breadcrumb from "../components/Breadcrumb";
 import ProductInfoSection from "../components/ProductInfoSection";
 import SizeSelector from "../components/SizeSelector";
 import Button from "../components/Button";
+import { getAllImagesOptimized } from "../utils/imageUtils";
 import axios from "axios";
+
 // Removed unused MUI icon imports to clean up warnings
 /**;
  * ProductDetailPage Component - Detailed product view with images, description, and purchase option
@@ -159,7 +161,7 @@ const ProductDetailPage = () => {
               amount: p.price,
             })),
             SKU: productData.SKU,
-            images: productData.imageUrl || [],
+            images: getAllImagesOptimized(productData.imageUrl || []),
             category: productData.category,
             subcategory: productData.manufacturer,
             region: "India", // From details: "Made in India"
@@ -228,6 +230,23 @@ const ProductDetailPage = () => {
       loadProduct();
     }
   }, [id]);
+
+  // Update product images on window resize for device optimization
+  useEffect(() => {
+    if (!rawProductData) return;
+
+    const handleResize = () => {
+      const optimizedImages = getAllImagesOptimized(
+        rawProductData.imageUrl || [],
+      );
+      setProduct((prev) =>
+        prev ? { ...prev, images: optimizedImages } : null,
+      );
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [rawProductData]);
 
   // Generate breadcrumb items dynamically
   const breadcrumbItems = product

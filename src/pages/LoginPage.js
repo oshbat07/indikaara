@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
-import loginBackground from "../assets/hero-1.jpg";
 import Backdrop from "../components/Backdrop";
 
 const GOOGLE_PROFILE_CLEAR_DELAY = 2000;
@@ -130,7 +129,9 @@ const LoginPage = () => {
       {/* Left Section - Image */}
       <div className="w-full md:w-1/2">
         <img
-          src={loginBackground}
+          src={
+            "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/50013eca-9726-4af3-1459-a0a80affbf00/public"
+          }
           alt="Craft Background"
           className="w-full h-[250px] md:h-screen object-cover"
         />

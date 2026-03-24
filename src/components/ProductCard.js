@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getFirstImage, getDefaultImage } from "../utils/imageUtils";
 
@@ -9,6 +9,7 @@ import { getFirstImage, getDefaultImage } from "../utils/imageUtils";
  */
 const ProductCard = ({ product, onClick }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [productImageSrc, setProductImageSrc] = useState("");
 
   const navigate = useNavigate();
   const handleClick = () => {
@@ -45,7 +46,20 @@ const ProductCard = ({ product, onClick }) => {
     return getDefaultImage();
   };
 
-  const productImageSrc = getProductImage();
+  // Update image source when product changes or on resize
+  useEffect(() => {
+    setProductImageSrc(getProductImage());
+  }, [product]);
+
+  // Update image on window resize to handle device changes
+  useEffect(() => {
+    const handleResize = () => {
+      setProductImageSrc(getProductImage());
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [product]);
 
   // Format price with Indian Rupee symbol
   const formatPrice = (price) => {
