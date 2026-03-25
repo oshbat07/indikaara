@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { formatSizeForAPI } from "../utils/sizeUtils";
 import axios from "axios";
 
 const AddressPage = () => {
@@ -22,7 +23,6 @@ const AddressPage = () => {
     email: "",
     additionalInfo: "",
   });
-
   const [errors, setErrors] = useState({});
 
   // Check if user is authenticated, redirect to login if not
@@ -135,19 +135,70 @@ const AddressPage = () => {
       setOrderError("");
 
       try {
-        // Transform cart items to required format with price information
+        // Transform cart items to required format
         const orderProducts = items.map((item) => {
-          // Ensure price is always a valid number
-          const itemPrice = parseFloat(item.price) || 0;
           const itemQuantity = parseInt(item.quantity) || 1;
-          const itemTotalPrice = itemPrice * itemQuantity;
 
-          return {
+          const orderItem = {
             product: item._id || item.id, // MongoDB _id of the product
             quantity: itemQuantity,
-            price: Math.round(itemPrice), // Ensure it's a valid integer
-            totalPrice: Math.round(itemTotalPrice), // Ensure it's a valid integer
           };
+
+          const category = (item.category || "").toString().toLowerCase();
+          const isRug = category === "rugs";
+
+          const deriveRugSize = (rawSize) => {
+            if (!rawSize) return { width: 0, height: 0 };
+            if (
+              typeof rawSize === "object" &&
+              rawSize.width &&
+              rawSize.height
+            ) {
+              return {
+                width: Number(rawSize.width),
+                height: Number(rawSize.height),
+              };
+            }
+            if (typeof rawSize === "string") {
+              const parsed = formatSizeForAPI(rawSize);
+              if (parsed) return parsed;
+            }
+            return { width: 0, height: 0 };
+          };
+
+          const deriveNonRugSize = (rawSize) => {
+            if (!rawSize) return "Standard";
+            if (typeof rawSize === "string") return rawSize;
+            if (
+              typeof rawSize === "object" &&
+              rawSize.width &&
+              rawSize.height
+            ) {
+              return `${rawSize.width} x ${rawSize.height}`;
+            }
+            return "Standard";
+          };
+
+          // Ensure every order item has a size key
+          if (isRug) {
+            if (item.size) {
+              orderItem.size = deriveRugSize(item.size);
+            } else if (item.dimensions) {
+              orderItem.size = deriveRugSize(item.dimensions);
+            } else {
+              orderItem.size = { width: 0, height: 0 };
+            }
+          } else {
+            if (item.size) {
+              orderItem.size = deriveNonRugSize(item.size);
+            } else if (item.dimensions) {
+              orderItem.size = deriveNonRugSize(item.dimensions);
+            } else {
+              orderItem.size = "Standard";
+            }
+          }
+
+          return orderItem;
         });
 
         // Validate that we have products
@@ -158,25 +209,6 @@ const AddressPage = () => {
           setIsCreatingOrder(false);
           return;
         }
-
-        // Validate all prices are numbers
-        const hasInvalidPrice = orderProducts.some(
-          (p) => isNaN(p.price) || isNaN(p.totalPrice) || p.price < 0,
-        );
-        if (hasInvalidPrice) {
-          console.error("Invalid prices found:", orderProducts);
-          setOrderError(
-            "Invalid product prices. Please go back to cart and try again.",
-          );
-          setIsCreatingOrder(false);
-          return;
-        }
-
-        // Calculate total price for the order
-        const totalOrderPrice = orderProducts.reduce(
-          (sum, item) => sum + (item.totalPrice || 0),
-          0,
-        );
 
         // Create order payload
         const orderPayload = {
@@ -192,14 +224,7 @@ const AddressPage = () => {
             email: formData.email,
             additionalInfo: formData.additionalInfo,
           },
-          totalPrice: totalOrderPrice,
         };
-
-        // Debug logging
-        console.log(
-          "Order payload being sent:",
-          JSON.stringify(orderPayload, null, 2),
-        );
 
         // Call the create-pending order API
         const response = await axios.post(

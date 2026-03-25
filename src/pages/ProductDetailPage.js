@@ -7,6 +7,7 @@ import ProductInfoSection from "../components/ProductInfoSection";
 import SizeSelector from "../components/SizeSelector";
 import Button from "../components/Button";
 import { getAllImagesOptimized } from "../utils/imageUtils";
+import { formatSizeForAPI } from "../utils/sizeUtils";
 import axios from "axios";
 
 // Removed unused MUI icon imports to clean up warnings
@@ -26,7 +27,7 @@ const ProductDetailPage = () => {
   // Quantity (will be adjusted to category minimum when product loads)
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
@@ -150,16 +151,26 @@ const ProductDetailPage = () => {
 
         if (productData) {
           // Transform product data to match component expectations
+          const isRug =
+            productData.category &&
+            productData.category.toLowerCase() === "rugs";
+
           const transformedProduct = {
             id: productData.id,
             _id: productData._id,
             name: productData.name,
             description: productData.description,
+            isRug: isRug,
             price: productData.price[0]?.price || null,
-            priceOptions: productData.price.map((p) => ({
-              size: p.size,
-              amount: p.price,
-            })),
+            priceOptions: productData.price.map((p) => {
+              // For rugs: convert to width/height object; for others: keep as string
+              const size = isRug ? formatSizeForAPI(p.size) : p.size;
+              return {
+                size: size || (isRug ? { width: 0, height: 0 } : "Standard"),
+                label: p.size || "Standard",
+                amount: p.price,
+              };
+            }),
             SKU: productData.SKU,
             images: getAllImagesOptimized(productData.imageUrl || []),
             category: productData.category,
@@ -170,7 +181,14 @@ const ProductDetailPage = () => {
             inStock: true,
             features: productData.tags || [],
             tags: productData.tags,
-            dimensions: [productData.price[0]?.size || ""],
+            dimensions: [
+              isRug
+                ? formatSizeForAPI(productData.price[0]?.size) || {
+                    width: 0,
+                    height: 0,
+                  }
+                : productData.price[0]?.size || "Standard",
+            ],
             artisan: {
               name: productData.manufacturer,
               location: "India",
@@ -203,11 +221,11 @@ const ProductDetailPage = () => {
             setCurrentPrice(parseFloat(firstOption.amount) || 0);
           } else if (transformedProduct.price) {
             setCurrentPrice(parseFloat(transformedProduct.price) || 0);
-            setSelectedSize("Standard");
+            setSelectedSize(isRug ? { width: 0, height: 0 } : "Standard");
           } else {
             // Fallback: ensure currentPrice is always set to a number
             setCurrentPrice(0);
-            setSelectedSize("Standard");
+            setSelectedSize(isRug ? { width: 0, height: 0 } : "Standard");
           }
 
           // Load related products
@@ -264,6 +282,14 @@ const ProductDetailPage = () => {
         { label: "Catalogue", path: "/catalogue" },
       ];
 
+  // Compare size objects by width and height (for rugs only)
+  const isSameSize = (a, b) => {
+    if (!product.isRug) return a === b; // String comparison for non-rugs
+    if (!a || !b || typeof a !== "object" || typeof b !== "object")
+      return false;
+    return a.width === b.width && a.height === b.height;
+  };
+
   // Determine minimum quantity based on product category
   const getMinQty = (prod) => {
     if (!prod || !prod.category) return 1;
@@ -287,10 +313,22 @@ const ProductDetailPage = () => {
   const handleSizeChange = (size) => {
     setSelectedSize(size);
     // Update price based on selected size from priceOptions
-    if (product.priceOptions) {
-      const selectedOption = product.priceOptions.find(
-        (option) => option.size === size,
-      );
+    if (product.priceOptions && product.priceOptions.length > 0) {
+      const selectedOption = product.priceOptions.find((option) => {
+        // For rugs: compare width/height objects; for others: compare strings
+        if (product.isRug) {
+          return (
+            option.size &&
+            size &&
+            typeof option.size === "object" &&
+            typeof size === "object" &&
+            option.size.width === size.width &&
+            option.size.height === size.height
+          );
+        } else {
+          return option.size === size;
+        }
+      });
       if (selectedOption) {
         setCurrentPrice(parseFloat(selectedOption.amount) || 0);
       }
@@ -327,10 +365,17 @@ const ProductDetailPage = () => {
           price: priceToUse,
           image: product.images[0],
           category: product.category,
-          size: selectedSize || product.dimensions[0] || "Standard",
+          size:
+            selectedSize ||
+            product.dimensions[0] ||
+            (product.isRug ? { width: 0, height: 0 } : "Standard"),
+          dimensions: product.isRug
+            ? selectedSize && typeof selectedSize === "object"
+              ? `${selectedSize.width} x ${selectedSize.height}`
+              : "Standard"
+            : selectedSize || product.dimensions?.[0] || "Standard",
           color: product.specifications.color || "Standard",
           material: product.specifications.material || "Handcrafted",
-          dimensions: selectedSize || product.dimensions[0] || null,
           SKU: product.SKU,
         },
         quantity,
@@ -638,22 +683,22 @@ const ProductDetailPage = () => {
               </p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  { size: "3' X 5'", sqft: 15 },
-                  { size: "4' X 6'", sqft: 24 },
-                  { size: "5' X 7'", sqft: 35 },
-                  { size: "6' X 9'", sqft: 54 },
-                  { size: "7' X 9'", sqft: 63 },
-                  { size: "8' X 10'", sqft: 80 },
-                  { size: "9' X 12'", sqft: 108 },
-                  { size: "10' X 13'", sqft: 130 },
-                  { size: "12' X 15'", sqft: 180 },
+                  { size: { width: 3, height: 5 }, sqft: 15 },
+                  { size: { width: 4, height: 6 }, sqft: 24 },
+                  { size: { width: 5, height: 7 }, sqft: 35 },
+                  { size: { width: 6, height: 9 }, sqft: 54 },
+                  { size: { width: 7, height: 9 }, sqft: 63 },
+                  { size: { width: 8, height: 10 }, sqft: 80 },
+                  { size: { width: 9, height: 12 }, sqft: 108 },
+                  { size: { width: 10, height: 13 }, sqft: 130 },
+                  { size: { width: 12, height: 15 }, sqft: 180 },
                 ].map((item) => {
                   const basePrice = parseFloat(product.price) || 0;
                   const totalPrice = Math.round(basePrice * item.sqft);
-                  const isSelected = selectedSize === item.size;
+                  const isSelected = isSameSize(selectedSize, item.size);
                   return (
                     <div
-                      key={item.size}
+                      key={`${item.size.width}x${item.size.height}`}
                       onClick={() => {
                         setSelectedSize(item.size);
                         setCurrentPrice(totalPrice > 0 ? totalPrice : 0);
@@ -674,7 +719,7 @@ const ProductDetailPage = () => {
                       }}
                     >
                       <p className="text-primary font-semibold text-sm mb-2">
-                        {item.size}
+                        {item.size.width}ft x {item.size.height}ft
                       </p>
                       <p className="text-secondary text-xs mb-2">
                         {item.sqft} sq ft
@@ -761,7 +806,9 @@ const ProductDetailPage = () => {
               <div className="mb-4 text-center">
                 <p className="text-sm text-secondary">Current Size Selection</p>
                 <p className="text-lg font-semibold text-primary">
-                  {selectedSize}
+                  {typeof selectedSize === "object"
+                    ? `${selectedSize.width} x ${selectedSize.height}`
+                    : selectedSize}
                 </p>
               </div>
             ) : (

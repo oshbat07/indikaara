@@ -184,7 +184,9 @@ const CartPage = () => {
                                 <span className="text-gray-900 font-medium text-sm">
                                   Size:{" "}
                                   <span className="text-gray-700">
-                                    {item.dimensions}
+                                    {typeof item.dimensions === "object"
+                                      ? `${item.dimensions.width} x ${item.dimensions.height}`
+                                      : item.dimensions}
                                   </span>
                                 </span>
                               </div>

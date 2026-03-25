@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import useProducts from "../hooks/useProduct";
+import { getFirstImage } from "../utils/imageUtils";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -15,14 +16,14 @@ const HandicraftShowcase = () => {
     if (!products || products.length === 0) return [];
 
     const primary = products.filter(
-      (p) => p.category && p.category.toLowerCase() === "handicraft items"
+      (p) => p.category && p.category.toLowerCase() === "handicraft items",
     );
     const extended = products.filter(
       (p) =>
         /decor|wall|vintage|craft|handicraft/i.test(p.category || "") ||
         (p.tags || []).some((t) =>
-          /decor|wall|vintage|craft|handicraft/i.test(t)
-        )
+          /decor|wall|vintage|craft|handicraft/i.test(t),
+        ),
     );
 
     const merged = [...primary, ...extended];
@@ -71,10 +72,42 @@ const HandicraftShowcase = () => {
       { breakpoint: 900, settings: { slidesToShow: 3 } },
       { breakpoint: 820, settings: { slidesToShow: 3 } },
       { breakpoint: 768, settings: { slidesToShow: 3 } },
-      { breakpoint: 640, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3800 } },
-      { breakpoint: 520, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3800 } },
-      { breakpoint: 460, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3800 } },
-      { breakpoint: 400, settings: { slidesToShow: 1, centerMode: false, autoplay: true, autoplaySpeed: 3800 } },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3800,
+        },
+      },
+      {
+        breakpoint: 520,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3800,
+        },
+      },
+      {
+        breakpoint: 460,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3800,
+        },
+      },
+      {
+        breakpoint: 400,
+        settings: {
+          slidesToShow: 1,
+          centerMode: false,
+          autoplay: true,
+          autoplaySpeed: 3800,
+        },
+      },
     ],
   };
 
@@ -108,7 +141,7 @@ const HandicraftShowcase = () => {
               <div key={item.id || idx} className="px-2 select-none">
                 <div className="relative flex items-end justify-center h-[320px] sm:h-[380px]">
                   <img
-                    src={item.image && item.image[0]}
+                    src={getFirstImage(item.imageUrl || item.image)}
                     alt={item.name}
                     loading="lazy"
                     onClick={() => navigate(`/product/${item._id}`)}

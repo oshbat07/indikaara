@@ -8,11 +8,22 @@ const SizeSelector = ({
   hidePrices = false,
 }) => {
   const [internalSelectedSize, setInternalSelectedSize] = useState(
-    selectedSize || ""
+    selectedSize || null,
   );
 
+  const isSameSize = (a, b) => {
+    // For string sizes (non-rugs)
+    if (typeof a === "string" && typeof b === "string") {
+      return a === b;
+    }
+    // For object sizes (rugs)
+    if (!a || !b || typeof a !== "object" || typeof b !== "object")
+      return false;
+    return a.width === b.width && a.height === b.height;
+  };
+
   useEffect(() => {
-    setInternalSelectedSize(selectedSize || "");
+    setInternalSelectedSize(selectedSize || null);
   }, [selectedSize]);
 
   const formatPrice = (amount) => {
@@ -42,11 +53,17 @@ const SizeSelector = ({
 
       <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3">
         {priceOptions.map((option, index) => {
-          const isSelected = internalSelectedSize === option.size;
+          const isSelected = isSameSize(internalSelectedSize, option.size);
+
+          const getKey = () => {
+            if (typeof option.size === "string")
+              return `${option.size}-${index}`;
+            return `${option.size.width || 0}x${option.size.height || 0}-${index}`;
+          };
 
           return (
             <button
-              key={option.size + "-" + index}
+              key={getKey()}
               onClick={() => handleSizeSelect(option.size, option.amount)}
               className={`aspect-square flex flex-col items-center justify-center border-2 rounded-md text-center px-1.5 py-1.5 sm:px-2 sm:py-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 focus:ring-offset-transparent ${
                 isSelected
@@ -55,7 +72,9 @@ const SizeSelector = ({
               }`}
             >
               <span className="font-medium text-[11px] sm:text-sm md:text-base leading-tight">
-                {option.size}
+                {typeof option.size === "string"
+                  ? option.size
+                  : `${option.size.width}x${option.size.height}`}
               </span>
               {!hidePrices && (
                 <span className="mt-0.5 font-bold text-[10px] sm:text-xs md:text-sm text-accent">
@@ -77,7 +96,9 @@ const SizeSelector = ({
           <p className="text-[11px] sm:text-xs md:text-sm text-secondary">
             Selected Size:{" "}
             <span className="font-medium text-primary">
-              {internalSelectedSize}
+              {typeof internalSelectedSize === "object"
+                ? `${internalSelectedSize.width} x ${internalSelectedSize.height}`
+                : internalSelectedSize}
             </span>
           </p>
         </div>

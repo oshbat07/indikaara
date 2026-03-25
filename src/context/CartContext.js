@@ -18,6 +18,18 @@ const getMinQtyFromCategory = (category) => {
   return 1;
 };
 
+// Helper: normalize size for comparison (handles both string and object formats)
+const getSizeKey = (size) => {
+  if (!size) return "";
+  // For string sizes (non-rugs)
+  if (typeof size === "string") return size;
+  // For object sizes (rugs)
+  if (typeof size === "object" && size.width != null && size.height != null) {
+    return `${size.width}x${size.height}`;
+  }
+  return JSON.stringify(size);
+};
+
 // Cart reducer
 const cartReducer = (state, action) => {
   switch (action.type) {
@@ -30,7 +42,7 @@ const cartReducer = (state, action) => {
       const existingItem = state.items.find(
         (item) =>
           item.id === action.payload.id &&
-          (item.size || "") === (action.payload.size || ""),
+          getSizeKey(item.size) === getSizeKey(action.payload.size),
       );
 
       if (existingItem) {
@@ -38,7 +50,7 @@ const cartReducer = (state, action) => {
           ...state,
           items: state.items.map((item) =>
             item.id === action.payload.id &&
-            (item.size || "") === (action.payload.size || "")
+            getSizeKey(item.size) === getSizeKey(action.payload.size)
               ? {
                   ...item,
                   quantity: item.quantity + requestedQty,

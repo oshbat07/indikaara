@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import useProducts from "../hooks/useProduct";
+import { getFirstImage } from "../utils/imageUtils";
 
 const RugsShowcase = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -139,7 +140,7 @@ const RugsShowcase = () => {
               <div key={item.id || idx} className="px-2 select-none">
                 <div className="relative flex items-end justify-center h-[340px] sm:h-[400px]">
                   <img
-                    src={item.imageUrl && item.imageUrl[0]}
+                    src={getFirstImage(item.imageUrl)}
                     onClick={() => navigate(`/product/${item._id}`)}
                     alt={item.name}
                     loading="lazy"
