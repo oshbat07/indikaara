@@ -19,7 +19,6 @@ const ProductCard = ({ product, onClick }) => {
     // Navigate to product detail page
     navigate(`/product/${product._id}`);
   };
-
   // Get the first available image from the product
   const getProductImage = () => {
     // Prioritize CDN image URLs (new API structure)

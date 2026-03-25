@@ -11,7 +11,7 @@ const OrderDetailsModal = ({ order, onClose, onRetryPayment }) => {
       minute: "2-digit",
     });
   };
-  console.log("price", order.products[0].product.price[0]);
+  console.log("order", order);
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -72,9 +72,10 @@ const OrderDetailsModal = ({ order, onClose, onRetryPayment }) => {
           <div className="border rounded-lg p-4 bg-gray-50">
             <h3 className="font-medium text-gray-900 mb-2">Shipping Address</h3>
             <div className="text-gray-600">
-              <p>{order.shippingAddress.fullName}</p>
-              <p>{order.shippingAddress.address}</p>
-              <p>Phone: {order.shippingAddress.phoneNumber}</p>
+              <p>
+                {order.shippingAddress.city}, {order.shippingAddress.state}
+              </p>
+              {/* <p>Phone: {order.shippingAddress.phoneNumber}</p> */}
             </div>
           </div>
 
@@ -84,10 +85,10 @@ const OrderDetailsModal = ({ order, onClose, onRetryPayment }) => {
             <div className="space-y-4">
               {order.products.map((item) => (
                 <div key={item._id} className="flex gap-4">
-                  <div
+                  {/* <div
                     className="w-16 h-16 bg-center bg-cover rounded-lg flex-shrink-0"
                     style={{ backgroundImage: `url("${item.product.image}")` }}
-                  />
+                  /> */}
                   <div className="flex-1">
                     <h4 className="text-gray-900 font-medium">
                       {item.product.name}
@@ -97,7 +98,7 @@ const OrderDetailsModal = ({ order, onClose, onRetryPayment }) => {
                   <div className="text-right">
                     <p className="text-gray-900 font-medium">
                       {formatCurrency(
-                        item.product.price[0].amount * item.quantity
+                        item.product.price[0].price * item.quantity,
                       )}
                     </p>
                   </div>

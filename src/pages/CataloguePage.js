@@ -233,23 +233,18 @@ const CataloguePage = () => {
 
       {/* Products Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-        {filteredProducts.map(
-          (product) =>
-            Array.isArray(product.imageUrl) &&
-            product.imageUrl.length > 0 &&
-            product.imageUrl.every((item) => typeof item === "string") && (
-              <ProductCard
-                key={product._id}
-                product={{
-                  ...product,
-                  category: product.category,
-                  storyTitle: product.name,
-                  storyDescription: product.description,
-                }}
-                onClick={handleProductClick}
-              />
-            ),
-        )}
+        {filteredProducts.map((product) => (
+          <ProductCard
+            key={product._id}
+            product={{
+              ...product,
+              category: product.category,
+              storyTitle: product.name,
+              storyDescription: product.description,
+            }}
+            onClick={handleProductClick}
+          />
+        ))}
       </div>
 
       {/* No Results */}

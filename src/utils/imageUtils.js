@@ -29,23 +29,30 @@ export const getImagePath = (imagePath) => {
   return `/${cleanPath}`;
 };
 
+// Normalize an image entry for both old (string array) and new objects.
+const extractImageUrl = (entry) => {
+  if (!entry) return null;
+  if (typeof entry === "string") return entry;
+  if (typeof entry === "object") {
+    return entry.url || entry.imageUrl || entry.path || null;
+  }
+  return null;
+};
+
 // Function to get the first available image from an array
 export const getFirstImage = (images) => {
   if (!images || !Array.isArray(images) || images.length === 0) {
     return null;
   }
 
-  // Get the first image path and convert it
-  const firstImageRaw = images[0];
+  const firstImageRaw = extractImageUrl(images[0]);
   const processedPath = getImagePath(firstImageRaw);
 
-  // If the image path is a CDN delivery URL, append the correct variant
   const optimizedImage = getOptimizedImageUrl(processedPath);
   if (optimizedImage) {
     return optimizedImage;
   }
 
-  // Fallback to the processed path
   return processedPath;
 };
 
@@ -55,10 +62,13 @@ export const getAllImages = (images) => {
     return [];
   }
 
-  return images.map((imagePath) => {
-    const adjusted = getImagePath(imagePath);
-    return getOptimizedImageUrl(adjusted);
-  });
+  return images
+    .map((imageEntry) => {
+      const rawUrl = extractImageUrl(imageEntry);
+      const adjusted = getImagePath(rawUrl);
+      return getOptimizedImageUrl(adjusted);
+    })
+    .filter(Boolean);
 };
 
 // Default fallback image
@@ -98,10 +108,11 @@ export const getAllImagesOptimized = (images) => {
     return [];
   }
 
-  return images.map((imagePath) => {
-    // First get the processed path
-    const processedPath = getImagePath(imagePath);
-    // Then optimize for device
-    return getOptimizedImageUrl(processedPath);
-  });
+  return images
+    .map((imageEntry) => {
+      const rawUrl = extractImageUrl(imageEntry);
+      const processedPath = getImagePath(rawUrl);
+      return getOptimizedImageUrl(processedPath);
+    })
+    .filter(Boolean);
 };

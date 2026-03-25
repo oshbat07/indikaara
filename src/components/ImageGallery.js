@@ -22,12 +22,7 @@ const ImageGallery = ({ images, productName }) => {
   // Function to process images based on current device
   const processImages = () => {
     let processed;
-    if (
-      images &&
-      images.length > 0 &&
-      typeof images[0] === "string" &&
-      images[0].startsWith("https://")
-    ) {
+    if (images && images.length > 0) {
       // Images are already processed by dataService, apply device optimization
       processed = images.map((img) => getAllImagesOptimized([img])[0]);
     } else {
