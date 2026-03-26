@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
 
 // Cart Context
 const CartContext = createContext();
@@ -30,6 +30,11 @@ const getSizeKey = (size) => {
   return JSON.stringify(size);
 };
 
+// Helper: generate a unique ID for each cart item
+const generateCartItemId = () => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 // Cart reducer
 const cartReducer = (state, action) => {
   switch (action.type) {
@@ -49,8 +54,7 @@ const cartReducer = (state, action) => {
         return {
           ...state,
           items: state.items.map((item) =>
-            item.id === action.payload.id &&
-            getSizeKey(item.size) === getSizeKey(action.payload.size)
+            item.cartItemId === existingItem.cartItemId
               ? {
                   ...item,
                   quantity: item.quantity + requestedQty,
@@ -62,14 +66,21 @@ const cartReducer = (state, action) => {
 
       return {
         ...state,
-        items: [...state.items, { ...action.payload, quantity: requestedQty }],
+        items: [
+          ...state.items,
+          {
+            ...action.payload,
+            quantity: requestedQty,
+            cartItemId: generateCartItemId(),
+          },
+        ],
       };
     }
 
     case CART_ACTIONS.REMOVE_ITEM:
       return {
         ...state,
-        items: state.items.filter((item) => item.id !== action.payload.id),
+        items: state.items.filter((item) => item.cartItemId !== action.payload.cartItemId),
       };
 
     case CART_ACTIONS.UPDATE_QUANTITY:
@@ -77,7 +88,7 @@ const cartReducer = (state, action) => {
         ...state,
         items: state.items
           .map((item) => {
-            if (item.id !== action.payload.id) return item;
+            if (item.cartItemId !== action.payload.cartItemId) return item;
             const min = getMinQtyFromCategory(item.category);
             return {
               ...item,
@@ -113,8 +124,9 @@ const initialState = {
 // Cart Provider Component
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount - FIRST PRIORITY
   useEffect(() => {
     const savedCart = localStorage.getItem("indikaara-cart");
     if (savedCart) {
@@ -125,10 +137,14 @@ export const CartProvider = ({ children }) => {
         console.error("Error loading cart from localStorage:", error);
       }
     }
+    // Mark as initialized after loading
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes - only after initialization
   useEffect(() => {
+    if (!isInitialized) return; // Don't save until cart is loaded from storage
+    
     localStorage.setItem(
       "indikaara-cart",
       JSON.stringify({ items: state.items }),
@@ -138,7 +154,7 @@ export const CartProvider = ({ children }) => {
     } catch (e) {
       // no-op in non-browser environments
     }
-  }, [state.items]);
+  }, [state.items, isInitialized]);
 
   // Listen for a global event when a user logs in so we can clear cart
   useEffect(() => {
@@ -184,17 +200,17 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = (cartItemId) => {
     dispatch({
       type: CART_ACTIONS.REMOVE_ITEM,
-      payload: { id: productId },
+      payload: { cartItemId },
     });
   };
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = (cartItemId, quantity) => {
     dispatch({
       type: CART_ACTIONS.UPDATE_QUANTITY,
-      payload: { id: productId, quantity },
+      payload: { cartItemId, quantity },
     });
   };
 

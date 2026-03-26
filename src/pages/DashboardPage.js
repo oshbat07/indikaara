@@ -57,7 +57,7 @@ const DashboardPage = () => {
   // Derived caption for breadcrumb
   const breadcrumb = useMemo(
     () => (activeTab === "orders" ? "Account" : "Addresses"),
-    [activeTab]
+    [activeTab],
   );
 
   const handleLogout = () => {
@@ -76,7 +76,7 @@ const DashboardPage = () => {
           : res.data?.orders || [];
         // Sort orders by date in descending order before setting state
         const sortedOrders = ordersData.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
         setOrders(sortedOrders);
       } catch (e) {
@@ -105,11 +105,6 @@ const DashboardPage = () => {
     }
   }, [user, addresses.length, orders]);
 
-  useEffect(() => {
-    console.log("user", user);
-    console.log("orders", orders);
-  }, [user]);
-
   const addAddress = () => {
     const name = window.prompt("Full Name", user?.name || "");
     if (!name) return;
@@ -131,7 +126,7 @@ const DashboardPage = () => {
     const name = window.prompt("Full Name", addr.name) || addr.name;
     const country = window.prompt("Country", addr.country) || addr.country;
     setAddresses((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, name, country } : a))
+      prev.map((a) => (a.id === id ? { ...a, name, country } : a)),
     );
   };
 
@@ -275,11 +270,11 @@ const DashboardPage = () => {
                     {orders
                       // Sort orders by date in descending order (most recent first)
                       .sort(
-                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
                       )
                       .slice(
                         (currentPage - 1) * ordersPerPage,
-                        currentPage * ordersPerPage
+                        currentPage * ordersPerPage,
                       )
                       .map((order) => (
                         <div
@@ -361,7 +356,7 @@ const DashboardPage = () => {
 
                       {Array.from(
                         { length: Math.ceil(orders.length / ordersPerPage) },
-                        (_, i) => i + 1
+                        (_, i) => i + 1,
                       ).map((pageNum) => (
                         <button
                           key={pageNum}
@@ -381,8 +376,8 @@ const DashboardPage = () => {
                           setCurrentPage((prev) =>
                             Math.min(
                               prev + 1,
-                              Math.ceil(orders.length / ordersPerPage)
-                            )
+                              Math.ceil(orders.length / ordersPerPage),
+                            ),
                           )
                         }
                         disabled={

@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import EnquiryButton from "./EnquiryButton";
@@ -9,6 +10,9 @@ import EnquiryButton from "./EnquiryButton";
  * @param {React.ReactNode} children - Page content to render
  */
 const Layout = ({ children }) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
   return (
     <div className="relative flex size-full min-h-screen flex-col bg-background text-primary">
       <div className="flex h-full grow flex-col">
@@ -23,8 +27,8 @@ const Layout = ({ children }) => {
         <Footer />
       </div>
 
-      {/* Sticky Enquiry Button */}
-      <EnquiryButton />
+      {/* Sticky Enquiry Button (Homepage only) */}
+      {isHomePage && <EnquiryButton />}
     </div>
   );
 };

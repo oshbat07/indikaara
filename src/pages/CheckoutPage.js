@@ -69,8 +69,8 @@ const CheckoutPage = () => {
       const jwt = localStorage.getItem("token");
 
       // Initiate payment on server
-      const successUrl = `${window.location.origin}/payment-success`;
-      const failureUrl = `${window.location.origin}/payment-failure`;
+      const successUrl = `${window.location.origin}/payment/success`;
+      const failureUrl = `${window.location.origin}/payment/failure`;
 
       const initResp = await fetch(`${API_BASE}/api/payu/initiate`, {
         method: "POST",

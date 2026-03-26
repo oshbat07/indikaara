@@ -802,7 +802,7 @@ const ProductDetailPage = () => {
                 </button>
               </div>
             </div>
-            {selectedSize ? (
+            {product.isRug && selectedSize ? (
               <div className="mb-4 text-center">
                 <p className="text-sm text-secondary">Current Size Selection</p>
                 <p className="text-lg font-semibold text-primary">
@@ -811,11 +811,11 @@ const ProductDetailPage = () => {
                     : selectedSize}
                 </p>
               </div>
-            ) : (
+            ) : product.isRug ? (
               <div className="mb-4 text-center text-sm text-yellow-400">
                 Select a size before adding to cart
               </div>
-            )}
+            ) : null}
 
             <div className="mt-8 flex justify-center">
               <Button

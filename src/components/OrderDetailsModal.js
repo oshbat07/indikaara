@@ -97,7 +97,7 @@ const OrderDetailsModal = ({ order, onClose, onRetryPayment }) => {
                   </div>
                   <div className="text-right">
                     <p className="text-gray-900 font-medium">
-                      {formatCurrency(item.product.price * item.quantity)}
+                      {formatCurrency(item.price)}
                     </p>
                   </div>
                 </div>
