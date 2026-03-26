@@ -31,9 +31,13 @@ const SizeSelector = ({
   };
 
   const handleSizeSelect = (size, amount) => {
-    setInternalSelectedSize(size);
+    const alreadySelected = isSameSize(internalSelectedSize, size);
+    const newSize = alreadySelected ? null : size;
+    const newAmount = alreadySelected ? 0 : amount;
+
+    setInternalSelectedSize(newSize);
     if (onSizeSelect) {
-      onSizeSelect(size, amount);
+      onSizeSelect(newSize, newAmount);
     }
   };
 

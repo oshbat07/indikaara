@@ -217,15 +217,20 @@ const ProductDetailPage = () => {
             transformedProduct.priceOptions.length > 0
           ) {
             const firstOption = transformedProduct.priceOptions[0];
-            setSelectedSize(firstOption.size);
             setCurrentPrice(parseFloat(firstOption.amount) || 0);
+            if (!isRug) {
+              setSelectedSize(firstOption.size);
+            } else {
+              // Keep rug selection empty until user action
+              setSelectedSize(null);
+            }
           } else if (transformedProduct.price) {
             setCurrentPrice(parseFloat(transformedProduct.price) || 0);
-            setSelectedSize(isRug ? { width: 0, height: 0 } : "Standard");
+            setSelectedSize(isRug ? null : "Standard");
           } else {
             // Fallback: ensure currentPrice is always set to a number
             setCurrentPrice(0);
-            setSelectedSize(isRug ? { width: 0, height: 0 } : "Standard");
+            setSelectedSize(isRug ? null : "Standard");
           }
 
           // Load related products
@@ -293,7 +298,6 @@ const ProductDetailPage = () => {
   // Determine minimum quantity based on product category
   const getMinQty = (prod) => {
     if (!prod || !prod.category) return 1;
-    const cat = String(prod.category).toLowerCase();
     // All products have minimum order quantity of 1
     return 1;
   };
@@ -700,8 +704,13 @@ const ProductDetailPage = () => {
                     <div
                       key={`${item.size.width}x${item.size.height}`}
                       onClick={() => {
-                        setSelectedSize(item.size);
-                        setCurrentPrice(totalPrice > 0 ? totalPrice : 0);
+                        if (isSelected) {
+                          setSelectedSize(null);
+                          setCurrentPrice(0);
+                        } else {
+                          setSelectedSize(item.size);
+                          setCurrentPrice(totalPrice > 0 ? totalPrice : 0);
+                        }
                       }}
                       className={`bg-card-bg border-2 rounded-lg p-4 cursor-pointer transition-all ${
                         isSelected
@@ -713,8 +722,13 @@ const ProductDetailPage = () => {
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
-                          setSelectedSize(item.size);
-                          setCurrentPrice(totalPrice);
+                          if (isSelected) {
+                            setSelectedSize(null);
+                            setCurrentPrice(0);
+                          } else {
+                            setSelectedSize(item.size);
+                            setCurrentPrice(totalPrice);
+                          }
                         }
                       }}
                     >
