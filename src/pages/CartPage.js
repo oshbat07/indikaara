@@ -148,7 +148,9 @@ const CartPage = () => {
                           <div className="flex-shrink-0">
                             <div
                               className="w-24 h-24 sm:w-20 sm:h-20 bg-center bg-cover rounded-lg"
-                              style={{ backgroundImage: `url("${item.image}")` }}
+                              style={{
+                                backgroundImage: `url("${item.image}")`,
+                              }}
                               role="img"
                               aria-label={item.title}
                             />
@@ -244,7 +246,8 @@ const CartPage = () => {
 
                             {/* Price - Hidden for Rugs */}
                             <p className="text-gray-900 font-bold text-lg">
-                              {(item.category || "").toLowerCase() === "rugs" ? (
+                              {(item.category || "").toLowerCase() ===
+                              "rugs" ? (
                                 <span className="text-gray-600 font-normal text-sm tracking-wide">
                                   Price on enquiry
                                 </span>
@@ -260,7 +263,10 @@ const CartPage = () => {
                           <div className="flex items-center gap-3 bg-white border border-gray-300 rounded-md p-2">
                             <button
                               onClick={() =>
-                                handleQuantityChange(item.cartItemId, item.quantity - 1)
+                                handleQuantityChange(
+                                  item.cartItemId,
+                                  item.quantity - 1,
+                                )
                               }
                               disabled={item.quantity <= MIN_QTY}
                               className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
@@ -289,7 +295,10 @@ const CartPage = () => {
                             </span>
                             <button
                               onClick={() =>
-                                handleQuantityChange(item.cartItemId, item.quantity + 1)
+                                handleQuantityChange(
+                                  item.cartItemId,
+                                  item.quantity + 1,
+                                )
                               }
                               className="w-8 h-8 rounded-full bg-gray-200 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center"
                               aria-label="Increase quantity"

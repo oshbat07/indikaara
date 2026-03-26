@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useState,
+} from "react";
 
 // Cart Context
 const CartContext = createContext();
@@ -80,7 +86,9 @@ const cartReducer = (state, action) => {
     case CART_ACTIONS.REMOVE_ITEM:
       return {
         ...state,
-        items: state.items.filter((item) => item.cartItemId !== action.payload.cartItemId),
+        items: state.items.filter(
+          (item) => item.cartItemId !== action.payload.cartItemId,
+        ),
       };
 
     case CART_ACTIONS.UPDATE_QUANTITY:
@@ -144,7 +152,7 @@ export const CartProvider = ({ children }) => {
   // Save cart to localStorage whenever it changes - only after initialization
   useEffect(() => {
     if (!isInitialized) return; // Don't save until cart is loaded from storage
-    
+
     localStorage.setItem(
       "indikaara-cart",
       JSON.stringify({ items: state.items }),
