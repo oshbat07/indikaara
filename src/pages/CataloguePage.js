@@ -1,17 +1,20 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import FilterDropdown from "../components/FilterDropdown";
 import ProductCard from "../components/ProductCard";
 import useProducts from "../hooks/useProduct";
 
 const CataloguePage = () => {
+  const ITEMS_PER_BATCH = 30;
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: products = [], isLoading, isError } = useProducts();
+  const loadMoreRef = useRef(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [selectedSort, setSelectedSort] = useState("featured");
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
 
   // ✅ Handle category from URL (same logic as before)
   useEffect(() => {
@@ -82,6 +85,40 @@ const CataloguePage = () => {
     return result;
   }, [products, searchTerm, selectedCategory, selectedSort]);
 
+  const visibleProducts = useMemo(
+    () => filteredProducts.slice(0, visibleCount),
+    [filteredProducts, visibleCount],
+  );
+
+  const hasMoreProducts = visibleCount < filteredProducts.length;
+
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_BATCH);
+  }, [searchTerm, selectedCategory, selectedSort, products, ITEMS_PER_BATCH]);
+
+  useEffect(() => {
+    if (!hasMoreProducts || !loadMoreRef.current) return;
+
+    // Incrementally render products as user reaches the sentinel.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setVisibleCount((prev) =>
+          Math.min(prev + ITEMS_PER_BATCH, filteredProducts.length),
+        );
+      },
+      {
+        root: null,
+        rootMargin: "280px 0px",
+        threshold: 0,
+      },
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => observer.disconnect();
+  }, [hasMoreProducts, filteredProducts.length, ITEMS_PER_BATCH]);
+
   // ✅ Handlers (same as before)
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -102,9 +139,43 @@ const CataloguePage = () => {
   // ✅ Loading / Error states
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl text-center">
-        <div className="text-primary text-xl">Loading products...</div>
-      </div>
+      <main
+        className="container mx-auto px-4 pt-6 md:pt-8 lg:pt-10 max-w-7xl"
+        role="main"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+          <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-2">
+            Loading products
+          </h1>
+          <p className="text-sm md:text-base text-secondary">
+            Curating handcrafted treasures for you...
+          </p>
+        </div>
+
+        <div className="mb-8 h-11 w-full max-w-md mx-auto rounded-full border border-gray-700 bg-gray-800/70 animate-pulse" />
+
+        <div className="mb-8 flex items-center justify-center gap-3 flex-wrap">
+          <div className="h-10 w-32 rounded-full border border-gray-700 bg-gray-800/70 animate-pulse" />
+          <div className="h-10 w-32 rounded-full border border-gray-700 bg-gray-800/70 animate-pulse" />
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pb-12 min-h-[55vh]">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <div
+              key={`catalogue-skeleton-${index}`}
+              className="rounded-xl border border-gray-700 bg-gray-800/60 p-3 animate-pulse"
+            >
+              <div className="aspect-[4/5] w-full rounded-lg bg-gray-700/70 mb-3" />
+              <div className="h-4 w-4/5 rounded bg-gray-700/70 mb-2" />
+              <div className="h-3 w-3/5 rounded bg-gray-700/60 mb-3" />
+              <div className="h-4 w-2/5 rounded bg-gray-700/70" />
+            </div>
+          ))}
+        </div>
+      </main>
     );
   }
 
@@ -118,15 +189,15 @@ const CataloguePage = () => {
 
   return (
     <main
-      className="container mx-auto px-4 -mt-[130px] md:-mt-[146px] lg:-mt-[162px] pt-[130px] md:pt-[146px] lg:pt-[162px] max-w-7xl"
+      className="container mx-auto px-4 pt-6 md:pt-8 lg:pt-10 max-w-7xl"
       role="main"
     >
       {/* Page Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-primary mb-4 leading-tight">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-primary mb-3 leading-tight">
           Handcrafted Treasures
         </h1>
-        <p className="text-lg text-secondary">
+        <p className="text-base md:text-[1.05rem] text-secondary">
           Discover the soul of India through its rich heritage of arts and
           crafts.
         </p>
@@ -227,13 +298,14 @@ const CataloguePage = () => {
       {/* Results Count */}
       <div className="text-center mb-6">
         <p className="text-secondary">
-          Showing {filteredProducts.length} of {products.length} products
+          Showing {visibleProducts.length} of {filteredProducts.length} filtered
+          products ({products.length} total)
         </p>
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-        {filteredProducts.map((product) => (
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+        {visibleProducts.map((product) => (
           <ProductCard
             key={product._id}
             product={{
@@ -242,10 +314,17 @@ const CataloguePage = () => {
               storyTitle: product.name,
               storyDescription: product.description,
             }}
+            compact
             onClick={handleProductClick}
           />
         ))}
       </div>
+
+      {hasMoreProducts && (
+        <div ref={loadMoreRef} className="py-8 text-center text-secondary">
+          Loading more products...
+        </div>
+      )}
 
       {/* No Results */}
       {filteredProducts.length === 0 && (

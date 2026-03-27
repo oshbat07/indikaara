@@ -36,7 +36,7 @@ const FeaturedArtisan = () => {
       <div className="mb-8 text-center">
         <h2
           id="featured-artisan-title"
-          className="text-4xl font-bold text-primary mb-3"
+          className="text-3xl font-bold text-primary mb-3"
         >
           Featured Artisan
         </h2>
@@ -59,17 +59,17 @@ const FeaturedArtisan = () => {
         {/* Artisan Story */}
         <div className="flex flex-col gap-4 text-center md:text-left md:w-1/2">
           <div className="mb-2">
-            <span className="inline-block bg-[var(--primary-color)] text-white px-3 py-1 rounded-full text-sm font-medium mb-3">
+            <span className="inline-block bg-[var(--primary-color)] text-white px-3 py-1 rounded-full text-xs font-medium mb-3">
               {featuredArtisan.craft}
             </span>
           </div>
-          <h3 className="text-3xl md:text-xl sm:text-lg font-bold text-primary mb-2">
+          <h3 className="text-2xl md:text-base sm:text-sm font-bold text-primary mb-2">
             {featuredArtisan.name}
           </h3>
-          <p className="text-[var(--secondary-color)] md:text-sm sm:text-sm font-medium mb-4">
+          <p className="text-[var(--secondary-color)] text-xs md:text-xs sm:text-xs font-medium mb-4">
             {featuredArtisan.title} • {featuredArtisan.location}
           </p>
-          <p className="lg:text-lg md:text-lg sm:text-sm text-secondary leading-relaxed mb-6">
+          <p className="text-sm lg:text-sm md:text-sm sm:text-xs text-secondary leading-relaxed mb-6">
             {featuredArtisan.story}
           </p>
 

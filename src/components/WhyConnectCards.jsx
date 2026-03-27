@@ -1,4 +1,5 @@
 import React from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   CheckCircleOutline,
   Public,
@@ -9,19 +10,7 @@ import {
 } from "@mui/icons-material";
 
 export const WhyConnectCards = () => {
-  const [expandedIndex, setExpandedIndex] = React.useState(null);
-  const [isMobile, setIsMobile] = React.useState(window.innerWidth < 768);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setExpandedIndex(null);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const items = [
     {
@@ -62,75 +51,79 @@ export const WhyConnectCards = () => {
     },
   ];
 
+  const selectedItem = items[selectedIndex];
+  const SelectedIcon = selectedItem.icon;
+
   return (
-    <div className="grid gap-[clamp(1rem,3vw,2rem)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full mt-[clamp(1.5rem,3vw,2.5rem)]">
-      {items.map((item, index) => {
-        const Icon = item.icon;
-        // Mobile: one card at a time (expandedIndex matches current index)
-        // Desktop: all expand together (expandedIndex is not null)
-        const isExpanded = isMobile
-          ? expandedIndex === index
-          : expandedIndex !== null;
+    <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(280px,0.95fr)_minmax(0,1.45fr)] lg:items-start">
+      <div className="rounded-2xl border border-gray-200 bg-white/95 p-3 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
+          {items.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = selectedIndex === index;
 
-        const handleClick = () => {
-          if (isMobile) {
-            // Mobile: toggle individual card
-            setExpandedIndex(expandedIndex === index ? null : index);
-          } else {
-            // Desktop: expand all or collapse all
-            setExpandedIndex(expandedIndex === null ? index : null);
-          }
-        };
-
-        return (
-          <div
-            key={item.title}
-            className="rounded-[clamp(0.75rem,3vw,1.5rem)] bg-gray-100/90 shadow-sm transition-all duration-300 overflow-hidden"
-          >
-            {/* Summary Section */}
-            <button
-              onClick={handleClick}
-              className={`w-full p-[clamp(1rem,3vw,1.5rem)] flex items-start gap-[clamp(0.75rem,2.5vw,1rem)] transition-colors text-left cursor-pointer hover:bg-gray-100`}
-            >
-              <div className="flex-shrink-0">
-                <Icon
-                  className="text-[#ac1f23] drop-shadow-sm"
-                  style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)" }}
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-[clamp(1rem,2.5vw,1.25rem)] font-semibold tracking-wide text-gray-800">
-                  {item.title}
-                </h3>
-              </div>
-              <svg
-                className={`w-[clamp(1rem,2vw,1.25rem)] h-[clamp(1rem,2vw,1.25rem)] flex-shrink-0 transition-transform duration-300 ${
-                  isExpanded ? "rotate-180" : ""
-                } mt-0.5`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            return (
+              <motion.button
+                key={item.title}
+                type="button"
+                onClick={() => setSelectedIndex(index)}
+                whileTap={{ scale: 0.985 }}
+                className={`group flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-250 ${
+                  isActive
+                    ? "border-primary bg-primary text-white ring-1 ring-primary/30 shadow-[0_10px_20px_rgba(172,31,35,0.28)]"
+                    : "border-gray-200 bg-white hover:border-primary/35 hover:bg-primary/5"
+                }`}
+                aria-pressed={isActive}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                />
-              </svg>
-            </button>
+                <div
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                    isActive
+                      ? "bg-white/20 text-white"
+                      : "bg-gray-100 text-primary"
+                  }`}
+                >
+                  <Icon style={{ fontSize: "1.1rem" }} />
+                </div>
+                <span
+                  className={`flex-1 text-[0.78rem] font-semibold tracking-tight transition-colors ${
+                    isActive ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  {item.title}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
 
-            {/* Expandable Details */}
-            {isExpanded && (
-              <div className="px-[clamp(1rem,3vw,1.5rem)] pb-[clamp(1rem,3vw,1.5rem)] border-t border-gray-300 pt-[clamp(0.75rem,2vw,1rem)] bg-white animate-in fade-in duration-200">
-                <p className="text-[clamp(0.875rem,2.5vw,1rem)] leading-relaxed text-gray-900 font-medium">
-                  {item.description}
-                </p>
+      <motion.article
+        layout
+        className="h-full rounded-2xl border border-[#ac1f23]/25 bg-white p-5 sm:p-6 text-left shadow-[0_12px_32px_rgba(15,23,42,0.1)]"
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedItem.title}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.24, ease: "easeOut" }}
+          >
+            <div className="mb-4 flex items-center gap-3 border-b border-gray-200 pb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ac1f23]/10 text-[#ac1f23]">
+                <SelectedIcon style={{ fontSize: "1.2rem" }} />
               </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
+              <h3 className="text-[0.93rem] font-semibold tracking-tight text-gray-900">
+                {selectedItem.title}
+              </h3>
+            </div>
+
+            <p className="text-[0.78rem] leading-7 text-gray-700">
+              {selectedItem.description}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </motion.article>
+    </section>
   );
 };

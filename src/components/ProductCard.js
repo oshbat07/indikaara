@@ -7,7 +7,7 @@ import { getFirstImage, getDefaultImage } from "../utils/imageUtils";
  * @param {Object} product - Product data object
  * @param {function} onClick - Click handler for product selection
  */
-const ProductCard = ({ product, onClick }) => {
+const ProductCard = ({ product, onClick, compact = false }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [productImageSrc, setProductImageSrc] = useState("");
 
@@ -101,7 +101,9 @@ const ProductCard = ({ product, onClick }) => {
 
   return (
     <div
-      className="flex flex-col gap-4 product-card rounded-[var(--border-radius-lg)] overflow-hidden group cursor-pointer hover:transform hover:scale-105 transition-all duration-300"
+      className={`flex flex-col product-card rounded-[var(--border-radius-lg)] overflow-hidden group cursor-pointer hover:transform hover:scale-105 transition-all duration-300 ${
+        compact ? "gap-3" : "gap-4"
+      }`}
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -140,21 +142,31 @@ const ProductCard = ({ product, onClick }) => {
 
         {/* Featured badge */}
         {product.featured && (
-          <div className="absolute top-3 left-3 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-full">
+          <div
+            className={`absolute top-3 left-3 bg-primary text-white font-semibold px-2 py-1 rounded-full ${
+              compact ? "text-[10px]" : "text-xs"
+            }`}
+          >
             Featured
           </div>
         )}
       </div>
 
       {/* Product Info */}
-      <div className="p-2 space-y-2">
-        <p className="text-primary text-xl font-semibold mb-1 line-clamp-2">
+      <div className={`${compact ? "p-1.5 space-y-1.5" : "p-2 space-y-2"}`}>
+        <p
+          className={`text-primary font-semibold mb-1 line-clamp-2 ${
+            compact ? "text-base" : "text-xl"
+          }`}
+        >
           {product.name}
         </p>
 
         {/* Price */}
         <div className="flex items-center gap-2">
-          <span className="text-primary text-lg font-bold">
+          <span
+            className={`text-primary font-bold ${compact ? "text-base" : "text-lg"}`}
+          >
             {displayPrice()}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
@@ -165,8 +177,12 @@ const ProductCard = ({ product, onClick }) => {
         </div>
 
         {/* Category*/}
-        <div className="flex flex-wrap gap-1 text-xs">
-          <span className="px-2 py-1 bg-primary/10 text-primary rounded-md">
+        <div
+          className={`flex flex-wrap gap-1 ${compact ? "text-[10px]" : "text-xs"}`}
+        >
+          <span
+            className={`${compact ? "px-1.5 py-0.5" : "px-2 py-1"} bg-primary/10 text-primary rounded-md`}
+          >
             {product.collection}
           </span>
         </div>

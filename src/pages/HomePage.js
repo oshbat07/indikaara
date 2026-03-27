@@ -33,30 +33,30 @@ const HomePage = () => {
       <HeroSection />
 
       {/*WHY CONNECT WITH INDIKAARA section */}
-      <section className="why-connect-section w-screen relative left-[calc(-50vw+50%)] bg-gray-50 py-[clamp(2rem,8vw,6rem)]">
-        <div className="w-full px-[clamp(0.75rem,4vw,2rem)]">
-          <div className="w-full bg-white p-[clamp(1.5rem,5vw,3rem)] rounded-[clamp(0.75rem,3vw,1.5rem)] shadow-[0_10px_40px_rgba(0,0,0,0.08)] text-center mx-auto">
-            <h1 className="text-[clamp(1.5rem,5vw,2.5rem)] font-extrabold text-gray-800 mb-[clamp(0.75rem,2vw,1rem)] leading-tight">
+      <section className="why-connect-section w-full bg-[radial-gradient(circle_at_top_right,_rgba(172,31,35,0.08),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#f3f4f6_100%)] py-[clamp(2.25rem,7vw,5rem)]">
+        <div className="mx-auto w-full max-w-7xl px-[clamp(0.75rem,4vw,2rem)]">
+          <div className="w-full rounded-2xl border border-white/70 bg-white/80 p-[clamp(1.25rem,4vw,2.5rem)] text-center shadow-[0_14px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+            <h1 className="text-[clamp(1.16rem,3.6vw,1.92rem)] font-extrabold text-gray-900 mb-[clamp(0.75rem,2vw,1rem)] leading-tight">
               Why Connect with{" "}
               <span className="text-[#ac1f23] split">Indikaara?</span>
             </h1>
-            <p className="text-[clamp(0.875rem,2.5vw,1.125rem)] text-gray-600 leading-relaxed mb-[clamp(1.5rem,3vw,2rem)]">
+            <p className="mx-auto max-w-3xl text-[clamp(0.72rem,1.84vw,0.85rem)] text-gray-600 leading-relaxed mb-[clamp(1.2rem,3vw,1.9rem)]">
               We bridge the world and India's finest artisans—built on
               authenticity, empowerment, and timeless craft.
             </p>
             <WhyConnectCards />
-            <div className="bg-orange-50 p-[clamp(1rem,3vw,1.5rem)] rounded-[clamp(0.75rem,2vw,1.25rem)] mt-[clamp(2rem,5vw,2.5rem)] border border-orange-100">
-              <p className="italic text-gray-700 leading-relaxed text-[clamp(0.75rem,2.5vw,1rem)]">
+            <div className="mx-auto mt-[clamp(1.5rem,4vw,2.2rem)] max-w-4xl rounded-xl border border-orange-100 bg-orange-50/80 p-[clamp(1rem,3vw,1.35rem)]">
+              <p className="italic text-gray-700 leading-relaxed text-[clamp(0.64rem,1.76vw,0.8rem)]">
                 "Indikaara didn't just sell my art; they shared my story. It's a
                 partnership that honors my craft and heritage."
               </p>
-              <p className="mt-[clamp(0.75rem,2vw,1rem)] font-semibold text-gray-800 text-[clamp(0.75rem,2.5vw,1rem)]">
+              <p className="mt-[clamp(0.7rem,2vw,1rem)] font-semibold text-gray-800 text-[clamp(0.64rem,1.76vw,0.8rem)]">
                 - A. Kumar, Weaver from Varanasi
               </p>
             </div>
             <button
               onClick={() => (window.location.href = "/foundation")}
-              className="mt-[clamp(2rem,5vw,2.5rem)] w-full px-[clamp(1.25rem,3vw,1.5rem)] py-[clamp(0.75rem,2vw,1rem)] bg-primary text-white font-bold rounded-full text-[clamp(1rem,2.5vw,1.125rem)] shadow-lg transition-all hover:bg-orange-700 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50"
+              className="mt-[clamp(1.8rem,4vw,2.2rem)] inline-flex w-full max-w-sm items-center justify-center rounded-full bg-primary px-[clamp(1.1rem,3vw,1.45rem)] py-[clamp(0.7rem,2vw,0.95rem)] text-[clamp(0.76rem,1.84vw,0.86rem)] font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:bg-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-500/45"
             >
               Know Our Foundation
             </button>

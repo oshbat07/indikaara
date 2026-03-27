@@ -30,11 +30,11 @@ const BlogDetailPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch blog post by slug
         const postData = await getPostBySlug(id);
         setBlog(postData);
-        
+
         // Fetch comments for this post
         if (postData._id) {
           try {
@@ -64,17 +64,16 @@ const BlogDetailPage = () => {
     }
   }, [id]);
 
-
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!blog?._id) return;
-    
+
     if (!newComment.content.trim()) {
       alert("Please enter a comment");
       return;
     }
-    
+
     if (!newComment.name.trim()) {
       alert("Please enter your name");
       return;
@@ -82,32 +81,35 @@ const BlogDetailPage = () => {
 
     try {
       setSubmittingComment(true);
-      
+
       const commentData = {
         name: newComment.name.trim(),
         content: newComment.content.trim(),
       };
-      
+
       if (newComment.email.trim()) {
         commentData.email = newComment.email.trim();
       }
-      
+
       const createdComment = await createComment(blog._id, commentData);
-      
+
       // Add to comments list (it will be pending, so won't show until approved)
       setComments((prev) => [createdComment, ...prev]);
-      
+
       // Reset form
       setNewComment({
         name: "",
         email: "",
         content: "",
       });
-      
+
       alert("Comment submitted! It will be visible after admin approval.");
     } catch (err) {
       console.error("Error submitting comment:", err);
-      alert(err.response?.data?.message || "Failed to submit comment. Please try again.");
+      alert(
+        err.response?.data?.message ||
+          "Failed to submit comment. Please try again.",
+      );
     } finally {
       setSubmittingComment(false);
     }
@@ -123,13 +125,13 @@ const BlogDetailPage = () => {
   };
 
   const formatTimeAgo = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
 
     if (diffInHours < 1) {
-      return 'Just now';
+      return "Just now";
     } else if (diffInHours < 24) {
       return `${diffInHours}h ago`;
     } else {
@@ -144,9 +146,30 @@ const BlogDetailPage = () => {
 
   if (loading) {
     return (
-      <main className="container mx-auto max-w-4xl px-4 py-8 pt-24">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)]"></div>
+      <main
+        className="container mx-auto max-w-4xl px-4 py-8 pt-24"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary-color)]/30 border-t-[var(--primary-color)]" />
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+            Loading article
+          </h1>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">
+            Preparing the full story...
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-gray-700 bg-[#2a2a2a]/60 p-5 animate-pulse">
+          <div className="h-5 w-1/4 rounded bg-gray-700/70 mb-4" />
+          <div className="h-9 w-5/6 rounded bg-gray-700/70 mb-3" />
+          <div className="h-4 w-1/3 rounded bg-gray-700/60 mb-6" />
+          <div className="h-64 w-full rounded-lg bg-gray-700/65 mb-6" />
+          <div className="h-3 w-full rounded bg-gray-700/60 mb-2" />
+          <div className="h-3 w-full rounded bg-gray-700/60 mb-2" />
+          <div className="h-3 w-11/12 rounded bg-gray-700/60 mb-2" />
+          <div className="h-3 w-4/5 rounded bg-gray-700/60" />
         </div>
       </main>
     );
@@ -159,7 +182,9 @@ const BlogDetailPage = () => {
           <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
             Blog post not found
           </h1>
-          <p className="text-[var(--text-secondary)] mb-6">{error || "The blog post you're looking for doesn't exist."}</p>
+          <p className="text-[var(--text-secondary)] mb-6">
+            {error || "The blog post you're looking for doesn't exist."}
+          </p>
           <Link
             to="/blog"
             className="text-[var(--primary-color)] hover:underline"
@@ -196,7 +221,6 @@ const BlogDetailPage = () => {
             </span>
           </div>
         </nav>
-
       </div>
 
       {/* Article Header */}
@@ -221,7 +245,10 @@ const BlogDetailPage = () => {
           {comments.length > 0 && (
             <>
               <span>•</span>
-              <span>{comments.length} {comments.length === 1 ? "comment" : "comments"}</span>
+              <span>
+                {comments.length}{" "}
+                {comments.length === 1 ? "comment" : "comments"}
+              </span>
             </>
           )}
         </div>
@@ -258,7 +285,6 @@ const BlogDetailPage = () => {
         </div>
       </article>
 
-
       {/* Comments Section */}
       <section className="mb-12">
         <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-6">
@@ -273,7 +299,9 @@ const BlogDetailPage = () => {
                 type="text"
                 placeholder="Your name *"
                 value={newComment.name}
-                onChange={(e) => setNewComment({ ...newComment, name: e.target.value })}
+                onChange={(e) =>
+                  setNewComment({ ...newComment, name: e.target.value })
+                }
                 required
                 className="w-full p-4 bg-[#2a2a2a] border border-gray-600 rounded-lg text-[var(--text-primary)] placeholder-gray-400 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-colors"
               />
@@ -281,13 +309,17 @@ const BlogDetailPage = () => {
                 type="email"
                 placeholder="Your email (optional)"
                 value={newComment.email}
-                onChange={(e) => setNewComment({ ...newComment, email: e.target.value })}
+                onChange={(e) =>
+                  setNewComment({ ...newComment, email: e.target.value })
+                }
                 className="w-full p-4 bg-[#2a2a2a] border border-gray-600 rounded-lg text-[var(--text-primary)] placeholder-gray-400 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-colors"
               />
             </div>
             <textarea
               value={newComment.content}
-              onChange={(e) => setNewComment({ ...newComment, content: e.target.value })}
+              onChange={(e) =>
+                setNewComment({ ...newComment, content: e.target.value })
+              }
               placeholder="Share your thoughts..."
               required
               rows={4}
@@ -296,7 +328,11 @@ const BlogDetailPage = () => {
           </div>
           <button
             type="submit"
-            disabled={!newComment.name.trim() || !newComment.content.trim() || submittingComment}
+            disabled={
+              !newComment.name.trim() ||
+              !newComment.content.trim() ||
+              submittingComment
+            }
             className="mt-4 px-6 py-3 bg-[var(--primary-color)] text-white rounded-lg hover:bg-[var(--secondary-color)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submittingComment ? "Submitting..." : "Post Comment"}

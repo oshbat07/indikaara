@@ -641,11 +641,41 @@ const ProductDetailPage = () => {
   // Loading state
   if (loading) {
     return (
-      <main className="container mx-auto px-4 py-8 max-w-6xl" role="main">
-        <div className="flex items-center justify-center min-h-96">
-          <div className="text-center">
-            <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-secondary">Loading product details...</p>
+      <main
+        className="container mx-auto px-4 py-8 max-w-7xl"
+        role="main"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+          <h1 className="text-3xl font-bold text-primary mb-2">
+            Loading product details
+          </h1>
+          <p className="text-secondary text-sm md:text-base">
+            Getting craftsmanship details ready...
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-pulse">
+          <div className="lg:col-span-5">
+            <div className="aspect-[4/5] w-full rounded-xl bg-gray-700/65 mb-4" />
+            <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <div
+                  key={`thumb-skeleton-${idx}`}
+                  className="aspect-square rounded-lg bg-gray-700/60"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-7 space-y-4">
+            <div className="h-4 w-1/4 rounded bg-gray-700/60" />
+            <div className="h-10 w-3/4 rounded bg-gray-700/70" />
+            <div className="h-4 w-2/5 rounded bg-gray-700/60" />
+            <div className="h-24 w-full rounded bg-gray-700/60" />
+            <div className="h-12 w-40 rounded-full bg-gray-700/65" />
+            <div className="h-14 w-full rounded-xl bg-gray-700/55" />
           </div>
         </div>
       </main>
@@ -876,21 +906,18 @@ const ProductDetailPage = () => {
           {/* Quantity Selector */}
           <div className="pt-4">
             {selectedSize ? (
-              <div className="mb-4 mx-auto w-full max-w-md rounded-xl border-2 border-[#ff4f53] bg-gradient-to-b from-[#2a0f13] to-[#17090b] px-4 py-3 text-center shadow-[0_0_0_1px_rgba(255,79,83,0.35),0_0_24px_rgba(172,31,35,0.45)]">
-                <p className="text-xs uppercase tracking-[0.12em] text-[#ffb8ba] font-bold">
+              <div className="mb-4 mx-auto w-full max-w-md rounded-xl border border-[#ac1f23]/45 bg-[#ac1f23]/10 px-4 py-3 text-center shadow-sm">
+                <p className="text-xs uppercase tracking-[0.1em] text-[#f2b6b8] font-semibold">
                   Current Size Selection
                 </p>
-                <p className="mt-1 text-lg font-bold text-white">
+                <p className="mt-1 text-lg font-semibold text-primary">
                   {typeof selectedSize === "object"
                     ? `${selectedSize.width} x ${selectedSize.height}`
                     : selectedSize}
                 </p>
                 {Number(currentPrice) > 0 && (
-                  <p className="mt-1 text-base font-extrabold text-[#ff4f53]">
+                  <p className="mt-1 text-base font-bold text-[#e45a5d]">
                     ₹ {Number(currentPrice).toLocaleString()}
-                    {(product.category || "").toLowerCase() === "rugs"
-                      ? " / sq ft"
-                      : ""}
                   </p>
                 )}
               </div>

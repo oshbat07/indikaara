@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   getAdminComments,
   approveComment,
   deleteComment,
-} from '../api/blogApi';
-import '../styles/blog.css';
+} from "../api/blogApi";
+import "../styles/blog.css";
 
 const CommentModerationPage = () => {
   const { token } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('pending');
+  const [statusFilter, setStatusFilter] = useState("pending");
   const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
@@ -26,12 +26,12 @@ const CommentModerationPage = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await getAdminComments(token, { status: statusFilter });
       setComments(data.comments || []);
     } catch (err) {
-      console.error('Error fetching comments:', err);
-      setError(err.response?.data?.message || 'Failed to load comments');
+      console.error("Error fetching comments:", err);
+      setError(err.response?.data?.message || "Failed to load comments");
       setComments([]);
     } finally {
       setLoading(false);
@@ -43,25 +43,31 @@ const CommentModerationPage = () => {
       setProcessingId(commentId);
       await approveComment(token, commentId);
       // Update comment status in list
-      setComments(comments.map(comment => 
-        comment._id === commentId 
-          ? { ...comment, status: 'approved' }
-          : comment
-      ));
+      setComments(
+        comments.map((comment) =>
+          comment._id === commentId
+            ? { ...comment, status: "approved" }
+            : comment,
+        ),
+      );
       // If filtering by pending, remove from list
-      if (statusFilter === 'pending') {
-        setComments(comments.filter(comment => comment._id !== commentId));
+      if (statusFilter === "pending") {
+        setComments(comments.filter((comment) => comment._id !== commentId));
       }
     } catch (err) {
-      console.error('Error approving comment:', err);
-      alert(err.response?.data?.message || 'Failed to approve comment');
+      console.error("Error approving comment:", err);
+      alert(err.response?.data?.message || "Failed to approve comment");
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleDelete = async (commentId) => {
-    if (!window.confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this comment? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -69,32 +75,56 @@ const CommentModerationPage = () => {
       setProcessingId(commentId);
       await deleteComment(token, commentId);
       // Remove from list
-      setComments(comments.filter(comment => comment._id !== commentId));
+      setComments(comments.filter((comment) => comment._id !== commentId));
     } catch (err) {
-      console.error('Error deleting comment:', err);
-      alert(err.response?.data?.message || 'Failed to delete comment');
+      console.error("Error deleting comment:", err);
+      alert(err.response?.data?.message || "Failed to delete comment");
     } finally {
       setProcessingId(null);
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   if (loading && comments.length === 0) {
     return (
-      <main className="container mx-auto max-w-7xl px-4 py-8 pt-24">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)]"></div>
+      <main
+        className="container mx-auto max-w-7xl px-4 py-8 pt-24"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary-color)]/30 border-t-[var(--primary-color)]" />
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+            Loading comments
+          </h1>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">
+            Fetching moderation queue...
+          </p>
+        </div>
+
+        <div className="space-y-4 animate-pulse">
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <div
+              key={`comment-skeleton-${idx}`}
+              className="bg-[#2a2a2a]/65 rounded-lg p-5 border border-gray-700"
+            >
+              <div className="h-4 w-1/3 rounded bg-gray-700/70 mb-3" />
+              <div className="h-3 w-full rounded bg-gray-700/60 mb-2" />
+              <div className="h-3 w-11/12 rounded bg-gray-700/60 mb-3" />
+              <div className="h-8 w-36 rounded bg-gray-700/60" />
+            </div>
+          ))}
         </div>
       </main>
     );
@@ -133,24 +163,24 @@ const CommentModerationPage = () => {
       <div className="mb-8">
         <div className="flex gap-4">
           <button
-            onClick={() => setStatusFilter('pending')}
+            onClick={() => setStatusFilter("pending")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'pending'
-                ? 'bg-[var(--primary-color)] text-white'
-                : 'bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a]'
+              statusFilter === "pending"
+                ? "bg-[var(--primary-color)] text-white"
+                : "bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a]"
             }`}
           >
-            Pending ({comments.filter(c => c.status === 'pending').length})
+            Pending ({comments.filter((c) => c.status === "pending").length})
           </button>
           <button
-            onClick={() => setStatusFilter('approved')}
+            onClick={() => setStatusFilter("approved")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              statusFilter === 'approved'
-                ? 'bg-[var(--primary-color)] text-white'
-                : 'bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a]'
+              statusFilter === "approved"
+                ? "bg-[var(--primary-color)] text-white"
+                : "bg-[#2a2a2a] text-[var(--text-secondary)] hover:bg-[#3a3a3a]"
             }`}
           >
-            Approved ({comments.filter(c => c.status === 'approved').length})
+            Approved ({comments.filter((c) => c.status === "approved").length})
           </button>
         </div>
       </div>
@@ -160,9 +190,9 @@ const CommentModerationPage = () => {
         {comments.length === 0 ? (
           <div className="text-center py-12 bg-[#2a2a2a] rounded-lg border border-gray-700">
             <p className="text-[var(--text-secondary)]">
-              {statusFilter === 'pending' 
-                ? 'No pending comments to review.'
-                : 'No approved comments.'}
+              {statusFilter === "pending"
+                ? "No pending comments to review."
+                : "No approved comments."}
             </p>
           </div>
         ) : (
@@ -187,9 +217,9 @@ const CommentModerationPage = () => {
                     )}
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        comment.status === 'approved'
-                          ? 'bg-green-500/20 text-green-400'
-                          : 'bg-yellow-500/20 text-yellow-400'
+                        comment.status === "approved"
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-yellow-500/20 text-yellow-400"
                       }`}
                     >
                       {comment.status}
@@ -198,9 +228,9 @@ const CommentModerationPage = () => {
                       {formatDate(comment.createdAt)}
                     </span>
                   </div>
-                  
+
                   {/* Post Reference */}
-                  {comment.post && typeof comment.post === 'object' && (
+                  {comment.post && typeof comment.post === "object" && (
                     <div className="mb-3">
                       <Link
                         to={`/blog/${comment.post.slug}`}
@@ -213,20 +243,22 @@ const CommentModerationPage = () => {
                       </span>
                     </div>
                   )}
-                  
+
                   <p className="text-[var(--text-secondary)] mb-4 whitespace-pre-wrap">
                     {comment.content}
                   </p>
-                  
+
                   {/* Actions */}
                   <div className="flex items-center gap-2">
-                    {comment.status === 'pending' && (
+                    {comment.status === "pending" && (
                       <button
                         onClick={() => handleApprove(comment._id)}
                         disabled={processingId === comment._id}
                         className="px-4 py-2 text-sm bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors disabled:opacity-50"
                       >
-                        {processingId === comment._id ? 'Processing...' : 'Approve'}
+                        {processingId === comment._id
+                          ? "Processing..."
+                          : "Approve"}
                       </button>
                     )}
                     <button
@@ -234,7 +266,9 @@ const CommentModerationPage = () => {
                       disabled={processingId === comment._id}
                       className="px-4 py-2 text-sm bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors disabled:opacity-50"
                     >
-                      {processingId === comment._id ? 'Processing...' : 'Delete'}
+                      {processingId === comment._id
+                        ? "Processing..."
+                        : "Delete"}
                     </button>
                   </div>
                 </div>

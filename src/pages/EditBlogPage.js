@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import '../styles/blog.css';
-import '../styles/quill-editor.css';
-import { getAdminPostById, updateBlogPost } from '../api/blogApi';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect, useMemo } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import "../styles/blog.css";
+import "../styles/quill-editor.css";
+import { getAdminPostById, updateBlogPost } from "../api/blogApi";
+import { useAuth } from "../context/AuthContext";
 
 const EditBlogPage = () => {
   const { id } = useParams();
@@ -16,89 +16,114 @@ const EditBlogPage = () => {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
-    title: '',
-    excerpt: '',
-    content: '',
-    coverImage: '',
-    tags: '',
+    title: "",
+    excerpt: "",
+    content: "",
+    coverImage: "",
+    tags: "",
   });
   const [errors, setErrors] = useState({});
 
   // Quill editor modules configuration - Industry standard setup
-  const quillModules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'font': [] }],
-        [{ 'size': ['small', false, 'large', 'huge'] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
-        [{ 'align': [] }],
-        ['blockquote', 'code-block'],
-        ['link', 'image', 'video'],
-        ['clean']
-      ],
-      handlers: {
-        image: function() {
-          const tooltip = this.quill.theme.tooltip;
-          const originalHide = tooltip.hide;
-          
-          tooltip.save = function() {
-            const range = this.quill.getSelection(true);
-            const value = this.textbox.value;
-            if (value) {
-              // Validate URL
-              if (value.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) || value.startsWith('http://') || value.startsWith('https://')) {
-                this.quill.insertEmbed(range.index, 'image', value, 'user');
-              } else {
-                alert('Please enter a valid image URL');
-                return;
+  const quillModules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          [{ font: [] }],
+          [{ size: ["small", false, "large", "huge"] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: [] }, { background: [] }],
+          [{ script: "sub" }, { script: "super" }],
+          [
+            { list: "ordered" },
+            { list: "bullet" },
+            { indent: "-1" },
+            { indent: "+1" },
+          ],
+          [{ direction: "rtl" }],
+          [{ align: [] }],
+          ["blockquote", "code-block"],
+          ["link", "image", "video"],
+          ["clean"],
+        ],
+        handlers: {
+          image: function () {
+            const tooltip = this.quill.theme.tooltip;
+            const originalHide = tooltip.hide;
+
+            tooltip.save = function () {
+              const range = this.quill.getSelection(true);
+              const value = this.textbox.value;
+              if (value) {
+                // Validate URL
+                if (
+                  value.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) ||
+                  value.startsWith("http://") ||
+                  value.startsWith("https://")
+                ) {
+                  this.quill.insertEmbed(range.index, "image", value, "user");
+                } else {
+                  alert("Please enter a valid image URL");
+                  return;
+                }
               }
-            }
-            tooltip.hide();
-          };
-          tooltip.hide = originalHide;
-          tooltip.edit('image');
-          tooltip.textbox.placeholder = 'Enter image URL';
-        }
-      }
-    },
-    clipboard: {
-      matchVisual: false
-    },
-    keyboard: {
-      bindings: {
-        tab: {
-          key: 9,
-          handler: function() {
-            return true; // Allow tab to work normally
-          }
-        }
-      }
-    }
-  }), []);
+              tooltip.hide();
+            };
+            tooltip.hide = originalHide;
+            tooltip.edit("image");
+            tooltip.textbox.placeholder = "Enter image URL";
+          },
+        },
+      },
+      clipboard: {
+        matchVisual: false,
+      },
+      keyboard: {
+        bindings: {
+          tab: {
+            key: 9,
+            handler: function () {
+              return true; // Allow tab to work normally
+            },
+          },
+        },
+      },
+    }),
+    [],
+  );
 
   const quillFormats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike',
-    'color', 'background', 'script',
-    'list', 'bullet', 'indent',
-    'direction', 'align',
-    'blockquote', 'code-block',
-    'link', 'image', 'video'
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background",
+    "script",
+    "list",
+    "bullet",
+    "indent",
+    "direction",
+    "align",
+    "blockquote",
+    "code-block",
+    "link",
+    "image",
+    "video",
   ];
 
   // Calculate word and character count
   const contentStats = useMemo(() => {
-    const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
-    const words = textContent.split(/\s+/).filter(word => word.length > 0);
+    const textContent = formData.content.replace(/<[^>]*>/g, "").trim();
+    const words = textContent.split(/\s+/).filter((word) => word.length > 0);
     return {
       characters: textContent.length,
       words: words.length,
-      charactersNoSpaces: textContent.replace(/\s/g, '').length
+      charactersNoSpaces: textContent.replace(/\s/g, "").length,
     };
   }, [formData.content]);
 
@@ -113,21 +138,21 @@ const EditBlogPage = () => {
       setLoading(true);
       setError(null);
       const post = await getAdminPostById(token, id);
-      
+
       setFormData({
-        title: post.title || '',
-        excerpt: post.excerpt || '',
-        content: post.content || '',
-        coverImage: post.coverImage || '',
-        tags: post.tags ? post.tags.join(', ') : '',
+        title: post.title || "",
+        excerpt: post.excerpt || "",
+        content: post.content || "",
+        coverImage: post.coverImage || "",
+        tags: post.tags ? post.tags.join(", ") : "",
       });
-      
+
       if (post.coverImage) {
         setImagePreview(post.coverImage);
       }
     } catch (err) {
-      console.error('Error fetching post:', err);
-      setError(err.response?.data?.message || 'Failed to load blog post');
+      console.error("Error fetching post:", err);
+      setError(err.response?.data?.message || "Failed to load blog post");
     } finally {
       setLoading(false);
     }
@@ -135,27 +160,27 @@ const EditBlogPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const handleImageUrlChange = (e) => {
     const url = e.target.value;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      coverImage: url
+      coverImage: url,
     }));
-    
-    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+
+    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
       setImagePreview(url);
     } else {
       setImagePreview(null);
@@ -164,22 +189,22 @@ const EditBlogPage = () => {
 
   const removeImage = () => {
     setImagePreview(null);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      coverImage: ''
+      coverImage: "",
     }));
   };
 
   const handleContentChange = (value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      content: value
+      content: value,
     }));
 
     if (errors.content) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        content: ''
+        content: "",
       }));
     }
   };
@@ -188,13 +213,13 @@ const EditBlogPage = () => {
     const newErrors = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'Title is required';
+      newErrors.title = "Title is required";
     }
 
     // Check if content has actual text (not just HTML tags)
-    const textContent = formData.content.replace(/<[^>]*>/g, '').trim();
+    const textContent = formData.content.replace(/<[^>]*>/g, "").trim();
     if (!textContent) {
-      newErrors.content = 'Content is required';
+      newErrors.content = "Content is required";
     }
 
     setErrors(newErrors);
@@ -213,7 +238,10 @@ const EditBlogPage = () => {
 
     try {
       const tagsArray = formData.tags
-        ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        ? formData.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0)
         : [];
 
       // formData.content is already HTML from Quill editor
@@ -225,13 +253,13 @@ const EditBlogPage = () => {
       if (formData.excerpt.trim()) {
         postData.excerpt = formData.excerpt.trim();
       } else {
-        postData.excerpt = '';
+        postData.excerpt = "";
       }
 
       if (formData.coverImage.trim()) {
         postData.coverImage = formData.coverImage.trim();
       } else {
-        postData.coverImage = '';
+        postData.coverImage = "";
       }
 
       if (tagsArray.length > 0) {
@@ -243,8 +271,11 @@ const EditBlogPage = () => {
       const updatedPost = await updateBlogPost(token, id, postData);
       navigate(`/blog/${updatedPost.slug}`);
     } catch (err) {
-      console.error('Error updating blog:', err);
-      setError(err.response?.data?.message || 'Failed to update blog post. Please try again.');
+      console.error("Error updating blog:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to update blog post. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -252,9 +283,25 @@ const EditBlogPage = () => {
 
   if (loading) {
     return (
-      <main className="container mx-auto max-w-4xl px-4 py-8 pt-24">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)]"></div>
+      <main
+        className="container mx-auto max-w-4xl px-4 py-8 pt-24"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary-color)]/30 border-t-[var(--primary-color)]" />
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+            Loading editor
+          </h1>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">
+            Preparing your draft for editing...
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-gray-700 bg-[#2a2a2a]/60 p-5 animate-pulse">
+          <div className="h-10 w-full rounded bg-gray-700/70 mb-4" />
+          <div className="h-28 w-full rounded bg-gray-700/60 mb-4" />
+          <div className="h-52 w-full rounded bg-gray-700/60" />
         </div>
       </main>
     );
@@ -284,11 +331,20 @@ const EditBlogPage = () => {
       {/* Breadcrumb */}
       <nav className="mb-8" aria-label="Breadcrumb">
         <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-          <Link to="/" className="text-[var(--primary-color)] hover:underline">Home</Link>
+          <Link to="/" className="text-[var(--primary-color)] hover:underline">
+            Home
+          </Link>
           <span>/</span>
-          <Link to="/blog/admin" className="text-[var(--primary-color)] hover:underline">Admin</Link>
+          <Link
+            to="/blog/admin"
+            className="text-[var(--primary-color)] hover:underline"
+          >
+            Admin
+          </Link>
           <span>/</span>
-          <span className="text-[var(--text-primary)] font-medium">Edit Post</span>
+          <span className="text-[var(--text-primary)] font-medium">
+            Edit Post
+          </span>
         </div>
       </nav>
 
@@ -308,7 +364,10 @@ const EditBlogPage = () => {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-[var(--text-primary)] mb-2"
+          >
             Title *
           </label>
           <input
@@ -319,7 +378,7 @@ const EditBlogPage = () => {
             onChange={handleInputChange}
             placeholder="Enter an engaging title for your blog post"
             className={`w-full p-4 bg-[#2a2a2a] border rounded-lg text-[var(--text-primary)] placeholder-gray-400 focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent transition-colors ${
-              errors.title ? 'border-red-500' : 'border-gray-600'
+              errors.title ? "border-red-500" : "border-gray-600"
             }`}
           />
           {errors.title && (
@@ -329,7 +388,10 @@ const EditBlogPage = () => {
 
         {/* Excerpt */}
         <div>
-          <label htmlFor="excerpt" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label
+            htmlFor="excerpt"
+            className="block text-sm font-medium text-[var(--text-primary)] mb-2"
+          >
             Excerpt
           </label>
           <textarea
@@ -345,7 +407,10 @@ const EditBlogPage = () => {
 
         {/* Tags */}
         <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label
+            htmlFor="tags"
+            className="block text-sm font-medium text-[var(--text-primary)] mb-2"
+          >
             Tags
           </label>
           <input
@@ -361,7 +426,10 @@ const EditBlogPage = () => {
 
         {/* Cover Image URL */}
         <div>
-          <label htmlFor="coverImage" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label
+            htmlFor="coverImage"
+            className="block text-sm font-medium text-[var(--text-primary)] mb-2"
+          >
             Cover Image URL
           </label>
           <input
@@ -376,9 +444,9 @@ const EditBlogPage = () => {
           {imagePreview && (
             <div className="mt-4 relative">
               <div className="rounded-lg overflow-hidden border-2 border-gray-600">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
+                <img
+                  src={imagePreview}
+                  alt="Preview"
                   className="w-full h-64 object-cover"
                   onError={() => setImagePreview(null)}
                 />
@@ -396,10 +464,15 @@ const EditBlogPage = () => {
 
         {/* Content */}
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label
+            htmlFor="content"
+            className="block text-sm font-medium text-[var(--text-primary)] mb-2"
+          >
             Content *
           </label>
-          <div className={`quill-editor-container ${errors.content ? 'error' : ''}`}>
+          <div
+            className={`quill-editor-container ${errors.content ? "error" : ""}`}
+          >
             <ReactQuill
               theme="snow"
               value={formData.content}
@@ -411,9 +484,15 @@ const EditBlogPage = () => {
           </div>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-2">
             <div className="flex flex-wrap gap-4 text-sm text-[var(--text-secondary)]">
-              <span>{contentStats.words} {contentStats.words === 1 ? 'word' : 'words'}</span>
+              <span>
+                {contentStats.words}{" "}
+                {contentStats.words === 1 ? "word" : "words"}
+              </span>
               <span>{contentStats.characters.toLocaleString()} characters</span>
-              <span>{contentStats.charactersNoSpaces.toLocaleString()} characters (no spaces)</span>
+              <span>
+                {contentStats.charactersNoSpaces.toLocaleString()} characters
+                (no spaces)
+              </span>
             </div>
             {errors.content && (
               <p className="text-sm text-red-400">{errors.content}</p>
@@ -421,7 +500,19 @@ const EditBlogPage = () => {
           </div>
           <div className="mt-2 text-sm text-[var(--text-secondary)]">
             <p className="mb-1">
-              Use the toolbar to format your content. Keyboard shortcuts: <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+B</kbd> Bold, <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+I</kbd> Italic, <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">Ctrl+K</kbd> Link
+              Use the toolbar to format your content. Keyboard shortcuts:{" "}
+              <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">
+                Ctrl+B
+              </kbd>{" "}
+              Bold,{" "}
+              <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">
+                Ctrl+I
+              </kbd>{" "}
+              Italic,{" "}
+              <kbd className="px-1.5 py-0.5 bg-[#1a1a1a] border border-gray-600 rounded text-xs">
+                Ctrl+K
+              </kbd>{" "}
+              Link
             </p>
           </div>
         </div>
@@ -439,12 +530,12 @@ const EditBlogPage = () => {
                 Saving...
               </span>
             ) : (
-              'Save Changes'
+              "Save Changes"
             )}
           </button>
           <button
             type="button"
-            onClick={() => navigate('/blog/admin')}
+            onClick={() => navigate("/blog/admin")}
             className="px-8 py-4 bg-[#2a2a2a] text-[var(--text-primary)] rounded-lg hover:bg-[#3a3a3a] transition-colors font-medium"
           >
             Cancel

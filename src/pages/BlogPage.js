@@ -23,19 +23,19 @@ const BlogPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch posts with search and tag filters
         const params = {
           sort,
         };
         if (searchTerm) params.q = searchTerm;
         if (selectedTag) params.tag = selectedTag;
-        
+
         const [postsData, tagsData] = await Promise.all([
           getPublishedPosts(params),
           getPublishedTags(),
         ]);
-        
+
         setBlogs(postsData.posts || []);
         setTags(tagsData.tags || []);
       } catch (err) {
@@ -71,9 +71,36 @@ const BlogPage = () => {
 
   if (loading) {
     return (
-      <main className="container mx-auto max-w-7xl px-4 py-8 pt-24">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)]"></div>
+      <main
+        className="container mx-auto max-w-7xl px-4 py-8 pt-24"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-8 max-w-2xl text-center">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-[var(--primary-color)]/30 border-t-[var(--primary-color)]" />
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
+            Loading blog posts
+          </h1>
+          <p className="text-[var(--text-secondary)] text-sm md:text-base">
+            Gathering stories and insights for you...
+          </p>
+        </div>
+
+        <div className="mb-8 h-11 w-full max-w-md rounded-lg border border-gray-700 bg-[#2a2a2a]/70 animate-pulse" />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div
+              key={`blog-loading-${index}`}
+              className="rounded-xl border border-gray-700 bg-[#2a2a2a]/60 p-4 animate-pulse"
+            >
+              <div className="h-44 w-full rounded-lg bg-gray-700/70 mb-4" />
+              <div className="h-4 w-3/4 rounded bg-gray-700/70 mb-2" />
+              <div className="h-3 w-1/2 rounded bg-gray-700/60 mb-4" />
+              <div className="h-3 w-full rounded bg-gray-700/60 mb-2" />
+              <div className="h-3 w-5/6 rounded bg-gray-700/60" />
+            </div>
+          ))}
         </div>
       </main>
     );
@@ -202,7 +229,7 @@ const BlogPage = () => {
               ))}
             </div>
           )}
-          
+
           {/* Sort */}
           <select
             value={sort}
@@ -227,9 +254,7 @@ const BlogPage = () => {
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-[var(--text-primary)]">
             {searchTerm || selectedTag
-              ? `${blogs.length} ${
-                  blogs.length === 1 ? "post" : "posts"
-                } found`
+              ? `${blogs.length} ${blogs.length === 1 ? "post" : "posts"} found`
               : "Latest Posts"}
           </h2>
         </div>
