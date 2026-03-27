@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-// Added hidePrices prop (boolean) to optionally suppress price display (e.g., for Rugs)
-// Buttons restyled to be square and uniform
 const SizeSelector = ({
   priceOptions = [],
   onSizeSelect,
@@ -30,6 +28,50 @@ const SizeSelector = ({
     return `₹${amount.toLocaleString()}`;
   };
 
+  const toRoundedCm = (feet) => {
+    const cm = Number(feet) * 30.48;
+    return Math.round(cm / 5) * 5;
+  };
+
+  const parseSizeToFeet = (size) => {
+    if (size && typeof size === "object") {
+      return {
+        width: Number(size.width) || 0,
+        height: Number(size.height) || 0,
+      };
+    }
+
+    if (typeof size === "string") {
+      const match = size.match(
+        /(\d+(?:\.\d+)?)\s*['"]?\s*[xX×]\s*(\d+(?:\.\d+)?)\s*['"]?/,
+      );
+      if (match) {
+        return {
+          width: Number(match[1]) || 0,
+          height: Number(match[2]) || 0,
+        };
+      }
+    }
+
+    return null;
+  };
+
+  const getSizeText = (size) => {
+    const parsed = parseSizeToFeet(size);
+
+    if (!parsed || !parsed.width || !parsed.height) {
+      return {
+        primary: typeof size === "string" ? size : "Standard",
+        secondary: "",
+      };
+    }
+
+    return {
+      primary: `${parsed.width}' x ${parsed.height}' ft`,
+      secondary: `${toRoundedCm(parsed.width)} x ${toRoundedCm(parsed.height)} cm`,
+    };
+  };
+
   const handleSizeSelect = (size, amount) => {
     const alreadySelected = isSameSize(internalSelectedSize, size);
     const newSize = alreadySelected ? null : size;
@@ -50,14 +92,15 @@ const SizeSelector = ({
   }
 
   return (
-    <div className="space-y-4 max-w-full sm:max-w-md md:max-w-lg mx-auto">
-      <h3 className="text-lg font-semibold text-primary mb-2 text-center">
-        Select Size
+    <div className="space-y-4 w-full">
+      <h3 className="text-base sm:text-lg font-semibold text-primary mb-2">
+        Size (Feet / cm)
       </h3>
 
-      <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3">
+      <div className="flex flex-wrap gap-2 sm:gap-3">
         {priceOptions.map((option, index) => {
           const isSelected = isSameSize(internalSelectedSize, option.size);
+          const sizeText = getSizeText(option.size);
 
           const getKey = () => {
             if (typeof option.size === "string")
@@ -69,25 +112,25 @@ const SizeSelector = ({
             <button
               key={getKey()}
               onClick={() => handleSizeSelect(option.size, option.amount)}
-              className={`aspect-square flex flex-col items-center justify-center border-2 rounded-md text-center px-1.5 py-1.5 sm:px-2 sm:py-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 focus:ring-offset-transparent ${
+              className={`min-h-[70px] min-w-[118px] sm:min-w-[132px] flex flex-col items-center justify-center border rounded-sm text-center px-3 py-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/60 focus:ring-offset-2 focus:ring-offset-transparent ${
                 isSelected
-                  ? "border-accent bg-accent/10 text-primary shadow-md"
-                  : "border-gray-300 hover:border-accent/50 text-secondary hover:text-primary"
+                  ? "border-[#ac1f23] bg-[#0b0b0f] text-white shadow-md"
+                  : "border-white/20 bg-gray-800/60 text-gray-200 hover:border-[#ac1f23]/70 hover:bg-gray-800"
               }`}
             >
-              <span className="font-medium text-[11px] sm:text-sm md:text-base leading-tight">
-                {typeof option.size === "string"
-                  ? option.size
-                  : `${option.size.width}x${option.size.height}`}
+              <span className="font-medium text-[13px] sm:text-[15px] leading-tight">
+                {sizeText.primary}
               </span>
-              {!hidePrices && (
-                <span className="mt-0.5 font-bold text-[10px] sm:text-xs md:text-sm text-accent">
+              <span
+                className={`text-[11px] sm:text-[13px] leading-tight ${
+                  isSelected ? "text-white/90" : "text-gray-300"
+                }`}
+              >
+                {sizeText.secondary || " "}
+              </span>
+              {!hidePrices && option.amount > 0 && (
+                <span className="mt-1 font-semibold text-[10px] sm:text-xs text-accent">
                   {formatPrice(option.amount)}
-                </span>
-              )}
-              {isSelected && (
-                <span className="mt-0.5 text-[9px] sm:text-[10px] md:text-xs text-accent">
-                  ✓
                 </span>
               )}
             </button>

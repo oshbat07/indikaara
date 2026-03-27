@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import ImageGallery from "../components/ImageGallery";
 import Breadcrumb from "../components/Breadcrumb";
-import ProductInfoSection from "../components/ProductInfoSection";
 import SizeSelector from "../components/SizeSelector";
 import Button from "../components/Button";
 import { getAllImagesOptimized } from "../utils/imageUtils";
@@ -32,111 +31,79 @@ const ProductDetailPage = () => {
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [shareMessage, setShareMessage] = useState("");
-  const galleryWrapperRef = useRef(null); // outer normal flow container
-  const galleryInnerRef = useRef(null); // element that becomes fixed
-  const placeholderRef = useRef(null); // placeholder to preserve height when fixed
-  const craftingRef = useRef(null); // anchor to release sticky
-  const careRef = useRef(null); // Care Instructions release anchor
-  const [headerHeight, setHeaderHeight] = useState(0); // dynamic header height
+  const [recommendedRugs, setRecommendedRugs] = useState([]);
+  const [recentlyViewedIds, setRecentlyViewedIds] = useState([]);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [headerHeight, setHeaderHeight] = useState(0); // combined fixed top stack height
+  const [galleryStickyTop, setGalleryStickyTop] = useState(120);
 
-  // Measure header height (supports responsive height changes & future shrink-on-scroll)
-  useEffect(() => {
-    const measure = () => {
-      const header = document.querySelector("header");
-      if (header) {
-        const h = header.getBoundingClientRect().height;
-        setHeaderHeight(h);
-      }
+  const buildRecentlyViewedCard = (item) => {
+    const firstPrice = Array.isArray(item?.price) ? item.price[0] : null;
+    const price = Number(
+      firstPrice?.price ?? firstPrice?.amount ?? item?.price ?? 0,
+    );
+
+    return {
+      id: item?._id || item?.id,
+      name: item?.name || "Product",
+      image:
+        (Array.isArray(item?.images) ? item.images[0] : "") ||
+        (Array.isArray(item?.imageUrl)
+          ? getAllImagesOptimized(item.imageUrl)[0]
+          : "") ||
+        item?.image ||
+        "",
+      materialText: Array.isArray(item?.materials)
+        ? item.materials.filter(Boolean).join(" & ")
+        : Array.isArray(item?.material)
+          ? item.material.filter(Boolean).join(" & ")
+          : "",
+      category: item?.category || "",
+      price,
     };
+  };
+
+  // Measure header height with ResizeObserver for robust sticky offsets across devices.
+  useEffect(() => {
+    const header = document.querySelector("header");
+    const banner = document.querySelector(".offer-banner");
+
+    const measure = () => {
+      const headerHeightPx = header
+        ? Math.max(0, Math.round(header.getBoundingClientRect().height))
+        : 0;
+      const bannerHeightPx = banner
+        ? Math.max(0, Math.round(banner.getBoundingClientRect().height))
+        : 0;
+      const topStackHeight = headerHeightPx + bannerHeightPx;
+      setHeaderHeight(topStackHeight);
+      setGalleryStickyTop(topStackHeight + 16);
+    };
+
+    let rafId = 0;
+    const scheduleMeasure = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(measure);
+    };
+
     measure();
-    window.addEventListener("resize", measure);
-    // slight delay to capture any late layout adjustments
-    const t = setTimeout(measure, 150);
+
+    let resizeObserver;
+    if (header && typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(scheduleMeasure);
+      resizeObserver.observe(header);
+    }
+
+    window.addEventListener("resize", scheduleMeasure);
+    window.addEventListener("orientationchange", scheduleMeasure);
+
     return () => {
-      window.removeEventListener("resize", measure);
-      clearTimeout(t);
+      if (rafId) cancelAnimationFrame(rafId);
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener("resize", scheduleMeasure);
+      window.removeEventListener("orientationchange", scheduleMeasure);
     };
   }, []);
-
-  // JS fallback sticky for browsers / layout where CSS sticky fails
-  useEffect(() => {
-    const handleScroll = () => {
-      const minWidth = 1024; // lg breakpoint
-      if (window.innerWidth < minWidth) {
-        // reset any fixed state on small screens
-        if (galleryInnerRef.current) {
-          galleryInnerRef.current.style.position = "";
-          galleryInnerRef.current.style.top = "";
-          galleryInnerRef.current.style.width = "";
-        }
-        if (placeholderRef.current)
-          placeholderRef.current.style.display = "none";
-        return;
-      }
-      if (!galleryWrapperRef.current || !galleryInnerRef.current) return;
-      const offsetBuffer = 20; // breathing room below header
-      const headerOffset = (headerHeight || 100) + offsetBuffer;
-      const rect = galleryWrapperRef.current.getBoundingClientRect();
-      const viewportTop = rect.top;
-      // Determine release point based on Care Instructions section bottom (preferred)
-      let releaseMode = null; // null=fixed eligible, 'absolute'=anchor at bottom, 'reset'=normal flow
-      const galleryHeight = galleryInnerRef.current?.offsetHeight || 0;
-
-      const anchorEl = careRef.current || craftingRef.current; // fallback to crafting if care not mounted
-      if (anchorEl) {
-        const anchorRect = anchorEl.getBoundingClientRect();
-        // If bottom of anchor is above the space the fixed gallery would occupy -> release
-        if (anchorRect.bottom <= headerOffset + galleryHeight - 8) {
-          releaseMode = "absolute";
-        }
-      }
-
-      if (releaseMode === "absolute") {
-        // Pin the gallery to the bottom of its wrapper smoothly
-        const wrapperRect = galleryWrapperRef.current.getBoundingClientRect();
-        const absoluteTop = wrapperRect.height - galleryHeight; // position within wrapper
-        galleryInnerRef.current.style.position = "absolute";
-        galleryInnerRef.current.style.top = absoluteTop + "px";
-        galleryInnerRef.current.style.width = "100%";
-        galleryInnerRef.current.style.transition = "top 180ms ease-out";
-        if (placeholderRef.current)
-          placeholderRef.current.style.display = "none";
-        return;
-      }
-
-      const stopPoint = rect.height - (window.innerHeight - headerOffset); // legacy guard
-      if (viewportTop <= headerOffset && stopPoint > 0) {
-        // activate fixed
-        if (placeholderRef.current) {
-          placeholderRef.current.style.display = "block";
-          placeholderRef.current.style.height =
-            galleryInnerRef.current.offsetHeight + "px";
-        }
-        galleryInnerRef.current.style.position = "fixed";
-        galleryInnerRef.current.style.top = headerOffset + "px";
-        galleryInnerRef.current.style.width =
-          galleryWrapperRef.current.offsetWidth + "px";
-        galleryInnerRef.current.style.transition = "top 120ms ease-out";
-      } else {
-        // reset
-        if (galleryInnerRef.current) {
-          galleryInnerRef.current.style.position = "";
-          galleryInnerRef.current.style.top = "";
-          galleryInnerRef.current.style.width = "";
-          galleryInnerRef.current.style.transition = "";
-        }
-        if (placeholderRef.current)
-          placeholderRef.current.style.display = "none";
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll);
-    handleScroll();
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, [headerHeight]);
 
   // Load product data
   useEffect(() => {
@@ -181,6 +148,9 @@ const ProductDetailPage = () => {
             inStock: true,
             features: productData.tags || [],
             tags: productData.tags,
+            materials: Array.isArray(productData.material)
+              ? productData.material.filter(Boolean)
+              : [],
             dimensions: [
               isRug
                 ? formatSizeForAPI(productData.price[0]?.size) || {
@@ -271,6 +241,193 @@ const ProductDetailPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [rawProductData]);
 
+  // Load 4 recommended products from the same category (or rugs for rug products).
+  useEffect(() => {
+    if (!product) return;
+
+    const loadRecommendedRugs = async () => {
+      try {
+        const allProducts = await axios
+          .get("/api/products")
+          .then((res) => (Array.isArray(res.data) ? res.data : []));
+
+        const currentId = String(product._id || product.id || id);
+        const currentCategory = String(product.category || "")
+          .trim()
+          .toLowerCase();
+
+        const rugs = allProducts
+          .filter(
+            (item) =>
+              String(item._id || item.id) !== currentId &&
+              String(item.category || "")
+                .trim()
+                .toLowerCase() === currentCategory,
+          )
+          .slice(0, 4)
+          .map((item) => {
+            const firstPrice = Array.isArray(item.price) ? item.price[0] : null;
+            const pricePerSqFt = Number(
+              firstPrice?.price ?? firstPrice?.amount ?? item.price ?? 0,
+            );
+
+            return {
+              id: item._id || item.id,
+              name: item.name || "Rug",
+              image: getAllImagesOptimized(item.imageUrl || [])[0] || "",
+              materialText: Array.isArray(item.material)
+                ? item.material.filter(Boolean).join(" & ")
+                : "",
+              category: item.category || "",
+              pricePerSqFt,
+            };
+          });
+
+        setRecommendedRugs(rugs);
+      } catch (err) {
+        console.error("Failed to load recommended rugs:", err);
+        setRecommendedRugs([]);
+      }
+    };
+
+    loadRecommendedRugs();
+  }, [id, product]);
+
+  // Track recently viewed product IDs and cache current product card payload.
+  useEffect(() => {
+    if (!product) return;
+
+    const HISTORY_KEY = "indikaara-recently-viewed-product-ids";
+    const CACHE_KEY = "indikaara-product-preview-cache";
+
+    const currentPreview = buildRecentlyViewedCard({
+      _id: product._id,
+      id: product.id,
+      name: product.name,
+      images: product.images,
+      materials: product.materials,
+      category: product.category,
+      price: product.price,
+    });
+    const currentId = String(currentPreview.id || "");
+    if (!currentId) return;
+
+    try {
+      const existingIds = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+      const normalizedIds = Array.isArray(existingIds)
+        ? existingIds.map((value) => String(value))
+        : [];
+
+      const mergedIds = [
+        currentId,
+        ...normalizedIds.filter((value) => value !== currentId),
+      ].slice(0, 20);
+
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(mergedIds));
+
+      const existingCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+      const cache =
+        existingCache && typeof existingCache === "object" ? existingCache : {};
+      cache[currentId] = {
+        cachedAt: Date.now(),
+        data: currentPreview,
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+
+      setRecentlyViewedIds(
+        mergedIds.filter((value) => value !== currentId).slice(0, 4),
+      );
+    } catch (err) {
+      console.error("Failed to update recently viewed products:", err);
+      setRecentlyViewedIds([]);
+      setRecentlyViewed([]);
+    }
+  }, [product]);
+
+  // Resolve recently viewed cards by product ID using cache first, then API.
+  useEffect(() => {
+    if (!recentlyViewedIds.length) {
+      setRecentlyViewed([]);
+      return;
+    }
+
+    const CACHE_KEY = "indikaara-product-preview-cache";
+    const CACHE_TTL_MS = 1000 * 60 * 60 * 24;
+    let isCancelled = false;
+
+    const loadRecentlyViewedByIds = async () => {
+      try {
+        const existingCache = JSON.parse(
+          localStorage.getItem(CACHE_KEY) || "{}",
+        );
+        const cache =
+          existingCache && typeof existingCache === "object"
+            ? existingCache
+            : {};
+        const now = Date.now();
+
+        const cardMap = {};
+        const idsToFetch = [];
+
+        recentlyViewedIds.forEach((viewedId) => {
+          const cacheEntry = cache[viewedId];
+          if (
+            cacheEntry &&
+            cacheEntry.data &&
+            typeof cacheEntry.cachedAt === "number" &&
+            now - cacheEntry.cachedAt < CACHE_TTL_MS
+          ) {
+            cardMap[viewedId] = cacheEntry.data;
+          } else {
+            idsToFetch.push(viewedId);
+          }
+        });
+
+        await Promise.all(
+          idsToFetch.map(async (viewedId) => {
+            try {
+              const productData = await axios
+                .get(`/api/products/${viewedId}`)
+                .then((res) => res.data);
+              if (!productData) return;
+
+              const card = buildRecentlyViewedCard(productData);
+              cardMap[viewedId] = card;
+              cache[viewedId] = { cachedAt: now, data: card };
+            } catch (fetchErr) {
+              console.error(
+                `Failed to fetch recently viewed product ${viewedId}:`,
+                fetchErr,
+              );
+            }
+          }),
+        );
+
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+
+        const orderedCards = recentlyViewedIds
+          .map((viewedId) => cardMap[viewedId])
+          .filter(Boolean)
+          .slice(0, 4);
+
+        if (!isCancelled) {
+          setRecentlyViewed(orderedCards);
+        }
+      } catch (err) {
+        console.error("Failed to load recently viewed products:", err);
+        if (!isCancelled) {
+          setRecentlyViewed([]);
+        }
+      }
+    };
+
+    loadRecentlyViewedByIds();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [recentlyViewedIds]);
+
   // Generate breadcrumb items dynamically
   const breadcrumbItems = product
     ? [
@@ -286,6 +443,11 @@ const ProductDetailPage = () => {
         { label: "Home", path: "/" },
         { label: "Catalogue", path: "/catalogue" },
       ];
+
+  const normalizedCategory = String(product?.category || "").trim();
+  const recommendedHeading = normalizedCategory
+    ? `Recommended from ${normalizedCategory} collection`
+    : "Recommended Products";
 
   // Compare size objects by width and height (for rugs only)
   const isSameSize = (a, b) => {
@@ -561,23 +723,15 @@ const ProductDetailPage = () => {
 
   return (
     <main
-      className="container mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-8 -mt-[130px] md:-mt-[146px] lg:-mt-[162px] max-w-7xl"
+      className="container mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-8 max-w-7xl"
       role="main"
-      style={{ paddingTop: (headerHeight || 120) + 48 + 130 }}
+      style={{ paddingTop: `${(headerHeight || 0) + 24}px` }}
     >
       {/* Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
         {/* Product Images (Sticky on large screens) */}
-        <div
-          className="lg:col-span-5 xl:col-span-5 relative"
-          ref={galleryWrapperRef}
-        >
-          <div
-            ref={placeholderRef}
-            style={{ display: "none" }}
-            aria-hidden="true"
-          ></div>
-          <div className="lg:top-36 xl:top-40" ref={galleryInnerRef}>
+        <div className="lg:col-span-5 xl:col-span-5 lg:self-start">
+          <div className="lg:sticky" style={{ top: `${galleryStickyTop}px` }}>
             <ImageGallery
               images={product.images || []}
               productName={product.name}
@@ -596,27 +750,12 @@ const ProductDetailPage = () => {
             <h1 className="sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2">
               {product.name}
             </h1>
-            {/* <p className="text-secondary text-xl leading-relaxed my-5">
-              {product.description}
-            </p> */}
-            {/* Price Display: Rugs => Price per sq ft (fixed), others => dynamic price */}
-            {product.category && product.category.toLowerCase() === "rugs" ? (
-              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[#ac1f23]">
-                ₹ {Number(product.price || 0).toLocaleString()} / sq ft
-              </div>
-            ) : currentPrice ? (
-              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[#ac1f23]">
-                ₹ {currentPrice.toLocaleString()}
-              </div>
-            ) : product.price ? (
-              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[#ac1f23]">
-                ₹ {product.price.toLocaleString()}
-              </div>
-            ) : (
-              <div className="inline-block text-white text-xl md:text-2xl font-bold px-6 py-3 rounded-[var(--border-radius-lg)] shadow-lg border-2 border-[var(--accent-color]">
-                Price on request
-              </div>
-            )}
+            <p className="text-secondary text-base sm:text-lg font-medium leading-tight -mt-1">
+              Hand Tufted
+              {Array.isArray(product.materials) && product.materials.length > 0
+                ? `, ${product.materials.join(" & ")}`
+                : ""}
+            </p>
             {/* Minimum Order Quantity notice - only show when minQty > 1 */}
             {minQty > 1 && (
               <div className="mt-4 inline-flex items-center gap-2 bg-gray-800/70 backdrop-blur-sm border border-[var(--accent-color)]/40 rounded-full px-4 py-2 text-sm text-secondary shadow-sm">
@@ -649,14 +788,16 @@ const ProductDetailPage = () => {
                 Specifications
               </h2>
               <div className="bg-gray-800 rounded-lg p-4 space-y-2">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
-                    <span className="text-secondary capitalize">
-                      {key.replace(/([A-Z])/g, " $1").trim()}:
-                    </span>
-                    <span className="text-primary">{value}</span>
-                  </div>
-                ))}
+                {Object.entries(product.specifications)
+                  .filter(([key]) => !["material", "dimensions"].includes(key))
+                  .map(([key, value]) => (
+                    <div key={key} className="flex justify-between">
+                      <span className="text-secondary capitalize">
+                        {key.replace(/([A-Z])/g, " $1").trim()}:
+                      </span>
+                      <span className="text-primary">{value}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           )}
@@ -682,16 +823,18 @@ const ProductDetailPage = () => {
               <h3 className="text-2xl font-bold text-[#ac1f23] mb-6">
                 Size Chart & Pricing
               </h3>
+              <p className="text-primary text-sm font-medium mb-2">
+                Size (Feet / cm)
+              </p>
               <p className="text-secondary text-sm mb-4">
                 Prices are calculated based on ₹ {product.price} per sq ft
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="flex flex-wrap gap-3">
                 {[
                   { size: { width: 3, height: 5 }, sqft: 15 },
                   { size: { width: 4, height: 6 }, sqft: 24 },
                   { size: { width: 5, height: 7 }, sqft: 35 },
                   { size: { width: 6, height: 9 }, sqft: 54 },
-                  { size: { width: 7, height: 9 }, sqft: 63 },
                   { size: { width: 8, height: 10 }, sqft: 80 },
                   { size: { width: 9, height: 12 }, sqft: 108 },
                   { size: { width: 10, height: 13 }, sqft: 130 },
@@ -700,6 +843,8 @@ const ProductDetailPage = () => {
                   const basePrice = parseFloat(product.price) || 0;
                   const totalPrice = Math.round(basePrice * item.sqft);
                   const isSelected = isSameSize(selectedSize, item.size);
+                  const cmWidth = Math.round(item.size.width * 30.48);
+                  const cmHeight = Math.round(item.size.height * 30.48);
                   return (
                     <div
                       key={`${item.size.width}x${item.size.height}`}
@@ -712,10 +857,10 @@ const ProductDetailPage = () => {
                           setCurrentPrice(totalPrice > 0 ? totalPrice : 0);
                         }
                       }}
-                      className={`bg-card-bg border-2 rounded-lg p-4 cursor-pointer transition-all ${
+                      className={`w-[138px] min-h-[88px] shrink-0 border text-center px-3 py-2 cursor-pointer transition-all duration-200 ${
                         isSelected
-                          ? "border-[#ac1f23] bg-[#ac1f23]/10 shadow-lg shadow-[#ac1f23]/20"
-                          : "border-border-color hover:border-primary/50"
+                          ? "bg-[#ac1f23] border-[#ac1f23] text-white shadow-lg shadow-[#ac1f23]/45 ring-2 ring-[#ac1f23]/60 ring-offset-2 ring-offset-gray-800 scale-[1.08]"
+                          : "bg-gray-900/60 border-white/20 text-gray-100 hover:border-[#ac1f23]/80 hover:scale-[1.02]"
                       }`}
                       role="button"
                       tabIndex={0}
@@ -732,22 +877,34 @@ const ProductDetailPage = () => {
                         }
                       }}
                     >
-                      <p className="text-primary font-semibold text-sm mb-2">
-                        {item.size.width}ft x {item.size.height}ft
-                      </p>
-                      <p className="text-secondary text-xs mb-2">
-                        {item.sqft} sq ft
-                      </p>
-                      <p className="text-[#ac1f23] font-bold text-sm mb-2">
-                        ₹ {totalPrice.toLocaleString()}
+                      <p
+                        className={`text-[20px] font-semibold leading-tight ${
+                          isSelected ? "text-white" : "text-primary"
+                        }`}
+                      >
+                        {item.size.width}' x {item.size.height}' ft
                       </p>
                       <p
-                        className={`text-xs font-medium text-center ${
-                          isSelected ? "text-green-500" : "text-secondary"
+                        className={`text-xs leading-tight ${
+                          isSelected ? "text-white/90" : "text-gray-300"
+                        }`}
+                      >
+                        {cmWidth} x {cmHeight} cm
+                      </p>
+                      <p
+                        className={`mt-1 text-sm font-bold ${
+                          isSelected ? "text-white" : "text-[#ac1f23]"
+                        }`}
+                      >
+                        ₹ {totalPrice.toLocaleString()}
+                      </p>
+                      <span
+                        className={`mt-1 text-[11px] font-medium ${
+                          isSelected ? "text-white" : "text-secondary"
                         }`}
                       >
                         {isSelected ? "Selected" : "Tap to select"}
-                      </p>
+                      </span>
                     </div>
                   );
                 })}
@@ -835,7 +992,7 @@ const ProductDetailPage = () => {
               <Button
                 size="lg"
                 onClick={handleAddToCart}
-                className="min-w-[260px] sm:min-w-[320px]"
+                className="w-full max-w-[320px]"
                 aria-label={`Add ${product.name} to cart`}
                 disabled={addedToCart || !selectedSize}
               >
@@ -864,7 +1021,7 @@ const ProductDetailPage = () => {
           </div>
 
           {/* Additional Actions */}
-          <div className="flex gap-4 pt-2">
+          <div className="flex flex-col gap-4 pt-2 sm:flex-row">
             <Button
               variant="outline"
               size="md"
@@ -886,30 +1043,6 @@ const ProductDetailPage = () => {
               📤 Share
             </Button>
           </div>
-          {/* Product Specifications */}
-
-          {/* Product Details Sections */}
-          <div className="space-y-6 mt-4">
-            {/* Product Description */}
-            <ProductInfoSection
-              title="Product Description"
-              content={product.description}
-            />
-
-            {/* Cultural Context */}
-            <ProductInfoSection
-              title="Cultural Context"
-              content={product.culturalContext}
-            />
-
-            {/* Artisan's Story */}
-            <ProductInfoSection
-              title="Artisan's Story"
-              content={product.artisan.story}
-            />
-          </div>
-
-          {/* Purchase Button (Buy Now hidden as requested) */}
 
           {/* Feedback Messages */}
           {wishlistMessage && (
@@ -922,53 +1055,118 @@ const ProductDetailPage = () => {
               {shareMessage}
             </div>
           )}
-          {/* Additional Product Information (moved inside right column for alignment) */}
-          <div className="mt-14 flex flex-col gap-8">
-            {/* Care Instructions Card */}
-            <div
-              ref={careRef}
-              className="bg-gray-800 rounded-lg p-6 shadow-md border border-white/5 min-h-[220px] w-full"
-            >
-              <h3 className="text-xl font-bold text-primary mb-4">
-                Care Instructions
-              </h3>
-              <ul className="list-disc list-inside space-y-1">
-                {(rawProductData?.details && rawProductData.details.length > 0
-                  ? rawProductData.details
-                  : product.specifications?.careInstructions
-                    ? [product.specifications.careInstructions]
-                    : ["Handle with care"]
-                ).map((line, idx) => (
-                  <li key={idx} className="text-secondary text-sm leading-snug">
-                    {line}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-xs text-secondary/60 mt-3 tracking-wide">
-                Following these guidelines helps preserve the craftsmanship and
-                longevity of this piece.
-              </p>
-            </div>
-            {/* Origin Card */}
-            <div className="bg-gray-800 rounded-lg p-6 shadow-md border border-white/5 min-h-[160px] w-full">
-              <h3 className="text-xl font-bold text-primary mb-3">Origin</h3>
-              <div className="space-y-2">
-                <p className="text-secondary">
-                  <span className="font-medium">Region:</span> {product.region}
-                </p>
-                <p className="text-secondary">
-                  <span className="font-medium">Category:</span>{" "}
-                  {product.category}
-                </p>
-                <p className="text-secondary">
-                  <span className="font-medium">Type:</span>{" "}
-                  {product.subcategory}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+
+      <section className="mt-12 w-full">
+        <h3 className="mb-5 text-2xl font-bold text-[#ac1f23]">
+          {recommendedHeading}
+        </h3>
+
+        {recommendedRugs.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recommendedRugs.map((rug) => (
+              <button
+                key={rug.id}
+                onClick={() => navigate(`/product/${rug.id}`)}
+                className="group overflow-hidden rounded-lg border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
+              >
+                <div className="aspect-[4/3] overflow-hidden bg-gray-900/70">
+                  {rug.image ? (
+                    <img
+                      src={rug.image}
+                      alt={rug.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-sm text-secondary">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-1 p-3">
+                  <p className="line-clamp-1 font-semibold text-primary">
+                    {rug.name}
+                  </p>
+                  {rug.materialText && (
+                    <p className="line-clamp-1 text-xs text-secondary">
+                      {rug.materialText}
+                    </p>
+                  )}
+                  {rug.pricePerSqFt > 0 && (
+                    <p className="text-sm font-bold text-[#ac1f23]">
+                      ₹ {rug.pricePerSqFt.toLocaleString()}
+                      {(rug.category || "").toLowerCase() === "rugs"
+                        ? " / sq ft"
+                        : ""}
+                    </p>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-white/10 bg-gray-800/40 p-4 text-sm text-secondary">
+            No recommended products available right now.
+          </div>
+        )}
+      </section>
+
+      <section className="mt-10 w-full">
+        <h3 className="mb-5 text-2xl font-bold text-[#ac1f23]">
+          Recently Viewed
+        </h3>
+
+        {recentlyViewed.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewed.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => navigate(`/product/${item.id}`)}
+                className="group overflow-hidden rounded-lg border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
+              >
+                <div className="aspect-[4/3] overflow-hidden bg-gray-900/70">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-sm text-secondary">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-1 p-3">
+                  <p className="line-clamp-1 font-semibold text-primary">
+                    {item.name}
+                  </p>
+                  {item.materialText && (
+                    <p className="line-clamp-1 text-xs text-secondary">
+                      {item.materialText}
+                    </p>
+                  )}
+                  {item.price > 0 && (
+                    <p className="text-sm font-bold text-[#ac1f23]">
+                      ₹ {item.price.toLocaleString()}
+                      {(item.category || "").toLowerCase() === "rugs"
+                        ? " / sq ft"
+                        : ""}
+                    </p>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-white/10 bg-gray-800/40 p-4 text-sm text-secondary">
+            No recently viewed products yet.
+          </div>
+        )}
+      </section>
     </main>
   );
 };

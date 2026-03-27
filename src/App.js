@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
@@ -7,7 +7,6 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/globals.css";
 import ScrollToTop from "./utils/scrollToTop";
-import axiosClient from "./api/axiosClient";
 import LogoLoader from "./components/LogoLoader";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CataloguePage from "./pages/CataloguePage";
@@ -25,7 +24,9 @@ const BlogDetailPage = lazy(() => import("./pages/BlogDetailPage"));
 const CreateBlogPage = lazy(() => import("./pages/CreateBlogPage"));
 const AdminBlogPage = lazy(() => import("./pages/AdminBlogPage"));
 const EditBlogPage = lazy(() => import("./pages/EditBlogPage"));
-const CommentModerationPage = lazy(() => import("./pages/CommentModerationPage"));
+const CommentModerationPage = lazy(
+  () => import("./pages/CommentModerationPage"),
+);
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const FAQPage = lazy(() => import("./pages/FAQPage"));
@@ -45,12 +46,6 @@ const PaymentFailurePage = lazy(() => import("./pages/PaymentFailurePage"));
  * Features: React Router setup, cart context provider, layout wrapper, and page routing
  */
 function App() {
-  useEffect(() => {
-    axiosClient
-      .get("/api/health")
-      .catch((err) => console.error("Health check failed:", err));
-  }, []);
-
   return (
     <AuthProvider>
       <CartProvider>
@@ -108,11 +103,14 @@ function App() {
                 <Route path="/blog" element={<BlogPage />} />
                 <Route path="/blog/:id" element={<BlogDetailPage />} />
                 <Route path="/blog/create" element={<CreateBlogPage />} />
-                
+
                 {/* Admin Blog Routes */}
                 <Route path="/blog/admin" element={<AdminBlogPage />} />
                 <Route path="/blog/admin/edit/:id" element={<EditBlogPage />} />
-                <Route path="/blog/admin/comments" element={<CommentModerationPage />} />
+                <Route
+                  path="/blog/admin/comments"
+                  element={<CommentModerationPage />}
+                />
 
                 {/* Support & Legal Pages */}
                 <Route path="/faq" element={<FAQPage />} />
