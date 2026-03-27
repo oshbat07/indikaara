@@ -34,8 +34,6 @@ const ProductDetailPage = () => {
   const [recommendedRugs, setRecommendedRugs] = useState([]);
   const [recentlyViewedIds, setRecentlyViewedIds] = useState([]);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
-  const [headerHeight, setHeaderHeight] = useState(0); // combined fixed top stack height
-  const [galleryStickyTop, setGalleryStickyTop] = useState(120);
 
   const buildRecentlyViewedCard = (item) => {
     const firstPrice = Array.isArray(item?.price) ? item.price[0] : null;
@@ -62,48 +60,6 @@ const ProductDetailPage = () => {
       price,
     };
   };
-
-  // Measure header height with ResizeObserver for robust sticky offsets across devices.
-  useEffect(() => {
-    const header = document.querySelector("header");
-    const banner = document.querySelector(".offer-banner");
-
-    const measure = () => {
-      const headerHeightPx = header
-        ? Math.max(0, Math.round(header.getBoundingClientRect().height))
-        : 0;
-      const bannerHeightPx = banner
-        ? Math.max(0, Math.round(banner.getBoundingClientRect().height))
-        : 0;
-      const topStackHeight = headerHeightPx + bannerHeightPx;
-      setHeaderHeight(topStackHeight);
-      setGalleryStickyTop(topStackHeight + 16);
-    };
-
-    let rafId = 0;
-    const scheduleMeasure = () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(measure);
-    };
-
-    measure();
-
-    let resizeObserver;
-    if (header && typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(scheduleMeasure);
-      resizeObserver.observe(header);
-    }
-
-    window.addEventListener("resize", scheduleMeasure);
-    window.addEventListener("orientationchange", scheduleMeasure);
-
-    return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      if (resizeObserver) resizeObserver.disconnect();
-      window.removeEventListener("resize", scheduleMeasure);
-      window.removeEventListener("orientationchange", scheduleMeasure);
-    };
-  }, []);
 
   // Load product data
   useEffect(() => {
@@ -725,13 +681,12 @@ const ProductDetailPage = () => {
     <main
       className="container mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-8 max-w-7xl"
       role="main"
-      style={{ paddingTop: `${(headerHeight || 0) + 24}px` }}
     >
       {/* Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-12">
         {/* Product Images (Sticky on large screens) */}
         <div className="lg:col-span-5 xl:col-span-5 lg:self-start">
-          <div className="lg:sticky" style={{ top: `${galleryStickyTop}px` }}>
+          <div className="lg:sticky lg:top-4">
             <ImageGallery
               images={product.images || []}
               productName={product.name}
