@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -7,7 +7,15 @@ import Button from "../components/Button";
  * CartPage Component - Shopping cart page with items and summary
  */
 const CartPage = () => {
-  const { items, itemCount, total, updateQuantity, removeFromCart } = useCart();
+  const {
+    items,
+    itemCount,
+    total,
+    shipping,
+    tax,
+    updateQuantity,
+    removeFromCart,
+  } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -38,12 +46,6 @@ const CartPage = () => {
       maximumFractionDigits: 0,
     }).format(amount);
   };
-
-  // Determine if any rugs are in cart
-  const hasRugs = useMemo(
-    () => items.some((i) => (i.category || "").toLowerCase() === "rugs"),
-    [items],
-  );
 
   if (items.length === 0) {
     return (
@@ -243,41 +245,89 @@ const CartPage = () => {
                                   </div>
                                 )}
                             </div>
-
-                            {/* Price - Hidden for Rugs */}
-                            <p className="text-gray-900 font-bold text-lg">
-                              {(item.category || "").toLowerCase() ===
-                              "rugs" ? (
-                                <span className="text-gray-600 font-normal text-sm tracking-wide">
-                                  Price on enquiry
-                                </span>
-                              ) : (
-                                formatCurrency(item.price)
-                              )}
-                            </p>
                           </div>
                         </div>
 
                         {/* Quantity and Remove Controls - Aligned to extreme right */}
-                        <div className="flex flex-col sm:flex-row items-center gap-3 sm:flex-shrink-0">
-                          <div className="flex items-center gap-3 bg-white border border-gray-300 rounded-md p-2">
+                        <div className="flex w-full flex-col gap-3 sm:w-auto sm:min-w-[170px] sm:items-end sm:flex-shrink-0">
+                          <p className="w-full rounded-md border border-red-200 bg-red-50 px-4 py-2 text-center text-lg font-extrabold text-red-600 sm:text-xl">
+                            {typeof item.price === "number" &&
+                            item.price > 0 ? (
+                              formatCurrency(item.price)
+                            ) : (
+                              <span className="text-sm font-normal tracking-wide text-gray-600">
+                                Price on enquiry
+                              </span>
+                            )}
+                          </p>
+
+                          <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+                            <div className="flex items-center gap-3 rounded-md border border-gray-300 bg-white p-2">
+                              <button
+                                onClick={() =>
+                                  handleQuantityChange(
+                                    item.cartItemId,
+                                    item.quantity - 1,
+                                  )
+                                }
+                                disabled={item.quantity <= MIN_QTY}
+                                className={`flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                                  item.quantity <= MIN_QTY
+                                    ? "cursor-not-allowed bg-gray-200 text-gray-400"
+                                    : "bg-gray-200 text-gray-900 hover:bg-gray-900 hover:text-white"
+                                }`}
+                                aria-label="Decrease quantity"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M20 12H4"
+                                  />
+                                </svg>
+                              </button>
+                              <span className="w-10 text-center font-bold text-gray-900">
+                                {Math.max(item.quantity, MIN_QTY)}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  handleQuantityChange(
+                                    item.cartItemId,
+                                    item.quantity + 1,
+                                  )
+                                }
+                                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-900 transition-colors hover:bg-gray-900 hover:text-white"
+                                aria-label="Increase quantity"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+
                             <button
-                              onClick={() =>
-                                handleQuantityChange(
-                                  item.cartItemId,
-                                  item.quantity - 1,
-                                )
-                              }
-                              disabled={item.quantity <= MIN_QTY}
-                              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                                item.quantity <= MIN_QTY
-                                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                  : "bg-gray-200 text-gray-900 hover:bg-gray-900 hover:text-white"
-                              }`}
-                              aria-label="Decrease quantity"
+                              onClick={() => removeFromCart(item.cartItemId)}
+                              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md text-gray-600 transition-colors hover:text-red-600"
+                              aria-label="Remove item"
                             >
                               <svg
-                                className="w-4 h-4"
+                                className="w-5 h-5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -286,59 +336,11 @@ const CartPage = () => {
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M20 12H4"
-                                />
-                              </svg>
-                            </button>
-                            <span className="w-10 text-center text-gray-900 font-bold">
-                              {Math.max(item.quantity, MIN_QTY)}
-                            </span>
-                            <button
-                              onClick={() =>
-                                handleQuantityChange(
-                                  item.cartItemId,
-                                  item.quantity + 1,
-                                )
-                              }
-                              className="w-8 h-8 rounded-full bg-gray-200 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors flex items-center justify-center"
-                              aria-label="Increase quantity"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                                 />
                               </svg>
                             </button>
                           </div>
-
-                          {/* Remove Button - Always visible on right */}
-                          <button
-                            onClick={() => removeFromCart(item.cartItemId)}
-                            className="p-2 text-gray-600 hover:text-red-600 transition-colors flex-shrink-0"
-                            aria-label="Remove item"
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -355,11 +357,52 @@ const CartPage = () => {
                 Order Summary
               </h2>
 
+              <div className="mb-6 space-y-3 border-b border-gray-200 pb-4">
+                {items.map((item) => (
+                  <div
+                    key={`summary-${item.cartItemId}`}
+                    className="flex items-start justify-between gap-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-gray-900">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Qty: {Math.max(item.quantity, MIN_QTY)}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-sm font-bold text-gray-900">
+                      {typeof item.price === "number" && item.price > 0
+                        ? formatCurrency(
+                            item.price * Math.max(item.quantity, MIN_QTY),
+                          )
+                        : "Enquiry"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600 font-medium">Subtotal</span>
                   <span className="text-gray-900 font-bold">
                     {formatCurrency(total)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 font-medium">
+                    Shipping Charge
+                  </span>
+                  <span className="text-gray-900 font-bold">
+                    {formatCurrency(shipping)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 font-medium">Tax</span>
+                  <span className="text-gray-900 font-bold">
+                    {formatCurrency(tax)}
                   </span>
                 </div>
 
