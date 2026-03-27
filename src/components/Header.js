@@ -33,12 +33,12 @@ export default function Header() {
     } catch {}
     try {
       const cartRaw = JSON.parse(
-        localStorage.getItem("indikaara-cart") || '{"items":[]}'
+        localStorage.getItem("indikaara-cart") || '{"items":[]}',
       );
       const itemsArr = cartRaw.items || [];
       const totalQty = itemsArr.reduce(
         (sum, it) => sum + (Number(it.quantity) || 0),
-        0
+        0,
       );
       setCartCount(totalQty);
     } catch {}
@@ -49,12 +49,12 @@ export default function Header() {
       } catch {}
       try {
         const cartRaw = JSON.parse(
-          localStorage.getItem("indikaara-cart") || '{"items":[]}'
+          localStorage.getItem("indikaara-cart") || '{"items":[]}',
         );
         const itemsArr = cartRaw.items || [];
         const totalQty = itemsArr.reduce(
           (sum, it) => sum + (Number(it.quantity) || 0),
-          0
+          0,
         );
         setCartCount((prev) => {
           if (prev !== totalQty) {
@@ -83,7 +83,7 @@ export default function Header() {
       <header
         className={`header-contrast ${
           scrolled ? "scrolled" : ""
-        } fixed top-[50px] left-0 right-0 z-50 h-20 md:h-24 lg:h-28 transition-all duration-300 border-b overflow-hidden
+        } fixed top-[35px] left-0 right-0 z-50 h-[51px] md:h-[62px] lg:h-[72px] transition-all duration-300 border-b overflow-hidden
         ${
           scrolled
             ? "backdrop-blur-2xl bg-[#0b0b0f]/72 border-white/15 shadow-[0_0_0_1px_rgba(255,255,255,0.06),0_4px_24px_-4px_rgba(255,255,255,0.12),0_8px_40px_-8px_rgba(172,31,35,0.35)]"
@@ -107,15 +107,15 @@ export default function Header() {
         <div className="absolute inset-0 border-t border-white/5/30 pointer-events-none" />
         {/* Burger extreme left; stable vertical alignment using flex instead of translate */}
         <div className="absolute inset-y-0 left-0 flex items-center">
-          <div className="flex items-center gap-1 pl-2 pr-2">
+          <div className="flex items-center gap-1 pl-1.5 pr-1.5">
             <button
               onClick={() => setIsOpen(true)}
               aria-label="Open navigation menu"
               aria-expanded={isOpen}
-              className="p-2 text-white hover:text-[#ac1f3] focus:outline-none focus:ring-2 focus:ring-[#ac1f23]/40 rounded-md z-50 relative"
+              className="p-1.5 text-white hover:text-[#ac1f3] focus:outline-none focus:ring-2 focus:ring-[#ac1f23]/40 rounded-md z-50 relative"
             >
               <span
-                className="block leading-none text-[1.9rem] md:text-[2.1rem] lg:text-[2.6rem] w-[2rem] md:w-[2.2rem] lg:w-[2.8rem] h-[1.9rem] md:h-[2.3rem] lg:h-[3rem] transition-transform duration-300 ease-out"
+                className="block leading-none text-[1.25rem] md:text-[1.4rem] lg:text-[1.7rem] w-[1.3rem] md:w-[1.5rem] lg:w-[1.9rem] h-[1.3rem] md:h-[1.55rem] lg:h-[1.95rem] transition-transform duration-300 ease-out"
                 aria-hidden="true"
               >
                 <MenuIcon fontSize="inherit" className="w-full h-full" />
@@ -129,22 +129,22 @@ export default function Header() {
           <div className="flex items-center select-none">
             <Link
               to="/"
-              className="block h-10 md:h-12 lg:h-20 transition-all duration-300"
+              className="block h-6 md:h-8 lg:h-12 transition-all duration-300"
             >
               <CombinedLogo className="h-full" />
             </Link>
           </div>
 
           {/* Right side actions (full-bleed) */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4 text-white pr-2 md:pr-4">
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-3 text-white pr-1.5 md:pr-3">
             {/* Small / Medium screens: essential icons */}
-            <div className="flex items-center gap-4 lg:hidden pr-1">
+            <div className="flex items-center gap-3 lg:hidden pr-1">
               <Link
                 to="/wishlist"
                 aria-label="Wishlist"
                 className="relative text-white/70 hover:text-white transition-colors"
               >
-                <FavoriteBorderIcon fontSize="medium" className="text-white" />
+                <FavoriteBorderIcon fontSize="small" className="text-white" />
                 {wishlistCount > 0 && (
                   <span className="icon-badge wishlist-badge">
                     {wishlistCount > 999 ? "999+" : wishlistCount}
@@ -156,7 +156,7 @@ export default function Header() {
                 aria-label="Cart"
                 className="relative text-white/70 hover:text-white transition-colors"
               >
-                <ShoppingCartIcon fontSize="medium" className="text-white" />
+                <ShoppingCartIcon fontSize="small" className="text-white" />
                 {cartCount > 0 && (
                   <span
                     className={`icon-badge cart-badge ${
@@ -169,14 +169,14 @@ export default function Header() {
               </Link>
             </div>
             {/* Right-side icons (wishlist, cart, profile) */}
-            <div className="hidden lg:flex items-center gap-10 pr-10">
+            <div className="hidden lg:flex items-center gap-7 pr-7">
               {/* Wishlist */}
               <Link
                 to="/wishlist"
                 aria-label="Wishlist"
                 className="relative text-white/70 hover:text-white transition-colors"
               >
-                <FavoriteBorderIcon className="text-white" fontSize="large" />
+                <FavoriteBorderIcon className="text-white" fontSize="medium" />
                 {wishlistCount > 0 && (
                   <span className="icon-badge wishlist-badge">
                     {wishlistCount > 999 ? "999+" : wishlistCount}
@@ -189,7 +189,7 @@ export default function Header() {
                 aria-label="Cart"
                 className="relative text-white/70 hover:text-white transition-colors"
               >
-                <ShoppingCartIcon className="text-white" fontSize="large" />
+                <ShoppingCartIcon className="text-white" fontSize="medium" />
                 {cartCount > 0 && (
                   <span
                     className={`icon-badge cart-badge ${
@@ -206,7 +206,7 @@ export default function Header() {
                 aria-label="Profile / Login"
                 className="text-white/70 hover:text-white transition-colors"
               >
-                <PersonIcon className="text-white" fontSize="large" />
+                <PersonIcon className="text-white" fontSize="medium" />
               </Link>
             </div>
 

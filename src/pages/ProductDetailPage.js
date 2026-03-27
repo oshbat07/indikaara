@@ -697,23 +697,30 @@ const ProductDetailPage = () => {
         {/* Product Information */}
         <div className="lg:col-span-7 xl:col-span-7 space-y-10">
           {/* Breadcrumb Navigation */}
-          <div className="mb-8 mt-2">
+          <div className="mb-6 mt-1">
             <Breadcrumb items={breadcrumbItems} />
           </div>
           {/* Product Header */}
           <div className="flex flex-col justify-between items-start bg-gray-800/60 backdrop-blur-sm w-full rounded-2xl border border-white/10 p-6 shadow-lg space-y-4">
-            <h1 className="sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-2">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-2xl font-bold mb-1">
               {product.name}
             </h1>
-            <p className="text-secondary text-base sm:text-lg font-medium leading-tight -mt-1">
-              Hand Tufted
-              {Array.isArray(product.materials) && product.materials.length > 0
-                ? `, ${product.materials.join(" & ")}`
-                : ""}
-            </p>
+            {((product.category || "").toLowerCase() === "rugs" ||
+              (Array.isArray(product.materials) &&
+                product.materials.length > 0)) && (
+              <p className="text-secondary text-base sm:text-lg font-medium leading-tight">
+                {(product.category || "").toLowerCase() === "rugs"
+                  ? "Hand Tufted"
+                  : ""}
+                {Array.isArray(product.materials) &&
+                product.materials.length > 0
+                  ? `${(product.category || "").toLowerCase() === "rugs" ? ", " : ""}${product.materials.join(" & ")}`
+                  : ""}
+              </p>
+            )}
             {/* Minimum Order Quantity notice - only show when minQty > 1 */}
             {minQty > 1 && (
-              <div className="mt-4 inline-flex items-center gap-2 bg-gray-800/70 backdrop-blur-sm border border-[var(--accent-color)]/40 rounded-full px-4 py-2 text-sm text-secondary shadow-sm">
+              <div className="mt-3 inline-flex items-center gap-2 bg-gray-800/70 backdrop-blur-sm border border-[var(--accent-color)]/40 rounded-full px-4 py-2 text-sm text-secondary shadow-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -739,14 +746,14 @@ const ProductDetailPage = () => {
           </div>
           {product.specifications && (
             <div className="space-y-3">
-              <h2 className="text-2xl font-bold text-[#ac1f23]">
+              <h2 className="text-lg font-bold text-[#ac1f23]">
                 Specifications
               </h2>
-              <div className="bg-gray-800 rounded-lg p-4 space-y-2">
+              <div className="bg-gray-800 rounded-lg p-4 space-y-2 text-sm">
                 {Object.entries(product.specifications)
                   .filter(([key]) => !["material", "dimensions"].includes(key))
                   .map(([key, value]) => (
-                    <div key={key} className="flex justify-between">
+                    <div key={key} className="flex justify-between gap-4">
                       <span className="text-secondary capitalize">
                         {key.replace(/([A-Z])/g, " $1").trim()}:
                       </span>
@@ -774,8 +781,8 @@ const ProductDetailPage = () => {
           )}
           {/* Size Chart for Rugs */}
           {product.category && product.category.toLowerCase() === "rugs" && (
-            <div className="mt-8 bg-gray-800 rounded-lg p-6 shadow-md border border-white/5">
-              <h3 className="text-2xl font-bold text-[#ac1f23] mb-6">
+            <div className="mt-6 bg-gray-800 rounded-lg p-6 shadow-md border border-white/5">
+              <h3 className="text-lg font-bold text-[#ac1f23] mb-5">
                 Size Chart & Pricing
               </h3>
               <p className="text-primary text-sm font-medium mb-2">
@@ -812,7 +819,7 @@ const ProductDetailPage = () => {
                           setCurrentPrice(totalPrice > 0 ? totalPrice : 0);
                         }
                       }}
-                      className={`w-[138px] min-h-[88px] shrink-0 border text-center px-3 py-2 cursor-pointer transition-all duration-200 ${
+                      className={`w-[124px] min-h-[78px] shrink-0 border text-center px-2.5 py-1.5 cursor-pointer transition-all duration-200 ${
                         isSelected
                           ? "bg-[#ac1f23] border-[#ac1f23] text-white shadow-lg shadow-[#ac1f23]/45 ring-2 ring-[#ac1f23]/60 ring-offset-2 ring-offset-gray-800 scale-[1.08]"
                           : "bg-gray-900/60 border-white/20 text-gray-100 hover:border-[#ac1f23]/80 hover:scale-[1.02]"
@@ -833,7 +840,7 @@ const ProductDetailPage = () => {
                       }}
                     >
                       <p
-                        className={`text-[20px] font-semibold leading-tight ${
+                        className={`text-[13px] font-semibold leading-tight ${
                           isSelected ? "text-white" : "text-primary"
                         }`}
                       >
@@ -854,7 +861,7 @@ const ProductDetailPage = () => {
                         ₹ {totalPrice.toLocaleString()}
                       </p>
                       <span
-                        className={`mt-1 text-[11px] font-medium ${
+                        className={`mt-1 text-xs font-medium ${
                           isSelected ? "text-white" : "text-secondary"
                         }`}
                       >
@@ -868,6 +875,31 @@ const ProductDetailPage = () => {
           )}
           {/* Quantity Selector */}
           <div className="pt-4">
+            {selectedSize ? (
+              <div className="mb-4 mx-auto w-full max-w-md rounded-xl border-2 border-[#ff4f53] bg-gradient-to-b from-[#2a0f13] to-[#17090b] px-4 py-3 text-center shadow-[0_0_0_1px_rgba(255,79,83,0.35),0_0_24px_rgba(172,31,35,0.45)]">
+                <p className="text-xs uppercase tracking-[0.12em] text-[#ffb8ba] font-bold">
+                  Current Size Selection
+                </p>
+                <p className="mt-1 text-lg font-bold text-white">
+                  {typeof selectedSize === "object"
+                    ? `${selectedSize.width} x ${selectedSize.height}`
+                    : selectedSize}
+                </p>
+                {Number(currentPrice) > 0 && (
+                  <p className="mt-1 text-base font-extrabold text-[#ff4f53]">
+                    ₹ {Number(currentPrice).toLocaleString()}
+                    {(product.category || "").toLowerCase() === "rugs"
+                      ? " / sq ft"
+                      : ""}
+                  </p>
+                )}
+              </div>
+            ) : product.isRug ? (
+              <div className="mb-4 text-center text-sm text-yellow-400">
+                Select a size before adding to cart
+              </div>
+            ) : null}
+
             <div className="flex flex-col items-center text-center">
               <label
                 htmlFor="quantity"
@@ -876,15 +908,15 @@ const ProductDetailPage = () => {
                 Quantity
               </label>
               {minQty > 1 && (
-                <p className="text-[11px] sm:text-xs text-secondary/70 mb-4 max-w-xs">
+                <p className="text-xs text-secondary/70 mb-4 max-w-xs">
                   This product has a minimum order quantity of {minQty} units.
                 </p>
               )}
-              <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <button
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   disabled={quantity <= 1}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-card-bg border border-border-color text-primary transition-colors flex items-center justify-center text-xl font-semibold ${
+                  className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-card-bg border border-border-color text-primary transition-colors flex items-center justify-center text-lg font-semibold ${
                     quantity > 1
                       ? "hover:bg-border-color cursor-pointer"
                       : "opacity-40 cursor-not-allowed"
@@ -899,17 +931,17 @@ const ProductDetailPage = () => {
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-7 h-7"
+                    className="w-5 h-5"
                   >
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
                 </button>
-                <span className="w-20 sm:w-24 text-center text-primary font-bold text-2xl select-none">
+                <span className="w-16 sm:w-20 text-center text-primary font-bold text-lg select-none">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-card-bg border border-border-color text-primary hover:bg-border-color transition-colors flex items-center justify-center text-xl font-semibold"
+                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-card-bg border border-border-color text-primary hover:bg-border-color transition-colors flex items-center justify-center text-lg font-semibold"
                   aria-label="Increase quantity"
                 >
                   <svg
@@ -920,7 +952,7 @@ const ProductDetailPage = () => {
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-7 h-7"
+                    className="w-5 h-5"
                   >
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
@@ -928,26 +960,12 @@ const ProductDetailPage = () => {
                 </button>
               </div>
             </div>
-            {product.isRug && selectedSize ? (
-              <div className="mb-4 text-center">
-                <p className="text-sm text-secondary">Current Size Selection</p>
-                <p className="text-lg font-semibold text-primary">
-                  {typeof selectedSize === "object"
-                    ? `${selectedSize.width} x ${selectedSize.height}`
-                    : selectedSize}
-                </p>
-              </div>
-            ) : product.isRug ? (
-              <div className="mb-4 text-center text-sm text-yellow-400">
-                Select a size before adding to cart
-              </div>
-            ) : null}
 
             <div className="mt-8 flex justify-center">
               <Button
-                size="lg"
+                size="md"
                 onClick={handleAddToCart}
-                className="w-full max-w-[320px]"
+                className="w-full max-w-[280px]"
                 aria-label={`Add ${product.name} to cart`}
                 disabled={addedToCart || !selectedSize}
               >
@@ -976,10 +994,10 @@ const ProductDetailPage = () => {
           </div>
 
           {/* Additional Actions */}
-          <div className="flex flex-col gap-4 pt-2 sm:flex-row">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             <Button
               variant="outline"
-              size="md"
+              size="sm"
               onClick={handleAddToWishlist}
               className={`flex-1 transition-colors ${
                 isInWishlist
@@ -991,7 +1009,7 @@ const ProductDetailPage = () => {
             </Button>
             <Button
               variant="outline"
-              size="md"
+              size="sm"
               onClick={handleShare}
               className="flex-1"
             >
@@ -1013,8 +1031,8 @@ const ProductDetailPage = () => {
         </div>
       </div>
 
-      <section className="mt-12 w-full">
-        <h3 className="mb-5 text-2xl font-bold text-[#ac1f23]">
+      <section className="mt-10 w-full">
+        <h3 className="mb-4 text-lg font-bold text-[#ac1f23]">
           {recommendedHeading}
         </h3>
 
@@ -1024,7 +1042,7 @@ const ProductDetailPage = () => {
               <button
                 key={rug.id}
                 onClick={() => navigate(`/product/${rug.id}`)}
-                className="group overflow-hidden rounded-lg border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
+                className="group overflow-hidden rounded-md border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-gray-900/70">
                   {rug.image ? (
@@ -1040,8 +1058,8 @@ const ProductDetailPage = () => {
                     </div>
                   )}
                 </div>
-                <div className="space-y-1 p-3">
-                  <p className="line-clamp-1 font-semibold text-primary">
+                <div className="space-y-1 p-2.5">
+                  <p className="line-clamp-1 text-sm font-semibold text-primary">
                     {rug.name}
                   </p>
                   {rug.materialText && (
@@ -1068,8 +1086,8 @@ const ProductDetailPage = () => {
         )}
       </section>
 
-      <section className="mt-10 w-full">
-        <h3 className="mb-5 text-2xl font-bold text-[#ac1f23]">
+      <section className="mt-8 w-full">
+        <h3 className="mb-4 text-lg font-bold text-[#ac1f23]">
           Recently Viewed
         </h3>
 
@@ -1079,7 +1097,7 @@ const ProductDetailPage = () => {
               <button
                 key={item.id}
                 onClick={() => navigate(`/product/${item.id}`)}
-                className="group overflow-hidden rounded-lg border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
+                className="group overflow-hidden rounded-md border border-white/10 bg-gray-800/60 text-left transition-all duration-200 hover:border-[#ac1f23]/80"
               >
                 <div className="aspect-[4/3] overflow-hidden bg-gray-900/70">
                   {item.image ? (
@@ -1095,8 +1113,8 @@ const ProductDetailPage = () => {
                     </div>
                   )}
                 </div>
-                <div className="space-y-1 p-3">
-                  <p className="line-clamp-1 font-semibold text-primary">
+                <div className="space-y-1 p-2.5">
+                  <p className="line-clamp-1 text-sm font-semibold text-primary">
                     {item.name}
                   </p>
                   {item.materialText && (

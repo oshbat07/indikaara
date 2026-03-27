@@ -53,7 +53,7 @@ const ImageGallery = ({ images, productName }) => {
     return (
       <div className="w-full h-96 bg-gray-800 rounded-xl flex items-center justify-center">
         <div
-          className="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl"
+          className="w-full h-full bg-center bg-no-repeat bg-contain rounded-xl"
           style={{ backgroundImage: `url("${defaultImg}")` }}
           role="img"
           aria-label={`${productName} - Default image`}
@@ -91,7 +91,8 @@ const ImageGallery = ({ images, productName }) => {
                 className="gallery-slide-bg"
                 style={{
                   backgroundImage: `url('${img}')`,
-                  backgroundSize: "cover",
+                  backgroundSize: "contain",
+                  backgroundRepeat: "no-repeat",
                   backgroundPosition: "center",
                 }}
                 role="img"

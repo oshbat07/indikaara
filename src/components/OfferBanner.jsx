@@ -19,7 +19,7 @@ const OfferBanner = () => {
       role="status"
       aria-label="Promotional offer"
       className="offer-banner fixed top-0 left-0 right-0 z-[60] bg-black/95 text-white"
-      style={{ height: 50 }}
+      style={{ height: 35 }}
     >
       <div className="h-full overflow-hidden select-none">
         <div className="offer-marquee h-full">
@@ -29,7 +29,7 @@ const OfferBanner = () => {
               {messages.map((msg, idx) => (
                 <span
                   key={`${i}-${idx}`}
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm md:text-base lg:text-[1.05rem] font-semibold tracking-wide"
+                  className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm lg:text-base font-semibold tracking-wide"
                 >
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-fuchsia-500/80" />
                   {msg}
