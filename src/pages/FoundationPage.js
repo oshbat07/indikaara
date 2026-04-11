@@ -1,541 +1,183 @@
 import React from "react";
 
-/**
- * FoundationPage Component - Dedicated page for company foundation, vision, mission, and values
- * Features:
- * - Company vision and mission statement
- * - Core values and principles
- * - Brand story and foundation
- * - Rich visual presentation with artisan imagery
- */
 const FoundationPage = () => {
   return (
     <main className="min-h-screen bg-background text-primary pt-24 md:pt-28 lg:pt-32 pb-16">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
+        {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-5xl font-bold text-primary mb-4">
+          <h1 className="text-5xl font-bold text-primary mb-4">
             Our Foundation
           </h1>
-          <p className="text-3xl text-text-secondary max-w-5xl mx-auto">
-            The values, vision, and principles that guide our journey in
-            preserving and celebrating India's rich artisan heritage.
+          <p className="text-2xl text-text-secondary max-w-4xl mx-auto">
+            Not built on trends. Built on what almost disappeared.
           </p>
         </div>
 
-        {/* Hero Content - Brand Story */}
+        {/* OUR STORY */}
         <section className="mb-20">
-          <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-8 md:p-12">
-            <div className="text-center mx-auto max-w-5xl">
-              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
+          <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/30 rounded-2xl p-8 md:p-12">
+            <div className="mx-auto max-w-4xl space-y-6 text-lg leading-8 text-text-secondary">
+              <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6 text-center">
                 Our Story
               </h2>
-              <p className="text-text-primary text-lg md:text-xl leading-relaxed mb-6">
-                <span
-                  style={{
-                    fontFamily: "'Dancing Script', cursive",
-                    fontSize: "2.5rem",
-                    fontWeight: "700",
-                    color: "var(--accent-color)",
-                    display: "block",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  Every piece tells a tale.
-                </span>
+
+              <p className="text-xl text-primary font-semibold text-center">
+                We do not sell products.{" "}
+                <span className="text-accent">We pass on proof.</span>
               </p>
-              <p className="text-text-secondary text-xl leading-relaxed">
-                At Indikaara, we believe that every product tells a story. Our
-                artisans are not just creators; they are custodians of ancient
-                traditions, passing down skills through generations. When you
-                purchase from us, you're not just buying a product – you're
-                supporting a legacy, a family, and the continuation of India's
-                rich cultural heritage.
+
+              <p>
+                Every piece tells a story? <strong>No.</strong> That is what
+                every brand says.
               </p>
-              <p className="text-text-secondary text-lg leading-relaxed mt-4">
-                Our handpicked collection of unique rugs, vintage finds, and
-                beautiful decor is here to help you create a home that feels
-                uniquely you. We've traveled to find the perfect blend of warmth
-                and character, so you can fill your space with items that bring
-                you joy and comfort.
+
+              <p>
+                <strong>Here is what we mean:</strong>
+              </p>
+
+              <p>
+                Our artisans are not "creators."{" "}
+                <strong>They are custodians</strong>; born into a skill their
+                great-grandmother learned at an age when most children cannot
+                tie their own shoes.
+              </p>
+
+              <p>
+                They do not choose this craft. <strong>It chooses them.</strong>{" "}
+                And it almost died. Twice.
+              </p>
+
+              <p>
+                Once when factories arrived. Again when the world decided{" "}
+                <strong>cheap was better.</strong>
+              </p>
+
+              <p>
+                You buy from Indikaara, you are not "supporting a legacy".
+                <strong>
+                  {" "}
+                  You are paying the school fee for a weaver's daughter.
+                </strong>
+              </p>
+
+              <p>
+                You are keeping a <strong>70-year-old potter</strong> from
+                closing his wheel for good.
+              </p>
+
+              <p>
+                We do not travel to find "warmth and character."
+                <strong> We travel to find the last hands</strong> who still
+                remember how to knot, carve, and cast the old way.
+              </p>
+
+              <p>
+                Our collection is not handpicked for your joy.
+                <br />
+                <strong>It is handpicked for your responsibility.</strong>
+              </p>
+
+              <p>You want a home that feels uniquely yours? Fine.</p>
+
+              <p className="text-primary font-semibold">
+                But first, let it feel like a home that did not erase anyone to
+                exist.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Foundation Cards - Vision, Mission, Values */}
+        {/* FOUNDATION CARDS (Rewritten tone) */}
         <section className="mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto">
-            {/* Card: Vision */}
-            <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 backdrop-blur-sm border border-red-700/30 rounded-xl p-8 text-center hover:from-red-800/40 hover:to-red-700/30 hover:border-red-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-2 border-red-500/30">
-                <img
-                  src={require("../assets/artisan-potter.png")}
-                  alt="Brand Vision"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Vision */}
+            <div className="bg-gray-800/50 border border-gray-700/30 rounded-xl p-8 text-center">
               <h3 className="text-2xl font-semibold text-primary mb-4">
-                Our Vision
+                Vision
               </h3>
               <p className="text-text-secondary leading-relaxed text-lg">
-                To preserve and celebrate India's rich artisan heritage by
-                connecting traditional craftspeople with modern homes, ensuring
-                every piece carries forward centuries of cultural wisdom and
-                artistic excellence.
+                A world where craft is not replaced by machines, and skill is
+                not erased by convenience. Where heritage is lived—not archived.
               </p>
             </div>
 
-            {/* Card: Mission */}
-            <div className="bg-gradient-to-br from-amber-900/30 to-orange-800/20 backdrop-blur-sm border border-amber-700/30 rounded-xl p-8 text-center hover:from-amber-800/40 hover:to-orange-700/30 hover:border-amber-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-2 border-amber-500/30">
-                <img
-                  src={require("../assets/artisan-rug-weaver.png")}
-                  alt="Brand Mission"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Mission */}
+            <div className="bg-gray-800/50 border border-gray-700/30 rounded-xl p-8 text-center">
               <h3 className="text-2xl font-semibold text-primary mb-4">
-                Our Mission
+                Mission
               </h3>
-              <p className="text-text-secondary leading-relaxed font-medium italic text-xl mb-4">
-                "Handcrafted with Heart, Treasured Forever"
-              </p>
               <p className="text-text-secondary leading-relaxed text-lg">
-                Every piece we curate is more than just decor—it's a testament
-                to the passion, skill, and soul of Indian artisans who pour
-                their heritage into every creation.
+                To make sure the last hands that know these crafts are not the
+                last. Every product we place is a decision to keep something
+                alive.
               </p>
             </div>
 
-            {/* Card: Values */}
-            <div className="bg-gradient-to-br from-teal-900/30 to-teal-800/20 backdrop-blur-sm border border-teal-700/30 rounded-xl p-8 text-center hover:from-teal-800/40 hover:to-teal-700/30 hover:border-teal-600/40 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full overflow-hidden border-2 border-teal-500/30">
-                <img
-                  src={require("../assets/artisan-wood-carver.png")}
-                  alt="Brand Values"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Values */}
+            <div className="bg-gray-800/50 border border-gray-700/30 rounded-xl p-8 text-center">
               <h3 className="text-2xl font-semibold text-primary mb-4">
-                Our Values
+                Values
               </h3>
-              <div className="text-text-secondary leading-relaxed space-y-3 text-lg">
-                <p className="font-medium">• Authenticity in every thread</p>
-                <p className="font-medium">
-                  • Sustainable artisan partnerships
-                </p>
-                <p className="font-medium">• Cultural heritage preservation</p>
-                <p className="font-medium">
-                  • Quality craftsmanship excellence
-                </p>
-                <p className="font-medium">• Empowering local communities</p>
+              <div className="text-text-secondary space-y-3 text-lg">
+                <p>• Craft over convenience</p>
+                <p>• People over margins</p>
+                <p>• Truth over storytelling</p>
+                <p>• Responsibility over aesthetics</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Detailed Sections - Artisan Heritage, Waste to Product Innovation, Quality & Sustainability */}
-        <section className="bg-gray-800/50 mb-20 rounded-xl p-8 md:p-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-primary mb-6">
-                Waste to Product Innovation
-              </h2>
-              <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                We believe discarded does not mean destined for landfill. At
-                Indikaara, offcuts, surplus yarns, metal remnants, and organic
-                by‑products are catalogued—not discarded—and thoughtfully
-                transformed into limited-edition pieces. This extends material
-                life while honoring the resourcefulness embedded in India’s
-                craft legacy.
-              </p>
-              <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                Our circular design loop focuses on reduction (optimizing
-                patterns), reclamation (collecting post-process remnants), and
-                reinvention (co‑creating new product stories with artisans).
-                Each upcycled item is transparently tagged so customers know its
-                material journey.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8">
-                <div className="text-center">
-                  <div className="bg-orange-600/20 text-orange-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v6h6M20 20v-6h-6M4 14v6h6M14 4h6v6"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">85%+</h3>
-                  <p className="text-text-secondary text-sm">
-                    Material Utilization Goal
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-teal-600/20 text-teal-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 4l-7 8-4-4-5 6"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">1200kg</h3>
-                  <p className="text-text-secondary text-sm">
-                    Annual Waste Rechanneled
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-amber-600/20 text-amber-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3M12 22a10 10 0 100-20 10 10 0 000 20z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">Closed Loop</h3>
-                  <p className="text-text-secondary text-sm">
-                    Design Philosophy
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <img
-                  src={
-                    "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/50013eca-9726-4af3-1459-a0a80affbf00/public"
-                  }
-                  alt="Upcycled Textile"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <img
-                  src={
-                    "https://imagedelivery.net/H565DrCZdQzOpEYoxfVenQ/caed5894-1e93-4a77-5cfd-6e3dd031cd00/public"
-                  }
-                  alt="Repurposed Metal Craft"
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-              </div>
-              <div className="space-y-4 mt-8">
-                <img
-                  src={require("../assets/featured-artisan-weave.png")}
-                  alt="Weaving Offcuts"
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-                <img
-                  src={require("../assets/featured-artisan-homepage.jpg")}
-                  alt="Circular Design Outcome"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              </div>
-            </div>
-          </div>
+        {/* REPLACED: Waste + Heritage → ONE STRONG SECTION */}
+        <section className="bg-gray-800/50 mb-20 rounded-xl p-8 md:p-12 text-center max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-primary mb-6">
+            What We Actually Do
+          </h2>
+
+          <p className="text-text-secondary text-lg leading-relaxed mb-4">
+            We do not optimize for scale. We optimize for survival.
+          </p>
+
+          <p className="text-text-secondary text-lg leading-relaxed mb-4">
+            No middle layers. No dilution of value. No race to the lowest price.
+          </p>
+
+          <p className="text-text-secondary text-lg leading-relaxed mb-4">
+            Just direct relationships with artisans, fair compensation, and work
+            that respects the time it takes to be made right.
+          </p>
+
+          <p className="text-primary font-semibold text-lg">
+            If it cannot be made with integrity, we do not make it.
+          </p>
         </section>
 
-        {/* Artisan Heritage */}
-        <section className="bg-gray-800/50 mb-20 rounded-xl p-8 md:p-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-primary mb-6">
-                Preserving Artisan Heritage
-              </h2>
-              <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                For generations, Indian artisans have mastered their crafts,
-                passing down techniques through families and communities. These
-                skills represent more than just methods of creation—they are
-                living traditions that connect us to our cultural roots.
-              </p>
-              <p className="text-text-secondary text-lg leading-relaxed mb-6">
-                At Indikaara, we work directly with these master craftspeople,
-                ensuring their knowledge and techniques continue to thrive in
-                the modern world. Each purchase directly supports these artisan
-                families and helps preserve these invaluable traditions for
-                future generations.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div className="text-center">
-                  <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">500+</h3>
-                  <p className="text-text-secondary text-sm">
-                    Artisan Families
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">15+</h3>
-                  <p className="text-text-secondary text-sm">
-                    Craft Traditions
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <svg
-                      className="w-8 h-8"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-primary">10+</h3>
-                  <p className="text-text-secondary text-sm">Indian States</p>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <img
-                  src={require("../assets/artisan-potter.png")}
-                  alt="Pottery Artisan"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <img
-                  src={require("../assets/artisan-wood-carver.png")}
-                  alt="Wood Carving Artisan"
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-              </div>
-              <div className="space-y-4 mt-8">
-                <img
-                  src={require("../assets/artisan-rug-weaver.png")}
-                  alt="Rug Weaving Artisan"
-                  className="w-full h-32 object-cover rounded-lg"
-                />
-                <img
-                  src={require("../assets/artisan-wheat-stem-art.png")}
-                  alt="Wheat Stem Art Artisan"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Quality & Sustainability */}
-        <section className="bg-gray-800/50 mb-20 rounded-xl p-8 md:p-12">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-primary mb-4">
-              Quality & Sustainability
-            </h2>
-            <p className="text-text-secondary text-lg max-w-3xl mx-auto">
-              Our commitment goes beyond beautiful products. We ensure every
-              piece meets the highest standards while supporting sustainable
-              practices and fair trade.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-green-600/20 text-green-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-primary mb-2">
-                Quality Assured
-              </h3>
-              <p className="text-text-secondary">
-                Every piece undergoes rigorous quality checks
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-blue-600/20 text-blue-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-primary mb-2">
-                Sustainable
-              </h3>
-              <p className="text-text-secondary">
-                Eco-friendly materials and processes
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-purple-600/20 text-purple-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-primary mb-2">
-                Fair Trade
-              </h3>
-              <p className="text-text-secondary">
-                Direct partnerships with artisan communities
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-orange-600/20 text-orange-400 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-10 h-10"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-primary mb-2">
-                Authentic
-              </h3>
-              <p className="text-text-secondary">
-                Genuine traditional craftsmanship guaranteed
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Call to Action */}
+        {/* CTA */}
         <section className="text-center py-16">
           <div className="bg-gradient-to-r from-primary/10 to-primary/20 rounded-2xl p-8 md:p-12 border border-primary/20">
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-6">
-              Join Our Mission
+              This Is Not Just Shopping
             </h2>
+
             <p className="text-text-secondary text-lg mb-8 max-w-2xl mx-auto">
-              Every purchase you make helps preserve centuries-old traditions
-              and supports artisan families across India. Be part of keeping
-              these beautiful crafts alive for future generations.
+              Every piece you choose decides whether a craft survives or
+              disappears.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/catalogue"
-                className="inline-flex items-center px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+                className="px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90"
               >
-                Explore Our Collection
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+                Explore Collection
               </a>
+
               <a
                 href="/artisans"
-                className="inline-flex items-center px-8 py-4 bg-transparent border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors"
+                className="px-8 py-4 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white"
               >
-                Meet Our Artisans
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                  />
-                </svg>
+                Meet Artisans
               </a>
             </div>
           </div>
