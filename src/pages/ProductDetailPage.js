@@ -71,7 +71,7 @@ const ProductDetailPage = () => {
         const productData = await axios
           .get(`/api/products/${id}`)
           .then((res) => res.data);
-
+        console.log("productdata", productData);
         if (productData) {
           // Transform product data to match component expectations
           const isRug =
@@ -128,7 +128,6 @@ const ProductDetailPage = () => {
             specifications: {
               material: productData.material?.[0] || "Traditional materials",
               color: productData.color?.[0] || "Standard",
-              careInstructions: "Handle with care",
               dimensions: productData.price[0]?.size || "Standard size",
               SKU: productData.SKU,
             },
@@ -738,15 +737,22 @@ const ProductDetailPage = () => {
             {((product.category || "").toLowerCase() === "rugs" ||
               (Array.isArray(product.materials) &&
                 product.materials.length > 0)) && (
-              <p className="text-secondary text-base sm:text-lg font-medium leading-tight">
-                {(product.category || "").toLowerCase() === "rugs"
-                  ? "Hand Tufted"
-                  : ""}
-                {Array.isArray(product.materials) &&
-                product.materials.length > 0
-                  ? `${(product.category || "").toLowerCase() === "rugs" ? ", " : ""}${product.materials.join(" & ")}`
-                  : ""}
-              </p>
+              <div className="space-y-3">
+                <p className="text-secondary text-base sm:text-lg font-medium leading-tight">
+                  {(product.category || "").toLowerCase() === "rugs"
+                    ? "Hand Tufted"
+                    : ""}
+                  {Array.isArray(product.materials) &&
+                  product.materials.length > 0
+                    ? `${(product.category || "").toLowerCase() === "rugs" ? ", " : ""}${product.materials.join(" & ")}`
+                    : ""}
+                </p>
+                {product.description && (
+                  <p className="text-sm sm:text-base text-secondary leading-relaxed max-w-3xl">
+                    {product.description}
+                  </p>
+                )}
+              </div>
             )}
             {/* Minimum Order Quantity notice - only show when minQty > 1 */}
             {minQty > 1 && (
@@ -781,7 +787,10 @@ const ProductDetailPage = () => {
               </h2>
               <div className="bg-gray-800 rounded-lg p-4 space-y-2 text-sm">
                 {Object.entries(product.specifications)
-                  .filter(([key]) => !["material", "dimensions"].includes(key))
+                  .filter(
+                    ([key]) =>
+                      !["material", "dimensions", "description"].includes(key),
+                  )
                   .map(([key, value]) => (
                     <div key={key} className="flex justify-between gap-4">
                       <span className="text-secondary capitalize">

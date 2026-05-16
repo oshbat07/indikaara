@@ -12,7 +12,7 @@
 .slick-list {
   border-radius: 0.75rem; /* rounded-xl */
   overflow: hidden;
-  background: #1f2937; /* gray-800 */
+  background: #191919; /* gray-800 */
 }
 
 .slick-slide > div {
