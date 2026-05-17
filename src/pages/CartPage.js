@@ -23,11 +23,11 @@ const CartPage = () => {
   const handleProceedToCheckout = () => {
     if (!user) {
       // Store the intended redirect path
-      localStorage.setItem("redirect_after_login", "/address");
+      localStorage.setItem("redirect_after_login", "/order-review");
       navigate("/login");
       return;
     }
-    navigate("/address");
+    navigate("/order-review");
   };
 
   // Handle quantity change

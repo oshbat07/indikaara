@@ -15,6 +15,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 // const CataloguePage = lazy(() => import("./pages/CataloguePage"));
 // const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
+const OrderReviewPage = lazy(() => import("./pages/OrderReviewPage"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const AddressPage = lazy(() => import("./pages/AddressPage"));
 const ArtisansPage = lazy(() => import("./pages/ArtisansPage"));
@@ -65,6 +66,9 @@ function App() {
                 <Route path="/biomass" element={<BiomassPage />} />
                 {/* Cart Route */}
                 <Route path="/cart" element={<CartPage />} />
+
+                {/* Order Review Route */}
+                <Route path="/order-review" element={<OrderReviewPage />} />
 
                 {/* Enquiry Route */}
                 <Route path="/enquiry" element={<EnquiryPage />} />

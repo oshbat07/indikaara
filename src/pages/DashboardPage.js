@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import OrderDetailsModal from "../components/OrderDetailsModal";
+import { countries } from "../data/countries";
 
 // Utility functions for order display
 const formatCurrency = (amount) => {
@@ -36,7 +36,32 @@ const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState("orders"); // 'orders' | 'addresses'
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [addressesLoading, setAddressesLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [form, setForm] = useState({
+    fullName: user?.name || "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
+    label: "Home",
+    customLabel: "",
+    isDefault: false,
+  });
+  const [editingId, setEditingId] = useState(null);
+  const [status, setStatus] = useState({
+    show: false,
+    type: "success",
+    message: "",
+  });
+  const [deleteModal, setDeleteModal] = useState({
+    show: false,
+    id: null,
+    label: "",
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const ordersPerPage = 10;
@@ -88,55 +113,194 @@ const DashboardPage = () => {
     fetchOrders();
   }, [isAuthenticated]);
 
-  // Seed one default address from user data if available (local-only demo)
+  // Fetch addresses when user opens the Addresses tab
   useEffect(() => {
-    if (addresses.length === 0) {
-      setAddresses((prev) => {
-        if (prev.length) return prev;
-        return [
-          {
-            id: "default",
-            name: user?.name || "Anonymous",
-            country: "India",
-            isDefault: true,
-          },
-        ];
-      });
-    }
-  }, [user, addresses.length, orders]);
+    if (!isAuthenticated || activeTab !== "addresses") return;
+    const fetchAddresses = async () => {
+      try {
+        setAddressesLoading(true);
+        const res = await axios.get("/api/users/addresses");
+        setAddresses(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setAddresses([]);
+        console.error("Failed to fetch addresses", err);
+      } finally {
+        setAddressesLoading(false);
+      }
+    };
+    fetchAddresses();
+  }, [isAuthenticated, activeTab]);
+
+  // Auto-hide status messages
+  useEffect(() => {
+    if (!status.show) return;
+    const t = setTimeout(() => setStatus((s) => ({ ...s, show: false })), 3000);
+    return () => clearTimeout(t);
+  }, [status.show]);
 
   const addAddress = () => {
-    const name = window.prompt("Full Name", user?.name || "");
-    if (!name) return;
-    const country = window.prompt("Country", "India") || "India";
-    setAddresses((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        name,
-        country,
-        isDefault: prev.length === 0,
-      },
-    ]);
+    setForm({
+      fullName: user?.name || "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "India",
+      label: "Home",
+      customLabel: "",
+      isDefault: false,
+    });
+    setShowAddModal(true);
+  };
+
+  const saveAddress = async () => {
+    // validate required fields
+    const required = [
+      "fullName",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "postalCode",
+    ];
+    for (const key of required) {
+      if (!form[key] || String(form[key]).trim() === "") {
+        setStatus({
+          show: true,
+          type: "error",
+          message: "Please fill in all required fields.",
+        });
+        return;
+      }
+    }
+
+    const labelToSend =
+      form.label === "Other" ? form.customLabel || "Other" : form.label;
+
+    try {
+      if (editingId) {
+        const res = await axios.put(`/api/users/addresses/${editingId}`, {
+          fullName: form.fullName,
+          phone: form.phone,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          postalCode: form.postalCode,
+          country: form.country,
+          label: labelToSend,
+          isDefault: form.isDefault,
+        });
+        const updated = res.data;
+        setAddresses((prev) =>
+          prev.map((p) =>
+            p._id === editingId || p.id === editingId
+              ? { ...p, ...updated }
+              : form.isDefault
+                ? { ...p, isDefault: false }
+                : p,
+          ),
+        );
+        setStatus({ show: true, type: "success", message: "Address updated" });
+      } else {
+        const res = await axios.post("/api/users/addresses", {
+          fullName: form.fullName,
+          phone: form.phone,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          postalCode: form.postalCode,
+          country: form.country,
+          label: labelToSend,
+          isDefault: form.isDefault,
+        });
+        const created = res.data;
+        setAddresses((prev) => {
+          const updated = form.isDefault
+            ? prev.map((p) => ({ ...p, isDefault: false }))
+            : prev;
+          return [created, ...updated];
+        });
+        setStatus({ show: true, type: "success", message: "Address added" });
+      }
+      setShowAddModal(false);
+      setEditingId(null);
+    } catch (err) {
+      console.error(err);
+      setStatus({
+        show: true,
+        type: "error",
+        message: "Failed to save address",
+      });
+    }
   };
 
   const editAddress = (id) => {
-    const addr = addresses.find((a) => a.id === id);
+    const addr = addresses.find((a) => a._id === id || a.id === id);
     if (!addr) return;
-    const name = window.prompt("Full Name", addr.name) || addr.name;
-    const country = window.prompt("Country", addr.country) || addr.country;
-    setAddresses((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, name, country } : a)),
-    );
+    setEditingId(id);
+    setForm({
+      fullName: addr.fullName || addr.name || "",
+      phone: addr.phone || "",
+      address: addr.address || "",
+      city: addr.city || "",
+      state: addr.state || "",
+      postalCode: addr.postalCode || "",
+      country: addr.country || "India",
+      label: ["Home", "Office"].includes(addr.label)
+        ? addr.label
+        : addr.label || "Other",
+      customLabel: ["Home", "Office"].includes(addr.label)
+        ? ""
+        : addr.label || "",
+      isDefault: !!addr.isDefault,
+    });
+    setShowAddModal(true);
   };
 
-  const deleteAddress = (id) => {
-    if (!window.confirm("Delete this address?")) return;
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
+  const openDeleteModal = (id, label) =>
+    setDeleteModal({ show: true, id, label });
+
+  const confirmDelete = async () => {
+    const id = deleteModal.id;
+    if (!id) return;
+    try {
+      await axios.delete(`/api/users/addresses/${id}`);
+      setAddresses((prev) =>
+        prev.filter((a) => !(a._id === id || a.id === id)),
+      );
+      setStatus({ show: true, type: "success", message: "Address deleted" });
+    } catch (err) {
+      console.error(err);
+      setStatus({
+        show: true,
+        type: "error",
+        message: "Failed to delete address",
+      });
+    } finally {
+      setDeleteModal({ show: false, id: null, label: "" });
+    }
   };
 
-  const setDefault = (id) => {
-    setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
+  const setDefault = async (id) => {
+    try {
+      await axios.put(`/api/users/addresses/${id}/default`);
+      setAddresses((prev) =>
+        prev.map((p) => ({ ...p, isDefault: p._id === id || p.id === id })),
+      );
+      setStatus({
+        show: true,
+        type: "success",
+        message: "Default address updated",
+      });
+    } catch (err) {
+      console.error(err);
+      setStatus({
+        show: true,
+        type: "error",
+        message: "Failed to set default address",
+      });
+    }
   };
 
   return (
@@ -478,44 +642,77 @@ const DashboardPage = () => {
               </h2>
 
               <div className="max-w-2xl mx-auto mt-10 space-y-4">
-                {addresses.map((addr) => (
-                  <div
-                    key={addr.id}
-                    className="border border-gray-200 rounded-md p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <div className="text-sm font-semibold text-gray-800">
-                        {addr.isDefault ? "Default address" : "Address"}
+                {addressesLoading ? (
+                  <div className="flex flex-col items-center py-12">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#ac1f23]" />
+                    <p className="mt-4 text-gray-600">Loading addresses...</p>
+                  </div>
+                ) : addresses.length > 0 ? (
+                  addresses.map((addr) => (
+                    <div
+                      key={addr._id || addr.id}
+                      className="border border-gray-200 rounded-md p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div>
+                        <div className="text-sm font-semibold text-gray-800">
+                          {addr.isDefault ? "Default address" : "Address"}
+                        </div>
+                        <div className="mt-2 text-gray-700">
+                          <div>{addr.fullName || addr.name}</div>
+                          <div>{addr.address}</div>
+                          <div>
+                            {addr.city} {addr.state} {addr.postalCode}
+                          </div>
+                          <div>{addr.country}</div>
+                        </div>
                       </div>
-                      <div className="mt-2 text-gray-700">
-                        <div>{addr.name}</div>
-                        <div>{addr.country}</div>
-                      </div>
-                    </div>
-                    <div className="mt-4 sm:mt-0 flex items-center gap-4 text-sm">
-                      {!addr.isDefault && (
+                      <div className="mt-4 sm:mt-0 flex items-center gap-4 text-sm">
+                        {!addr.isDefault && (
+                          <button
+                            onClick={() => setDefault(addr._id || addr.id)}
+                            className="text-gray-600 hover:text-black"
+                          >
+                            Make default
+                          </button>
+                        )}
                         <button
-                          onClick={() => setDefault(addr.id)}
+                          onClick={() => editAddress(addr._id || addr.id)}
                           className="text-gray-600 hover:text-black"
                         >
-                          Make default
+                          Edit
                         </button>
-                      )}
+                        <button
+                          onClick={() =>
+                            openDeleteModal(
+                              addr._id || addr.id,
+                              addr.fullName || addr.name,
+                            )
+                          }
+                          className="text-gray-600 hover:text-black"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 border border-gray-200 rounded-xl">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No saved addresses
+                    </h3>
+                    <p className="text-gray-500 mb-6">
+                      Add an address to make checkout faster.
+                    </p>
+                    <div className="flex justify-center">
                       <button
-                        onClick={() => editAddress(addr.id)}
-                        className="text-gray-600 hover:text-black"
+                        onClick={addAddress}
+                        className="bg-[#ac1f23] hover:bg-[#a46840] text-white font-semibold px-6 py-3 rounded"
                       >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteAddress(addr.id)}
-                        className="text-gray-600 hover:text-black"
-                      >
-                        Delete
+                        Add address
                       </button>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="flex justify-center mt-8">
@@ -578,6 +775,237 @@ const DashboardPage = () => {
           onClose={handleCloseModal}
           onRetryPayment={handleRetryPayment}
         />
+      )}
+
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center py-5 px-4 sm:px-6">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowAddModal(false)}
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
+            style={{ maxHeight: "80vh" }}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-slate-50 shrink-0">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-950">
+                {editingId ? "Edit Address" : "Add Address"}
+              </h3>
+              <button
+                aria-label="Close"
+                onClick={() => setShowAddModal(false)}
+                className="text-slate-600 hover:text-slate-900 p-2 rounded-md"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1 min-h-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-semibold text-slate-900">
+                    Full name *
+                  </label>
+                  <input
+                    value={form.fullName}
+                    onChange={(e) =>
+                      setForm({ ...form, fullName: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-900">
+                    Phone *
+                  </label>
+                  <input
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm({ ...form, phone: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-semibold text-slate-900">
+                    Address *
+                  </label>
+                  <textarea
+                    value={form.address}
+                    onChange={(e) =>
+                      setForm({ ...form, address: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-2.5 py-2 h-20 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-900">
+                    City *
+                  </label>
+                  <input
+                    value={form.city}
+                    onChange={(e) => setForm({ ...form, city: e.target.value })}
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-900">
+                    State *
+                  </label>
+                  <input
+                    value={form.state}
+                    onChange={(e) =>
+                      setForm({ ...form, state: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-900">
+                    Postal Code *
+                  </label>
+                  <input
+                    value={form.postalCode}
+                    onChange={(e) =>
+                      setForm({ ...form, postalCode: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-900">
+                    Country
+                  </label>
+                  <select
+                    value={form.country}
+                    onChange={(e) =>
+                      setForm({ ...form, country: e.target.value })
+                    }
+                    className="mt-2 w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="text-sm font-semibold text-slate-900">
+                    Label
+                  </label>
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <select
+                      value={form.label}
+                      onChange={(e) =>
+                        setForm({ ...form, label: e.target.value })
+                      }
+                      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                    >
+                      <option>Home</option>
+                      <option>Office</option>
+                      <option>Other</option>
+                    </select>
+                    {form.label === "Other" && (
+                      <input
+                        placeholder="Custom label"
+                        value={form.customLabel}
+                        onChange={(e) =>
+                          setForm({ ...form, customLabel: e.target.value })
+                        }
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ac1f23]"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="sm:col-span-2 flex items-center gap-2 mt-2">
+                  <input
+                    id="isDefault"
+                    type="checkbox"
+                    checked={form.isDefault}
+                    onChange={(e) =>
+                      setForm({ ...form, isDefault: e.target.checked })
+                    }
+                    className="h-4 w-4 text-[#ac1f23] rounded border-gray-300 focus:ring-[#ac1f23]"
+                  />
+                  <label htmlFor="isDefault" className="text-sm text-slate-900">
+                    Make default address
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="w-full sm:w-auto px-3 py-2.5 rounded-md border border-gray-200 bg-white text-slate-900 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveAddress}
+                className="w-full sm:w-auto px-3 py-2.5 rounded-md bg-[#ac1f23] hover:bg-[#8f1a1d] text-white"
+              >
+                {editingId ? "Update address" : "Save address"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {status.show && (
+        <div className="fixed top-6 right-6 z-50">
+          <div
+            className={`px-4 py-2 rounded-md shadow ${status.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}
+          >
+            {status.message}
+          </div>
+        </div>
+      )}
+
+      {deleteModal.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setDeleteModal({ show: false, id: null, label: "" })}
+          />
+          <div className="relative bg-white rounded-2xl p-6 w-full max-w-md z-10 shadow-2xl border border-gray-200">
+            <h3 className="text-lg font-semibold mb-2 text-slate-950">
+              Delete address
+            </h3>
+            <p className="text-sm text-slate-800 mb-4">
+              Are you sure you want to delete{" "}
+              <strong>{deleteModal.label}</strong>?
+            </p>
+            <div className="flex flex-col sm:flex-row items-stretch sm:justify-end gap-3">
+              <button
+                onClick={() =>
+                  setDeleteModal({ show: false, id: null, label: "" })
+                }
+                className="w-full sm:w-auto px-4 py-3 rounded-md border border-gray-200 bg-white text-slate-900 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="w-full sm:w-auto px-4 py-3 rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
