@@ -78,24 +78,37 @@ const ProductDetailPage = () => {
             productData.category &&
             productData.category.toLowerCase() === "rugs";
 
+          const basePrice = Array.isArray(productData.price)
+            ? Number(
+                productData.price[0]?.price ??
+                  productData.price[0]?.amount ??
+                  productData.price[0]?.value ??
+                  0,
+              )
+            : Number(productData.price ?? 0);
+
           const transformedProduct = {
             id: productData.id,
             _id: productData._id,
             name: productData.name,
             description: productData.description,
             isRug: isRug,
-            price: productData.price[0]?.price || null,
-            priceOptions: productData.price.map((p) => {
-              // For rugs: convert to width/height object; for others: keep as string
-              const size = isRug ? formatSizeForAPI(p.size) : p.size;
-              return {
-                size: size || (isRug ? { width: 0, height: 0 } : "Standard"),
-                label: p.size || "Standard",
-                amount: p.price,
-              };
-            }),
+            price: basePrice,
+            priceOptions: Array.isArray(productData.price)
+              ? productData.price.map((p) => ({
+                  size: isRug ? formatSizeForAPI(p.size) : p.size,
+                  label: p.size || "Standard",
+                  amount: Number(p.price ?? p.amount ?? p.value ?? 0),
+                }))
+              : [
+                  {
+                    size: isRug ? { width: 0, height: 0 } : "Standard",
+                    label: "Standard",
+                    amount: Number(productData.price ?? 0),
+                  },
+                ],
             SKU: productData.SKU,
-            images: getAllImagesOptimized(productData.imageUrl || []),
+            images: getAllImagesOptimized(productData.imageUrl || productData.image || []),
             category: productData.category,
             subcategory: productData.manufacturer,
             region: "India", // From details: "Made in India"
@@ -107,14 +120,7 @@ const ProductDetailPage = () => {
             materials: Array.isArray(productData.material)
               ? productData.material.filter(Boolean)
               : [],
-            dimensions: [
-              isRug
-                ? formatSizeForAPI(productData.price[0]?.size) || {
-                    width: 0,
-                    height: 0,
-                  }
-                : productData.price[0]?.size || "Standard",
-            ],
+            dimensions: [isRug ? { width: 0, height: 0 } : "Standard"],
             artisan: {
               name: productData.manufacturer,
               location: "India",
@@ -128,7 +134,9 @@ const ProductDetailPage = () => {
             specifications: {
               material: productData.material?.[0] || "Traditional materials",
               color: productData.color?.[0] || "Standard",
-              dimensions: productData.price[0]?.size || "Standard size",
+              dimensions: Array.isArray(productData.price)
+                ? productData.price[0]?.size || "Standard size"
+                : productData.price || "Standard size",
               SKU: productData.SKU,
             },
           };
@@ -221,15 +229,14 @@ const ProductDetailPage = () => {
           )
           .slice(0, 4)
           .map((item) => {
-            const firstPrice = Array.isArray(item.price) ? item.price[0] : null;
-            const pricePerSqFt = Number(
-              firstPrice?.price ?? firstPrice?.amount ?? item.price ?? 0,
-            );
+            const pricePerSqFt = Array.isArray(item.price)
+              ? Number(item.price[0]?.price ?? item.price[0]?.amount ?? 0)
+              : Number(item.price ?? 0);
 
             return {
               id: item._id || item.id,
               name: item.name || "Rug",
-              image: getAllImagesOptimized(item.imageUrl || [])[0] || "",
+              image: getAllImagesOptimized(item.imageUrl || item.image || [])[0] || "",
               materialText: Array.isArray(item.material)
                 ? item.material.filter(Boolean).join(" & ")
                 : "",
@@ -914,7 +921,7 @@ const ProductDetailPage = () => {
           )}
           {/* Quantity Selector */}
           <div className="pt-4">
-            {selectedSize ? (
+            {selectedSize && product.isRug ? (
               <div className="mb-4 mx-auto w-full max-w-md rounded-xl border border-[#ac1f23]/45 bg-[#ac1f23]/10 px-4 py-3 text-center shadow-sm">
                 <p className="text-xs uppercase tracking-[0.1em] text-[#f2b6b8] font-semibold">
                   Current Size Selection
@@ -930,7 +937,7 @@ const ProductDetailPage = () => {
                   </p>
                 )}
               </div>
-            ) : product.isRug ? (
+            ) : product.isRug && selectedSize ? (
               <div className="mb-4 text-center text-sm text-yellow-400">
                 Select a size before adding to cart
               </div>

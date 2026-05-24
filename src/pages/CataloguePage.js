@@ -50,6 +50,21 @@ const CataloguePage = () => {
     { value: "newest", label: "Newest First" },
   ];
 
+  const normalizeProductPrice = (price) => {
+    if (Array.isArray(price) && price.length > 0) {
+      const values = price
+        .map((item) =>
+          item && typeof item === "object"
+            ? Number(item.amount ?? item.price ?? 0)
+            : Number(item) || 0,
+        )
+        .filter((val) => !Number.isNaN(val));
+      return values.length > 0 ? Math.min(...values) : 0;
+    }
+
+    return Number(price) || 0;
+  };
+
   // ✅ Filter and sort logic
   const filteredProducts = useMemo(() => {
     let result = [...products];
@@ -73,13 +88,25 @@ const CataloguePage = () => {
 
     // Sorting
     if (selectedSort === "price-low-high") {
-      result.sort((a, b) => a.price[0]?.amount - b.price[0]?.amount);
+      result.sort((a, b) => {
+        const priceA = normalizeProductPrice(a.price);
+        const priceB = normalizeProductPrice(b.price);
+        return priceA - priceB;
+      });
     } else if (selectedSort === "price-high-low") {
-      result.sort((a, b) => b.price[0]?.amount - a.price[0]?.amount);
+      result.sort((a, b) => {
+        const priceA = normalizeProductPrice(a.price);
+        const priceB = normalizeProductPrice(b.price);
+        return priceB - priceA;
+      });
     } else if (selectedSort === "name") {
-      result.sort((a, b) => a.name.localeCompare(b.name));
+      result.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     } else if (selectedSort === "newest") {
-      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      result.sort((a, b) => {
+        const dateA = new Date(b.createdAt || 0);
+        const dateB = new Date(a.createdAt || 0);
+        return dateA - dateB;
+      });
     }
 
     return result;

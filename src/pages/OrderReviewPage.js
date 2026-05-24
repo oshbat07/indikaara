@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import AddressModal from "../components/AddressModal";
 
 /**
  * OrderReviewPage Component - Review order details and select delivery address
  */
 const OrderReviewPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { items, clearCart } = useCart();
   const { user } = useAuth();
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
+  const [addressForm, setAddressForm] = useState({
+    fullName: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "India",
+    label: "Home",
+    customLabel: "",
+    isDefault: false,
+  });
+  const [isSavingAddress, setIsSavingAddress] = useState(false);
   const [error, setError] = useState("");
 
   const MIN_QTY = 1;
@@ -55,20 +69,17 @@ const OrderReviewPage = () => {
         const res = await axios.get("/api/users/addresses");
         const addressList = Array.isArray(res.data) ? res.data : [];
 
-        if (addressList.length === 0) {
-          navigate("/address");
-          return;
-        }
-
         setAddresses(addressList);
-        // Select default address or first one
-        const defaultAddr = addressList.find((addr) => addr.isDefault);
-        setSelectedAddressId(
-          defaultAddr?._id ||
-            defaultAddr?.id ||
-            addressList[0]?._id ||
-            addressList[0]?.id,
-        );
+        // Select default address or first one when available
+        if (addressList.length > 0) {
+          const defaultAddr = addressList.find((addr) => addr.isDefault);
+          setSelectedAddressId(
+            defaultAddr?._id ||
+              defaultAddr?.id ||
+              addressList[0]?._id ||
+              addressList[0]?.id,
+          );
+        }
       } catch (err) {
         console.error("Failed to fetch addresses:", err);
         setError("Failed to load addresses. Please try again.");
@@ -103,8 +114,103 @@ const OrderReviewPage = () => {
     );
   }
 
+  // Helper to validate address form in modal
+  const validateAddressForm = () => {
+    const requiredFields = [
+      "fullName",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "postalCode",
+      "country",
+    ];
+    return requiredFields.every(
+      (key) => addressForm[key] && addressForm[key].trim() !== "",
+    );
+  };
+
+  const openAddAddressModal = () => {
+    setError("");
+    setAddressForm({
+      fullName: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "India",
+      label: "Home",
+      customLabel: "",
+      isDefault: false,
+    });
+    setShowAddAddressModal(true);
+  };
+
+  const handleSaveAddress = async () => {
+    if (!validateAddressForm()) {
+      setError("Please fill in all required address fields.");
+      return;
+    }
+
+    setIsSavingAddress(true);
+    setError("");
+    try {
+      const labelToSave =
+        addressForm.label === "Other"
+          ? addressForm.customLabel || "Other"
+          : addressForm.label;
+
+      const response = await axios.post("/api/users/addresses", {
+        fullName: addressForm.fullName,
+        phone: addressForm.phone,
+        address: addressForm.address,
+        city: addressForm.city,
+        state: addressForm.state,
+        postalCode: addressForm.postalCode,
+        country: addressForm.country,
+        label: labelToSave,
+        isDefault: addressForm.isDefault,
+      });
+
+      const savedAddress = response.data;
+      setAddresses((prev) => {
+        const updated = addressForm.isDefault
+          ? prev.map((addr) => ({ ...addr, isDefault: false }))
+          : prev;
+        return [savedAddress, ...updated];
+      });
+      setSelectedAddressId(savedAddress._id || savedAddress.id);
+      setShowAddAddressModal(false);
+      setAddressForm({
+        fullName: "",
+        phone: "",
+        address: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "India",
+        label: "Home",
+        customLabel: "",
+        isDefault: false,
+      });
+    } catch (err) {
+      console.error("Failed to save address:", err);
+      setError(
+        err.response?.data?.message ||
+          "Failed to save address. Please try again.",
+      );
+    } finally {
+      setIsSavingAddress(false);
+    }
+  };
+
   // Handle proceed to payment
   const handleProceedToPayment = async () => {
+    if (addresses.length === 0) {
+      setError("Please add a delivery address before proceeding.");
+      return;
+    }
     if (!selectedAddressId) {
       setError("Please select a delivery address.");
       return;
@@ -388,7 +494,7 @@ const OrderReviewPage = () => {
               <div className="text-center py-6">
                 <p className="text-gray-600 mb-4">No saved addresses found.</p>
                 <button
-                  onClick={() => navigate("/address")}
+                  onClick={openAddAddressModal}
                   className="bg-[#ac1f23] hover:bg-[#a46840] text-white font-semibold px-6 py-2 rounded"
                 >
                   Add Address
@@ -442,15 +548,35 @@ const OrderReviewPage = () => {
             )}
 
             {addresses.length > 0 && (
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="mt-4 text-sm text-[#ac1f23] hover:underline font-medium"
-              >
-                Manage Addresses
-              </button>
+              <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <button
+                  onClick={openAddAddressModal}
+                  className="inline-flex items-center justify-center rounded-md bg-[#ac1f23] px-4 py-2 text-sm font-semibold text-white hover:bg-[#a46840]"
+                >
+                  Add New Address
+                </button>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="text-sm text-[#ac1f23] hover:underline font-medium"
+                >
+                  Manage Addresses
+                </button>
+              </div>
             )}
           </div>
         </div>
+
+        <AddressModal
+          show={showAddAddressModal}
+          onClose={() => setShowAddAddressModal(false)}
+          onSave={handleSaveAddress}
+          form={addressForm}
+          setForm={setAddressForm}
+          isSaving={isSavingAddress}
+          error={error}
+          title="Add Delivery Address"
+          saveLabel="Save Address"
+        />
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
