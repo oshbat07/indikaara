@@ -108,7 +108,9 @@ const ProductDetailPage = () => {
                   },
                 ],
             SKU: productData.SKU,
-            images: getAllImagesOptimized(productData.imageUrl || productData.image || []),
+            images: getAllImagesOptimized(
+              productData.imageUrl || productData.image || [],
+            ),
             category: productData.category,
             subcategory: productData.manufacturer,
             region: "India", // From details: "Made in India"
@@ -236,7 +238,9 @@ const ProductDetailPage = () => {
             return {
               id: item._id || item.id,
               name: item.name || "Rug",
-              image: getAllImagesOptimized(item.imageUrl || item.image || [])[0] || "",
+              image:
+                getAllImagesOptimized(item.imageUrl || item.image || [])[0] ||
+                "",
               materialText: Array.isArray(item.material)
                 ? item.material.filter(Boolean).join(" & ")
                 : "",
