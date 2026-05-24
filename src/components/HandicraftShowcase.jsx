@@ -45,7 +45,10 @@ const HandicraftShowcase = () => {
       try {
         const results = await Promise.all(
           deduped.map((id) =>
-            axios.get(`/api/products/${id}`).then((r) => r.data).catch(() => null),
+            axios
+              .get(`/api/products/${id}`)
+              .then((r) => r.data)
+              .catch(() => null),
           ),
         );
         const valid = results.filter(Boolean);
@@ -233,7 +236,8 @@ const HandicraftShowcase = () => {
           <div className="mt-4 flex items-center justify-center gap-4">
             <button
               onClick={() =>
-                (window.location.href = "/catalogue?category=handicraftproducts")
+                (window.location.href =
+                  "/catalogue?category=handicraftproducts")
               }
               className="inline-block text-[11px] tracking-wide font-semibold uppercase text-gray-200 border-b-2 border-gray-400/60 hover:border-white transition-colors px-2 py-1"
             >

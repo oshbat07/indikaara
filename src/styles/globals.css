@@ -75,7 +75,9 @@ body {
 .product-card {
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  transition:
+    transform 0.3s ease-in-out,
+    box-shadow 0.3s ease-in-out;
 }
 
 .product-card:hover {
@@ -92,7 +94,9 @@ body {
   color: white;
   padding: 1rem;
   transform: translateY(100%);
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
   opacity: 0;
 }
 
@@ -143,7 +147,9 @@ body {
 
 /* Smooth transitions */
 * {
-  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+  transition:
+    color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out;
 }
 
@@ -166,7 +172,8 @@ body {
   backdrop-filter: blur(6px) saturate(160%);
   -webkit-backdrop-filter: blur(6px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.4),
+  box-shadow:
+    0 2px 4px -1px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 }
 .cart-badge {
@@ -180,7 +187,9 @@ body {
 
 /* Rugs center slider custom styling */
 .rugs-center-slider .slick-slide {
-  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+  transition:
+    transform 0.6s cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 0.5s ease;
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
   opacity: 0.45;
@@ -207,7 +216,8 @@ body {
   }
 }
 .rugs-center-slider .slick-slide img.rug-stack-image {
-  box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.35),
+  box-shadow:
+    0 10px 28px -8px rgba(0, 0, 0, 0.35),
     0 4px 10px -4px rgba(0, 0, 0, 0.4);
   border-radius: 4px;
 }
@@ -249,13 +259,16 @@ body {
 
 /* Header contrast & glow utilities */
 .header-contrast *:not(svg):not(path) {
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 6px rgba(0, 0, 0, 0.35);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.55),
+    0 0 6px rgba(0, 0, 0, 0.35);
 }
 .header-contrast .icon-glow svg {
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
 }
 .header-contrast.scrolled:not(.menu-open) {
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.35),
+  box-shadow:
+    0 2px 8px -2px rgba(0, 0, 0, 0.35),
     0 6px 24px -8px rgba(0, 0, 0, 0.5);
 }
 
@@ -355,6 +368,8 @@ body {
 
 /* Smooth transitions */
 * {
-  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+  transition:
+    color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out;
 }

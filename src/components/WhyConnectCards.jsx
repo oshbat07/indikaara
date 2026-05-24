@@ -266,7 +266,9 @@ If a piece doesn't feel right, send it back. No hoops. No hostility. Just a retu
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ac1f23]/10 text-[#ac1f23]">
                     <SelectedIcon style={{ fontSize: "1.1rem" }} />
                   </div>
-                  <h3 className="text-base font-semibold text-gray-900">{selectedItem.title}</h3>
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {selectedItem.title}
+                  </h3>
                 </div>
                 <button
                   onClick={() => setModalOpen(false)}
@@ -277,7 +279,10 @@ If a piece doesn't feel right, send it back. No hoops. No hostility. Just a retu
                 </button>
               </div>
 
-              <div className="mt-3 text-[0.9rem] leading-7 text-gray-700" dangerouslySetInnerHTML={{ __html: selectedItem.description }} />
+              <div
+                className="mt-3 text-[0.9rem] leading-7 text-gray-700"
+                dangerouslySetInnerHTML={{ __html: selectedItem.description }}
+              />
             </motion.div>
           </motion.div>
         )}

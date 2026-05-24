@@ -153,10 +153,10 @@ const HeroSection = () => {
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 hero-nav-dot ${
-                  index === currentSlide
-                    ? "bg-[#ac1f23] scale-110 active"
-                    : "bg-white/70 border border-white/20 hover:bg-white"
-                }`}
+                index === currentSlide
+                  ? "bg-[#ac1f23] scale-110 active"
+                  : "bg-white/70 border border-white/20 hover:bg-white"
+              }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
