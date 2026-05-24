@@ -44,13 +44,13 @@
 }
 
 .hero-nav-arrow {
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   transition: all 0.3s ease;
 }
 
 .hero-nav-arrow:hover {
   transform: scale(1.05);
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .hero-nav-dot {
@@ -62,7 +62,12 @@
 }
 
 .hero-nav-dot.active {
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(172, 31, 35, 0.45);
+}
+
+/* Ensure background cover applies to hero image wrappers */
+.hero-carousel .bg-cover {
+  background-size: cover !important;
 }
 
 /* Responsive text sizing for hero */

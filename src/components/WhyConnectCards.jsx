@@ -11,6 +11,24 @@ import {
 
 export const WhyConnectCards = () => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [modalOpen, setModalOpen] = React.useState(false);
+
+  // Close modal on Escape and lock body scroll when modal is open
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") setModalOpen(false);
+    };
+    if (modalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [modalOpen]);
 
   const items = [
     {
@@ -144,45 +162,56 @@ If a piece doesn't feel right, send it back. No hoops. No hostility. Just a retu
           {items.map((item, index) => {
             const Icon = item.icon;
             const isActive = selectedIndex === index;
+            const handleCardClick = () => {
+              // On small screens, open modal; on lg+ update right panel
+              if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                setSelectedIndex(index);
+                setModalOpen(true);
+              } else {
+                setSelectedIndex(index);
+              }
+            };
 
             return (
-              <motion.button
-                key={item.title}
-                type="button"
-                onClick={() => setSelectedIndex(index)}
-                whileTap={{ scale: 0.985 }}
-                className={`group flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-250 ${
-                  isActive
-                    ? "border-primary bg-primary text-white ring-1 ring-primary/30 shadow-[0_10px_20px_rgba(172,31,35,0.28)]"
-                    : "border-gray-200 bg-white hover:border-primary/35 hover:bg-primary/5"
-                }`}
-                aria-pressed={isActive}
-              >
-                <div
-                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+              <>
+                <motion.button
+                  key={item.title}
+                  type="button"
+                  onClick={handleCardClick}
+                  whileTap={{ scale: 0.985 }}
+                  className={`group flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-250 ${
                     isActive
-                      ? "bg-white/20 text-white"
-                      : "bg-gray-100 text-primary"
+                      ? "border-primary bg-primary text-white ring-1 ring-primary/30 shadow-[0_10px_20px_rgba(172,31,35,0.28)]"
+                      : "border-gray-200 bg-white hover:border-primary/35 hover:bg-primary/5"
                   }`}
+                  aria-pressed={isActive}
                 >
-                  <Icon style={{ fontSize: "1.1rem" }} />
-                </div>
-                <span
-                  className={`flex-1 text-[0.78rem] font-semibold tracking-tight ${
-                    isActive ? "text-white" : "text-gray-800"
-                  }`}
-                >
-                  {item.title}
-                </span>
-              </motion.button>
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                      isActive
+                        ? "bg-white/20 text-white"
+                        : "bg-gray-100 text-primary"
+                    }`}
+                  >
+                    <Icon style={{ fontSize: "1.1rem" }} />
+                  </div>
+                  <span
+                    className={`flex-1 text-[0.78rem] font-semibold tracking-tight ${
+                      isActive ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    {item.title}
+                  </span>
+                </motion.button>
+              </>
             );
           })}
         </div>
       </div>
-
+      {/* Desktop/right-panel description (visible on lg and above) */}
       <motion.article
         layout
-        className="h-full rounded-2xl border border-[#ac1f23]/25 bg-white p-5 sm:p-6 text-left shadow-[0_12px_32px_rgba(15,23,42,0.1)]"
+        className="hidden lg:block h-full rounded-2xl border border-[#ac1f23]/25 bg-white p-5 sm:p-6 text-left shadow-[0_12px_32px_rgba(15,23,42,0.1)]"
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -201,7 +230,6 @@ If a piece doesn't feel right, send it back. No hoops. No hostility. Just a retu
               </h3>
             </div>
 
-            {/* ✅ FIXED HERE */}
             <div
               className="text-[0.78rem] leading-7 text-gray-700"
               dangerouslySetInnerHTML={{ __html: selectedItem.description }}
@@ -209,6 +237,51 @@ If a piece doesn't feel right, send it back. No hoops. No hostility. Just a retu
           </motion.div>
         </AnimatePresence>
       </motion.article>
+
+      {/* Mobile modal for card description */}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 lg:hidden overflow-y-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setModalOpen(false)}
+              aria-hidden="true"
+            />
+
+            <motion.div
+              className="relative z-10 w-full max-w-xl overflow-y-auto rounded-lg bg-white p-4 shadow-lg"
+              style={{ maxHeight: "calc(100vh - 48px)" }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ac1f23]/10 text-[#ac1f23]">
+                    <SelectedIcon style={{ fontSize: "1.1rem" }} />
+                  </div>
+                  <h3 className="text-base font-semibold text-gray-900">{selectedItem.title}</h3>
+                </div>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  aria-label="Close description"
+                  className="rounded-md bg-gray-100 p-2 text-gray-700 hover:bg-gray-200"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="mt-3 text-[0.9rem] leading-7 text-gray-700" dangerouslySetInnerHTML={{ __html: selectedItem.description }} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

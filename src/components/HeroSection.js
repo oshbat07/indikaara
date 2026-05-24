@@ -66,7 +66,7 @@ const HeroSection = () => {
   //   console.log("e", e);
   // };
   return (
-    <section className="relative pt-1 w-screen bg-[#1a1a1a] overflow-hidden hero-carousel">
+    <section className="relative pt-1 w-screen overflow-hidden hero-carousel bg-transparent">
       {/* NEW ARRIVALS Header */}
       <div className="absolute top-6 md:top-8 left-0 right-0 z-30 text-center"></div>
 
@@ -82,14 +82,11 @@ const HeroSection = () => {
               key={slide.id}
               className="w-full h-full flex-shrink-0 relative"
             >
-              {/* Background Image */}
+              {/* Background Image (cover ensures full-bleed responsive images) */}
               <div
-                className="absolute inset-0 bg-contain bg-no-repeat bg-center w-full h-full"
+                className="absolute inset-0 bg-cover bg-no-repeat bg-center w-full h-full"
                 style={{ backgroundImage: `url("${slide.image}")` }}
               />
-
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
               {/* Content */}
               {/* <div className="relative z-20 h-full flex flex-col justify-end pb-20 md:pb-24 lg:pb-32 text-center px-4">
@@ -111,7 +108,7 @@ const HeroSection = () => {
         {/* Navigation Arrows */}
         <button
           onClick={goToPrevious}
-          className="absolute left-2 md:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-all duration-200 backdrop-blur-sm hero-nav-arrow"
+          className="absolute left-2 md:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-white/30 hover:bg-white/70 rounded-full flex items-center justify-center text-black/80 transition-all duration-200 hero-nav-arrow"
           aria-label="Previous slide"
         >
           <svg
@@ -131,7 +128,7 @@ const HeroSection = () => {
 
         <button
           onClick={goToNext}
-          className="absolute right-2 md:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-black/30 hover:bg-black/50 rounded-full flex items-center justify-center text-white transition-all duration-200 backdrop-blur-sm hero-nav-arrow"
+          className="absolute right-2 md:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-30 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-white/30 hover:bg-white/70 rounded-full flex items-center justify-center text-black/80 transition-all duration-200 hero-nav-arrow"
           aria-label="Next slide"
         >
           <svg
@@ -156,19 +153,19 @@ const HeroSection = () => {
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 hero-nav-dot ${
-                index === currentSlide
-                  ? "bg-white scale-110 active"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
+                  index === currentSlide
+                    ? "bg-[#ac1f23] scale-110 active"
+                    : "bg-white/70 border border-white/20 hover:bg-white"
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
 
         {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-black/20">
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200">
           <div
-            className="h-full bg-white/40 transition-all duration-100 ease-out"
+            className="h-full bg-[#ac1f23]/60 transition-all duration-100 ease-out"
             style={{
               width: isAutoPlaying
                 ? `${((currentSlide + 1) / slides.length) * 100}%`

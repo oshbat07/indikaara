@@ -33,8 +33,8 @@ const HomePage = () => {
       <HeroSection />
 
       {/*WHY CONNECT WITH INDIKAARA section */}
-      <section className="why-connect-section w-full bg-[radial-gradient(circle_at_top_right,_rgba(172,31,35,0.08),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#f3f4f6_100%)] py-[clamp(2.25rem,7vw,5rem)]">
-        <div className="mx-auto w-full max-w-7xl px-[clamp(0.75rem,4vw,2rem)]">
+      <section className="why-connect-section page-bleed w-full bg-[radial-gradient(circle_at_top_right,_rgba(172,31,35,0.08),_transparent_45%),linear-gradient(180deg,#f8fafc_0%,#f3f4f6_100%)] py-[clamp(2.25rem,7vw,5rem)]">
+        <div className="w-full px-[clamp(0.75rem,4vw,2rem)]">
           <div className="w-full rounded-2xl border border-white/70 bg-white/80 p-[clamp(1.25rem,4vw,2.5rem)] text-center shadow-[0_14px_40px_rgba(15,23,42,0.08)] backdrop-blur-sm">
             <h1 className="text-[clamp(1.16rem,3.6vw,1.92rem)] font-extrabold text-gray-900 mb-[clamp(0.75rem,2vw,1rem)] leading-tight">
               Why Connect with{" "}

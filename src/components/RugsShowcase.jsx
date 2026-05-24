@@ -114,10 +114,12 @@ const RugsShowcase = () => {
       className="relative bg-gradient-to-b from-gray-900 via-[#101010] to-gray-950 py-16 sm:py-20 px-4 sm:px-8 overflow-hidden"
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0"
         style={{
+          // subtle highlight instead of a dark wash to keep images bright
           background:
-            "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08), transparent 55%)",
+            "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.03), transparent 55%)",
+          mixBlendMode: "overlay",
         }}
       />
       <div className="max-w-7xl mx-auto relative">
@@ -144,7 +146,7 @@ const RugsShowcase = () => {
                     onClick={() => navigate(`/product/${item._id}`)}
                     alt={item.name}
                     loading="lazy"
-                    className="rug-stack-image transition-all duration-500 ease-out object-cover rounded shadow-lg cursor-pointer"
+                    className="rug-stack-image relative z-20 transition-all duration-500 ease-out object-cover rounded shadow-lg cursor-pointer"
                     style={{ height: "88%", width: "auto" }}
                   />
                 </div>

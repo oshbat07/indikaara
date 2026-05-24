@@ -191,6 +191,21 @@ body {
   opacity: 1;
   pointer-events: auto;
 }
+/* Ensure the currently active slide is visible even when centerMode is disabled (mobile) */
+.rugs-center-slider .slick-slide.slick-active {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+}
+
+/* Mobile: when sliders show single slide, avoid dimming non-centered slides */
+@media (max-width: 640px) {
+  .rugs-center-slider .slick-slide {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+}
 .rugs-center-slider .slick-slide img.rug-stack-image {
   box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.35),
     0 4px 10px -4px rgba(0, 0, 0, 0.4);

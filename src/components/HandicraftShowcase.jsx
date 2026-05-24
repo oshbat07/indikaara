@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Slider from "react-slick";
 import { useNavigate } from "react-router-dom";
 import useProducts from "../hooks/useProduct";
+import axios from "axios";
 import { getFirstImage } from "../utils/imageUtils";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,6 +11,55 @@ const HandicraftShowcase = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const navigate = useNavigate();
   const { data: products = [], isLoading } = useProducts();
+
+  // If the homepage should show a fixed set of handicraft products, fetch them here.
+  const HARDCODED_IDS = [
+    "68ef93fa69f2a591336e2df6",
+    "6a0624cbfdf4038feaf66c87",
+    "6a0624cbfdf4038feaf66c87",
+    "6a0624cbfdf4038feaf66ca0",
+    "6a0624cbfdf4038feaf66caa",
+    "6a0624cbfdf4038feaf66caa",
+    "6a0624cbfdf4038feaf66cd2",
+    "6a0624cbfdf4038feaf66c9c",
+    "6a0624cbfdf4038feaf66c8e",
+    "68ef93fa69f2a591336e2e14",
+  ];
+
+  const [fetchedItems, setFetchedItems] = useState(null);
+  const [isFetchingIds, setIsFetchingIds] = useState(false);
+
+  useEffect(() => {
+    // dedupe while preserving order
+    const deduped = [];
+    const seen = new Set();
+    for (const id of HARDCODED_IDS) {
+      if (!seen.has(id)) {
+        seen.add(id);
+        deduped.push(id);
+      }
+    }
+
+    const fetchAll = async () => {
+      setIsFetchingIds(true);
+      try {
+        const results = await Promise.all(
+          deduped.map((id) =>
+            axios.get(`/api/products/${id}`).then((r) => r.data).catch(() => null),
+          ),
+        );
+        const valid = results.filter(Boolean);
+        setFetchedItems(valid);
+      } catch (err) {
+        console.error("Failed to fetch fixed handicraft IDs:", err);
+        setFetchedItems([]);
+      } finally {
+        setIsFetchingIds(false);
+      }
+    };
+
+    fetchAll();
+  }, []);
 
   // Filter products for handicrafts
   const items = useMemo(() => {
@@ -29,13 +79,25 @@ const HandicraftShowcase = () => {
     const merged = [...primary, ...extended];
     const unique = Array.from(new Map(merged.map((m) => [m._id, m])).values());
 
-    return unique.length > 0 ? unique.slice(0, 6) : [];
+    return unique.length > 0 ? unique : [];
   }, [products]);
+  // Use fetchedItems (if available) as the single source of truth for this showcase.
+  const itemsToUse = Array.isArray(fetchedItems) ? fetchedItems : items;
+
+  // Support paging through the set of handicraft items so users can "replace" the view
+  const PAGE_SIZE = 6;
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const pages = [];
+  for (let i = 0; i < itemsToUse.length; i += PAGE_SIZE) {
+    pages.push(itemsToUse.slice(i, i + PAGE_SIZE));
+  }
+  const displayed = pages.length > 0 ? pages[pageIndex % pages.length] : [];
 
   // Return null while loading or no items
-  if (isLoading || items.length === 0) return null;
+  // If we're still fetching the specific IDs, show nothing (or could show a loader)
+  if (isFetchingIds) return null;
 
-  if (!items.length) return null;
+  if (!itemsToUse || itemsToUse.length === 0) return null;
 
   const ArrowBtn = ({ onClick, dir }) => (
     <button
@@ -117,10 +179,12 @@ const HandicraftShowcase = () => {
       className="relative bg-gradient-to-b from-[#101010] via-[#0d0d0d] to-gray-900 py-16 sm:py-20 px-4 sm:px-8 overflow-hidden"
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0"
         style={{
+          // subtle highlight so product imagery stays prominent
           background:
-            "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05), transparent 60%)",
+            "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.02), transparent 60%)",
+          mixBlendMode: "overlay",
         }}
       />
       <div className="max-w-7xl mx-auto relative">
@@ -137,7 +201,7 @@ const HandicraftShowcase = () => {
         </div>
         <div className="relative">
           <Slider {...settings}>
-            {items.map((item, idx) => (
+            {displayed.map((item, idx) => (
               <div key={item.id || idx} className="px-2 select-none">
                 <div className="relative flex items-end justify-center h-[320px] sm:h-[380px]">
                   <img
@@ -145,7 +209,7 @@ const HandicraftShowcase = () => {
                     alt={item.name}
                     loading="lazy"
                     onClick={() => navigate(`/product/${item._id}`)}
-                    className="rug-stack-image transition-all duration-500 ease-out object-cover rounded shadow-lg cursor-pointer"
+                    className="rug-stack-image relative z-20 transition-all duration-500 ease-out object-cover rounded shadow-lg cursor-pointer"
                     style={{
                       height:
                         idx === activeIndex % items.length ? "90%" : "80%",
@@ -164,16 +228,30 @@ const HandicraftShowcase = () => {
         </div>
         <div className="mt-8 text-center">
           <p className="text-sm sm:text-base font-medium text-gray-200">
-            {items[activeIndex % items.length]?.name}
+            {displayed[activeIndex % displayed.length]?.name}
           </p>
-          <button
-            onClick={() =>
-              (window.location.href = "/catalogue?category=handicraftproducts")
-            }
-            className="mt-4 inline-block text-[11px] tracking-wide font-semibold uppercase text-gray-200 border-b-2 border-gray-400/60 hover:border-white transition-colors"
-          >
-            Shop Collection
-          </button>
+          <div className="mt-4 flex items-center justify-center gap-4">
+            <button
+              onClick={() =>
+                (window.location.href = "/catalogue?category=handicraftproducts")
+              }
+              className="inline-block text-[11px] tracking-wide font-semibold uppercase text-gray-200 border-b-2 border-gray-400/60 hover:border-white transition-colors px-2 py-1"
+            >
+              Shop Collection
+            </button>
+
+            {pages.length > 1 && (
+              <button
+                onClick={() => {
+                  setPageIndex((p) => (p + 1) % pages.length);
+                  setActiveIndex(0);
+                }}
+                className="inline-block text-[11px] tracking-wide font-semibold uppercase text-gray-200 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors"
+              >
+                Show Other Handicrafts
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </section>
