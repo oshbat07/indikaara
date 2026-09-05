@@ -274,6 +274,10 @@ const CheckoutPage = () => {
               <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight">
                 Order Summary
               </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Sold and Fulfilled by Indikaara Exports and GSTIN
+                23GDNPS5669R2Z7
+              </p>
 
               {/* Order Items */}
               <div className="space-y-4 mb-6">

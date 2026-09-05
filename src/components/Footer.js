@@ -153,6 +153,10 @@ const Footer = () => {
             artisan heritage.
           </p>
 
+          <p className="text-sm text-text-secondary mb-4 md:mb-0">
+            This website is operated by Indikaara Exports
+          </p>
+
           {/* Quick Links */}
           <nav className="flex space-x-6" aria-label="Quick footer links">
             <Link

@@ -212,7 +212,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-text-primary">Phone</h3>
-                    <p className="text-text-secondary">+91 9179219231</p>
+                    <p className="text-text-secondary">+91-91792192311</p>
                     <p className="text-text-secondary text-sm">
                       Mon-Fri: 9 AM - 6 PM IST
                     </p>
@@ -286,6 +286,52 @@ const ContactPage = () => {
                 <div className="flex justify-between">
                   <span className="text-text-secondary">Sunday</span>
                   <span className="text-text-primary">Closed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Legal Information */}
+            <div className="bg-gray-800/50 rounded-xl p-8">
+              <h2 className="text-2xl font-semibold text-primary mb-6">
+                Legal Information
+              </h2>
+
+              <div className="space-y-3 text-text-secondary text-sm">
+                <div>
+                  <strong className="text-text-primary">Brand Name:</strong>
+                  <div>Indikaara</div>
+                </div>
+
+                <div>
+                  <strong className="text-text-primary">
+                    Registered Business Name:
+                  </strong>
+                  <div>Indikaara Exports</div>
+                </div>
+
+                <div>
+                  <strong className="text-text-primary">GSTIN:</strong>
+                  <div>23GDNPS5669R2Z7</div>
+                </div>
+
+                <div>
+                  <strong className="text-text-primary">
+                    Registered Address:
+                  </strong>
+                  <div>
+                    11, Amrit Complex, Raisen Road, near Prabhat Petrol Pump,
+                    Old Ashoka Garden, Bhopal (M.P), 462023
+                  </div>
+                </div>
+
+                <div>
+                  <strong className="text-text-primary">Email:</strong>
+                  <div>support@indikaara.com</div>
+                </div>
+
+                <div>
+                  <strong className="text-text-primary">Phone:</strong>
+                  <div>+91-91792192311</div>
                 </div>
               </div>
             </div>

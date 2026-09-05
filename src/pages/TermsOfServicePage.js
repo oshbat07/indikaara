@@ -15,7 +15,7 @@ const TermsOfServicePage = () => {
             Terms of Service
           </h1>
           <p className="text-lg text-text-secondary">
-            Last updated: September 12, 2025
+            Last updated: August 26, 2026
           </p>
         </div>
 
@@ -196,6 +196,10 @@ const TermsOfServicePage = () => {
               <p className="text-text-secondary leading-relaxed">
                 For detailed return instructions, please contact our customer
                 service team.
+              </p>
+
+              <p className="text-text-secondary leading-relaxed">
+                refunds and invoices are processed by the legal entity
               </p>
             </section>
 
